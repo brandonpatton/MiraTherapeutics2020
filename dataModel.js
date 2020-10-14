@@ -6,22 +6,22 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function(){
     // connected
     const assignmentSchema = new mongoose.Schema({
-        assignmentData: null,               //key to database
-        assignmentTitle: null,              //should this be a variable passed in
-        assignmentType: null,               //should this be null
-        dueDate: null,                      //get from user input form
-        frequency: null,                    //get from user input form
-        patientName: null,                  //get from user input form
+        assignmentData: '',               //key to database
+        assignmentTitle: '',              //should this be a variable passed in
+        assignmentType: '',               //should this be null
+        dueDate: Date,                      //get from user input form
+        frequency: '',                    //get from user input form
+        patientName: '',                  //get from user input form
         done: false,                        //starts false as default
-        specialInstructions: null           //get from user input form
+        specialInstructions: ''           //get from user input form
     });
 
     const Grounding = mongoose.model("Grounding", assignmentSchema)
     const flashback = new Grounding({
-        assignmentData: flashbackKey,
+        assignmentData: "flashbackKey",
         assignmentTitle: "Flashback Grounding",     // this and the below would be passed in as a variable from form, except for "done"
         assignmentType: "Grounding",
-        dueDate: "1/25/21",
+        dueDate: new Date(),
         frequency: "Weekly",
         patientName: "Liam",
         done: false,
@@ -32,4 +32,5 @@ db.once("open", function(){
     });
     
 });
+
 
