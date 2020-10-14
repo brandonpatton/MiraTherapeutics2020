@@ -1,0 +1,21 @@
+{
+  "name": "testing-jest-mongodb",
+  "version": "1.0.0",
+  "description": "Basic testing using jest and mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "author": "Liam King",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^26.5.2"
+  },
+  "dependencies": {
+    "@shelf/jest-mongodb": "^1.2.3",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.2",
+    "mongodb-memory-server": "^6.9.2"
+  }
+}
