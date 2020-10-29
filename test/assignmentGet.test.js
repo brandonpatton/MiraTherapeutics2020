@@ -21,8 +21,8 @@ afterAll(async () => {
 	await mongoServer.stop();
 });
 
-describe('insert', () => {
-	it('should insert an assignment with no exercises', async () => {
+describe('retrieve', () => {
+	it('should retrieve an assignment from the database', async () => {
 		expect.assertions(9)
 
 		let testDateAssigned = new Date();
@@ -38,9 +38,9 @@ describe('insert', () => {
 		});
 
 		const mongoUri = await mongoServer.getUri();
-		let insertInfo = await assignmentData.createAssignment(mongoUri, noExerciseAssignment.exerciseList, noExerciseAssignment.dateAssigned, noExerciseAssignment.patientName, noExerciseAssignment.patientId, noExerciseAssignment.therapistName, noExerciseAssignment.therapistId, noExerciseAssignment.assignmentProgress, noExerciseAssignment.visitNumber);
+		const insertInfo = await noExerciseAssignment.save()
 
-		const res = await Assignment.findOne({ _id: insertInfo._id });
+		const res = await assignmentData.getAssignment(mongoUri, insertInfo._id)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length);
 		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
