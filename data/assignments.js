@@ -1,10 +1,12 @@
-const mongoCollections = require('../config/mongoCollections')
-const assignments = mongoCollections.assignments
+const mongoose = require('mongoose')
+const { Assignment } = require('./models/assignment');
 
 module.exports = {
-    async createAssignment(exerciseList, dateAssigned, patientName, patientId, therapistName, therapistId, assignmentProgress, visitNumber) {
-        const assignmentCollection = await assignments()
-        let newAssignment = {
+    async createAssignment(mongoUri, exerciseList, dateAssigned, patientName, patientId, therapistName, therapistId, assignmentProgress, visitNumber) {
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
+        let newAssignment = new Assignment({
             exerciseList:exerciseList,
             dateAssigned:dateAssigned,
             patientName:patientName,
@@ -13,16 +15,18 @@ module.exports = {
             therapistId:therapistId,
             assignmentProgress:assignmentProgress,
             visitNumber:visitNumber
-        }
-        const insertInfo = await assignmentCollection.insertOne(newAssignment)
-        if (insertInfo.insertedCount === 0) throw 'Could not create assignment'
-        const id = insertInfo.insertedId
-        return await this.getAssignment(id)
+        });
+        const insertInfo = await newAssignment.save();
+        if (insertInfo.errors) throw `Could not add assignment. Error: ${insertInfo.errors}`
+        const id = insertInfo._id
+        return await this.getAssignment(mongoUri, id)
     },
 
-    async getAssignment(id) {
-        const assignmentCollection = await assignments()
-        const assignment = await assignmentCollection.findOne({_id: id})
+    async getAssignment(mongoUri, id) {
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
+        const assignment = await Assignment.findOne({_id: id})
         if (assignment === null) throw 'No assignment exists with that id'
         return assignment
     },
