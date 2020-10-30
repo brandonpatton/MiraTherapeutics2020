@@ -26,12 +26,12 @@ module.exports = {
         if (assignment === null) throw 'No assignment exists with that id'
         return assignment
     },
-	async removeAssignment(id){
-		const assignmentCollection = await assignments()
-		const Assignment = await assignmentCollection.deleteOne({_id: id})
-		if(Assignment.deletedCount == 0){
-			throw 'No assignment exists with that id'
-		}
-	return `Successfully removed assignment with id:${id}`
+    async removeAssignment(id){
+        const assignmentCollection = await assignments()
+        const Assignment = await assignmentCollection.deleteOne({_id: id})
+        if(Assignment.deletedCount == 0){
+        throw 'No assignment exists with that id'
+        }
+    return `Successfully removed assignment with id:${id}`
 	}
 }
