@@ -53,6 +53,66 @@ describe('insert', () => {
 
 	});
 
+	it('should insert an assignment with exercises', async () => {
+		let testDateAssigned = new Date();
+		const mongoUri = await mongoServer.getUri();
+
+		const flashbackExercise = new Exercise({
+            exerciseTitle: 'Flashback Grounding',
+            exerciseType: 'Grounding',
+            dueDate: testDateAssigned,
+            frequency: 'Daily',
+            patientName: 'John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 0,
+            specialInstructions: 'Please let me know if you need any help!'
+		});
+
+		const insertFlashback = await flashbackExercise.save()
+
+		const traumaStoryExercise = new Exercise({
+			exerciseTitle: 'TraumaStory',
+            exerciseType: 'Reading',
+            dueDate: testDateAssigned,
+            frequency: 'Weekly',
+            patientName: 'John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 0,
+            specialInstructions: 'Do this one once a week!'
+		})
+
+		const insertTraumaStory = await traumaStoryExercise.save()
+
+		const assignmentWithExercises = new Assignment({
+			exerciseList: [insertFlashback._id, insertTraumaStory._id],
+			dateAssigned: testDateAssigned,
+			patientName: 'John Doe',
+			patientId: 'PjohnDoe1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 1
+		});
+
+		
+		const insertInfo = await assignmentData.createAssignment(mongoUri, assignmentWithExercises.exerciseList, assignmentWithExercises.dateAssigned, assignmentWithExercises.patientName, assignmentWithExercises.patientId, assignmentWithExercises.therapistName, assignmentWithExercises.therapistId, assignmentWithExercises.assignmentProgress, assignmentWithExercises.visitNumber);
+
+		const res = await Assignment.findOne({ _id: insertInfo._id})
+		expect.assertions(10 + res.exerciseList.length)
+		expect(res._id).toEqual(insertInfo._id);
+		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
+		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
+		for (let i = 0; i < res.exerciseList.length; i++) expect(res.exerciseList[i]).toEqual(insertInfo.exerciseList[i])
+		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
+		expect(res.patientName).toEqual(insertInfo.patientName);
+		expect(res.patientId).toEqual(insertInfo.patientId);
+		expect(res.therapistName).toEqual(insertInfo.therapistName);
+		expect(res.therapistId).toEqual(insertInfo.therapistId);
+		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
+		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+
+	});
+
 	
 })
 

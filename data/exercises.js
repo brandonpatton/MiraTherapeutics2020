@@ -2,12 +2,11 @@ const mongoose = require('mongoose')
 const { Exercise } = require('./models/exercise');
 
 module.exports = {
-    async createExercise(mongoUri, exerciseData, exerciseTitle, exerciseType, dueDate, frequency, patientName, patientName, patientId, progress, specialInstructions) {
+    async createExercise(mongoUri, exerciseTitle, exerciseType, dueDate, frequency, patientName, patientId, progress, specialInstructions) {
         await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             if (err) console.error(err);
         })
         let newExercise = new Exercise({
-            exerciseData: exerciseData,
             exerciseTitle: exerciseTitle,
             exerciseType: exerciseType,
             dueDate: dueDate,
@@ -20,7 +19,7 @@ module.exports = {
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
         const id = insertInfo._id
-        return await this.getexercise(mongoUri, id)
+        return await this.getExercise(mongoUri, id)
     },
 
     async getExercise(mongoUri, id) {
