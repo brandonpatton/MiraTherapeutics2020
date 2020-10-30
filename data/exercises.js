@@ -29,6 +29,16 @@ module.exports = {
         const exercise = await Exercise.findOne({_id: id})
         if (exercise === null) throw 'No exercise exists with that id'
         return exercise
+    },
+    async removeExercise(mongoUri, id){
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
+        const exercise = await Exercise.deleteOne({_id: id})
+        if(Exercise.deletedCount == 0){
+            throw 'No exercise exists with that id'
+            }
+        return `Deleted exercise with id:${id}`
     }
 
 }
