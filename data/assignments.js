@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { Assignment } = require('./models/assignment');
+const { Exercise  } = require('./exercises');
 
 module.exports = {
     async createAssignment(mongoUri, exerciseList, dateAssigned, patientName, patientId, therapistName, therapistId, assignmentProgress, visitNumber) {
@@ -30,12 +31,20 @@ module.exports = {
         if (assignment === null) throw 'No assignment exists with that id'
         return assignment
     },
-    async removeAssignment(id){
+    async removeAssignment(mongoUri, id){
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
         const assignmentCollection = await assignments()
         const Assignment = await assignmentCollection.deleteOne({_id: id})
         if(Assignment.deletedCount == 0){
         throw 'No assignment exists with that id'
         }
+        for(i=0;i<length.exerciseList;i++){
+            Exercise.removeExercise(mongoUri, exerciseList[i].id)
+        }
+
+
     return `Successfully removed assignment with id:${id}`
 	}
 }
