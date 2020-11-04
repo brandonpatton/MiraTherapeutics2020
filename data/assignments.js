@@ -46,5 +46,16 @@ module.exports = {
 
 
     return `Successfully removed assignment with id:${id}`
-	}
+    },
+    
+    async getAssignmentByPatientId(mongoUri, patientIdInput){
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
+        //const assignmentCollection = await assignments()
+        const assignment = await Assignment.findOne({patientId: patientIdInput})
+        if (assignment === null) throw 'No assignment exists with that patientId'
+        return assignment
+    }
 }
+
