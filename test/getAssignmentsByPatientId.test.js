@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Assignment } = require('../data/models/assignment');
 const { Exercise } = require('../data/models/exercise');
-const assignmentData = require('../data/assignments')
+const assignmentData = require('../data/methods/assignments')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;

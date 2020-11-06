@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { Exercise } = require('./models/exercise');
+const { Exercise } = require('../models/exercise');
 
 module.exports = {
     async createExercise(mongoUri, exerciseTitle, exerciseType, dueDate, frequency, patientName, patientId, progress, specialInstructions) {
