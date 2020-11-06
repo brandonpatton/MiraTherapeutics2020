@@ -43,8 +43,6 @@ module.exports = {
         for(i=0;i<length.exerciseList;i++){
             Exercise.removeExercise(mongoUri, exerciseList[i].id)
         }
-
-
-    return `Successfully removed assignment with id:${id}`
+        return `Successfully removed assignment with id:${id}`
 	}
 }
