@@ -25,4 +25,9 @@ router.post('/', async (req, res) => {
         assignmentProgress:req.params.assignmentProgress,
         visitNumber:req.params.visitNumber
     })
+    try {
+        await assignmentData.createAssignment(newAssignment)
+    } catch {
+        console.log(e)
+    }
 })
