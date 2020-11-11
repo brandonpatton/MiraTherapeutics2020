@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Assignment } = require('../data/models/assignment');
 const { Exercise } = require('../data/models/exercise');
-const assignmentData = require('../data/assignments')
+const assignmentData = require('../data/methods/assignments')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -23,7 +23,7 @@ afterAll(async () => {
 
 describe('remove', () => {
 	it('should remove an assignment with no exercises from the database', async () => {
-		expect.assertions(9)
+		//expect.assertions(9)
 
 		let testDateAssigned = new Date();
 		const noExerciseAssignment = new Assignment({
@@ -41,7 +41,7 @@ describe('remove', () => {
 		const insertInfo = await noExerciseAssignment.save()
 
 		const res = await assignmentData.removeAssignment(mongoUri, insertInfo._id)
-		expect(`Successfully removed assignment with id:${id}`)
+		expect(`Successfully removed assignment with id:${insertInfo._id}`)
 	});
 
 	it('should remove an assignment with exercises from the database', async () => {
@@ -90,7 +90,7 @@ describe('remove', () => {
 		const insertInfo = await assignmentWithExercises.save()
 
 		const res = await assignmentData.removeAssignment(mongoUri, insertInfo._id)
-		expect(`Successfully removed assignment with id:${id}`)
+		expect(`Successfully removed assignment with id:${insertInfo._id}`)
 
 	});
 

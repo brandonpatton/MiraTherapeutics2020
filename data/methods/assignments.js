@@ -35,17 +35,17 @@ module.exports = {
         await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             if (err) console.error(err);
         })
-        const assignmentCollection = await assignments()
-        const Assignment = await assignmentCollection.deleteOne({_id: id})
-        if(Assignment.deletedCount == 0){
+        //const assignmentCollection = await assignments()
+        const assignment = await Assignment.deleteOne({_id: id})
+        if(assignment.deletedCount == 0){
         throw 'No assignment exists with that id'
         }
-        for(i=0;i<length.exerciseList;i++){
-            Exercise.removeExercise(mongoUri, exerciseList[i].id)
-        }
+        //for(i=0;i<length.exerciseList;i++){
+          //  Exercise.removeExercise(mongoUri, exerciseList[i].id)
+       // }
 
 
-    return `Successfully removed assignment with id:${id}`
+        return `Successfully removed assignment with id:${id}`
     },
 
     async updateAssignment(mongoUri, id, newAssignment) {
