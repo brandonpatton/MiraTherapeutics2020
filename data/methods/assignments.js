@@ -47,6 +47,24 @@ module.exports = {
 
     return `Successfully removed assignment with id:${id}`
     },
+
+    async updateAssignment(mongoUri, id, newAssignment) {
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
+        await Assignment.updateOne({ _id: id}, {
+            exerciseList: newAssignment.exerciseList,
+            dateAssigned: newAssignment.dateAssigned,
+			patientName: newAssignment.patientName,
+			patientId: newAssignment.patientId,
+			therapistName: newAssignment.therapistName,
+			therapistId: newAssignment.therapistId,
+			assignmentProgress: newAssignment.assignmentProgress,
+			visitNumber: newAssignment.visitNumber
+        })
+        return await this.getAssignment(mongoUri, id);
+
+    },
     
     async getAssignmentsByPatientId(mongoUri, patientIdInput){
         await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {

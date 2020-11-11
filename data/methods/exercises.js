@@ -30,15 +30,32 @@ module.exports = {
         if (exercise === null) throw 'No exercise exists with that id'
         return exercise
     },
+    async updateExercise(mongoUri,newExercise){
+        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+            if (err) console.error(err);
+        })
+        const exercise = await this.getExercise(newExercise._id)
+        const updatedInfo = await Exercise.updateOne({
+            exerciseTitle: newExercise.exerciseTitle,
+            exerciseType: newExercise.exerciseType,
+            dueDate: newExercise.dueDate,
+            frequency: newExercise.frequency,
+            patientName: newExercise.patientName,
+            patientId: newExercise.patientId,
+            progress: newExercise.progress,
+            specialInstructions: newExercise.specialInstructions
+        })
+        if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
+        return exercise;
+    },
     async removeExercise(mongoUri, id){
         await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             if (err) console.error(err);
         })
         const exercise = await Exercise.deleteOne({_id: id})
-        if(Exercise.deletedCount == 0){
-            throw 'No exercise exists with that id'
-            }
-        return `Deleted exercise with id:${id}`
+        if(exercise.error) throw `Could not delete exercise. Error: ${exercise.errors}`
+            
+        return `Removed exercise with id:${id}`
     }
 
 }
