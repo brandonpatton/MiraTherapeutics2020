@@ -1,20 +1,20 @@
 const mongoose = require('mongoose')
-const { Exercise } = require('./models/exercise');
+const { Exercise } = require('../models/exercise');
 
 module.exports = {
-    async createExercise(mongoUri, exerciseTitle, exerciseType, dueDate, frequency, patientName, patientId, progress, specialInstructions) {
+    async createExercise(mongoUri, exercise) {
         await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             if (err) console.error(err);
         })
         let newExercise = new Exercise({
-            exerciseTitle: exerciseTitle,
-            exerciseType: exerciseType,
-            dueDate: dueDate,
-            frequency: frequency,
-            patientName: patientName,
-            patientId: patientId,
-            progress: progress,
-            specialInstructions: specialInstructions
+            exerciseTitle: exercise.exerciseTitle,
+            exerciseType: exercise.exerciseType,
+            dueDate: exercise.dueDate,
+            frequency: exercise.frequency,
+            patientName: exercise.patientName,
+            patientId: exercise.patientId,
+            progress: exercise.progress,
+            specialInstructions: exercise.specialInstructions
         });
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`

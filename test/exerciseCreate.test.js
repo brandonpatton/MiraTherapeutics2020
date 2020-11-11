@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Exercise } = require('../data/models/exercise');
-const assignmentData = require('../data/exercises')
+const assignmentData = require('../data/methods/exercises')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -37,7 +37,7 @@ describe('insert', () => {
 		});
 
 		const mongoUri = await mongoServer.getUri();
-		const insertFlashback = await assignmentData.createExercise(mongoUri, flashbackExercise.exerciseTitle, flashbackExercise.exerciseType, flashbackExercise.dueDate, flashbackExercise.frequency, flashbackExercise.patientName, flashbackExercise.patientId, flashbackExercise.progress, flashbackExercise.specialInstructions);
+		const insertFlashback = await assignmentData.createExercise(mongoUri, flashbackExercise);
 
 		const res = await Exercise.findOne({ _id: insertFlashback._id })
 		expect(res._id).toEqual(insertFlashback._id);

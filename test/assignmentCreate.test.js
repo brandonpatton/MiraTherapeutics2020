@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Assignment } = require('../data/models/assignment');
 const { Exercise } = require('../data/models/exercise');
-const assignmentData = require('../data/assignments')
+const assignmentData = require('../data/methods/assignments')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -38,7 +38,7 @@ describe('insert', () => {
 		});
 
 		const mongoUri = await mongoServer.getUri();
-		let insertInfo = await assignmentData.createAssignment(mongoUri, noExerciseAssignment.exerciseList, noExerciseAssignment.dateAssigned, noExerciseAssignment.patientName, noExerciseAssignment.patientId, noExerciseAssignment.therapistName, noExerciseAssignment.therapistId, noExerciseAssignment.assignmentProgress, noExerciseAssignment.visitNumber);
+		let insertInfo = await assignmentData.createAssignment(mongoUri, noExerciseAssignment);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id });
 		expect(res._id).toEqual(insertInfo._id);
@@ -95,7 +95,7 @@ describe('insert', () => {
 		});
 
 		
-		const insertInfo = await assignmentData.createAssignment(mongoUri, assignmentWithExercises.exerciseList, assignmentWithExercises.dateAssigned, assignmentWithExercises.patientName, assignmentWithExercises.patientId, assignmentWithExercises.therapistName, assignmentWithExercises.therapistId, assignmentWithExercises.assignmentProgress, assignmentWithExercises.visitNumber);
+		const insertInfo = await assignmentData.createAssignment(mongoUri, assignmentWithExercises);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id})
 		expect.assertions(10 + res.exerciseList.length)

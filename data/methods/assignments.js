@@ -1,21 +1,21 @@
 const mongoose = require('mongoose')
-const { Assignment } = require('./models/assignment');
-const { Exercise  } = require('./exercises');
+const { Assignment } = require('../models/assignment');
+const { Exercise } = require('./exercises');
 
 module.exports = {
-    async createAssignment(mongoUri, exerciseList, dateAssigned, patientName, patientId, therapistName, therapistId, assignmentProgress, visitNumber) {
+    async createAssignment(mongoUri, assignment) {
         await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             if (err) console.error(err);
         })
         let newAssignment = new Assignment({
-            exerciseList:exerciseList,
-            dateAssigned:dateAssigned,
-            patientName:patientName,
-            patientId:patientId,
-            therapistName:therapistName,
-            therapistId:therapistId,
-            assignmentProgress:assignmentProgress,
-            visitNumber:visitNumber
+            exerciseList:assignment.exerciseList,
+            dateAssigned:assignment.dateAssigned,
+            patientName:assignment.patientName,
+            patientId:assignment.patientId,
+            therapistName:assignment.therapistName,
+            therapistId:assignment.therapistId,
+            assignmentProgress:assignment.assignmentProgress,
+            visitNumber:assignment.visitNumber
         });
         const insertInfo = await newAssignment.save();
         if (insertInfo.errors) throw `Could not add assignment. Error: ${insertInfo.errors}`
