@@ -3,10 +3,7 @@ const { Assignment } = require('../models/assignment');
 const { Exercise } = require('./exercises');
 
 module.exports = {
-    async createAssignment(mongoUri, assignment) {
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async createAssignment(assignment) {
         let newAssignment = new Assignment({
             exerciseList:assignment.exerciseList,
             dateAssigned:assignment.dateAssigned,
@@ -20,21 +17,15 @@ module.exports = {
         const insertInfo = await newAssignment.save();
         if (insertInfo.errors) throw `Could not add assignment. Error: ${insertInfo.errors}`
         const id = insertInfo._id
-        return await this.getAssignment(mongoUri, id)
+        return await this.getAssignment(id)
     },
 
-    async getAssignment(mongoUri, id) {
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async getAssignment(id) {
         const assignment = await Assignment.findOne({_id: id})
         if (assignment === null) throw 'No assignment exists with that id'
         return assignment
     },
-    async removeAssignment(mongoUri, id){
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async removeAssignment(id){
         //const assignmentCollection = await assignments()
         const assignment = await Assignment.deleteOne({_id: id})
         if(assignment.deletedCount == 0){
@@ -48,10 +39,7 @@ module.exports = {
         return `Successfully removed assignment with id:${id}`
     },
 
-    async updateAssignment(mongoUri, id, newAssignment) {
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async updateAssignment(id, newAssignment) {
         await Assignment.updateOne({ _id: id}, {
             exerciseList: newAssignment.exerciseList,
             dateAssigned: newAssignment.dateAssigned,
@@ -62,14 +50,11 @@ module.exports = {
 			assignmentProgress: newAssignment.assignmentProgress,
 			visitNumber: newAssignment.visitNumber
         })
-        return await this.getAssignment(mongoUri, id);
+        return await this.getAssignment(id);
 
     },
     
-    async getAssignmentsByPatientId(mongoUri, patientIdInput){
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async getAssignmentsByPatientId(patientIdInput){
         const assignments = await Assignment.find({patientId: patientIdInput})
         if (assignments === null) throw 'No assignment exists with that patientId'
         return assignments

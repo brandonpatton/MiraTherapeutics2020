@@ -51,8 +51,7 @@ describe('update', () => {
 			assignmentProgress: 0,
 			visitNumber: 1
 		});
-
-		const mongoUri = await mongoServer.getUri();
+ 
 		let insertInfo = await noExerciseAssignment.save();
 
         const res = await Assignment.findOne({ _id: insertInfo._id });
@@ -68,7 +67,7 @@ describe('update', () => {
 			visitNumber: 1
         }
 
-        const updatedAssignment = await assignmentData.updateAssignment(mongoUri, res._id, noExerciseUpdated)
+        const updatedAssignment = await assignmentData.updateAssignment(res._id, noExerciseUpdated)
         const retrievedUpdatedAssignment = await Assignment.findOne({ _id: res._id});
 
 		expect(updatedAssignment._id).toEqual(retrievedUpdatedAssignment._id);

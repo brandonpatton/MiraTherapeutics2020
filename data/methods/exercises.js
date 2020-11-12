@@ -2,10 +2,7 @@ const mongoose = require('mongoose')
 const { Exercise } = require('../models/exercise');
 
 module.exports = {
-    async createExercise(mongoUri, exercise) {
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async createExercise(exercise) {
         let newExercise = new Exercise({
             exerciseTitle: exercise.exerciseTitle,
             exerciseType: exercise.exerciseType,
@@ -19,23 +16,17 @@ module.exports = {
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
         const id = insertInfo._id
-        return await this.getExercise(mongoUri, id)
+        return await this.getExercise(id)
     },
 
-    async getExercise(mongoUri, id) {
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async getExercise(id) {
         const exercise = await Exercise.findOne({_id: id})
         if (exercise === null) throw 'No exercise exists with that id'
         return exercise
     },
-    async updateExercise(mongoUri,newExercise){
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
-        const exercise = await this.getExercise(newExercise._id)
-        const updatedInfo = await Exercise.updateOne({
+    async updateExercise(id, newExercise){
+        const exercise = await this.getExercise(id)
+        const updatedInfo = await Exercise.updateOne({ _id: id}, { 
             exerciseTitle: newExercise.exerciseTitle,
             exerciseType: newExercise.exerciseType,
             dueDate: newExercise.dueDate,
@@ -46,12 +37,9 @@ module.exports = {
             specialInstructions: newExercise.specialInstructions
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
-        return exercise;
+        return await this.getExercise(id);
     },
-    async removeExercise(mongoUri, id){
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if (err) console.error(err);
-        })
+    async removeExercise(id){
         const exercise = await Exercise.deleteOne({_id: id})
         if(exercise.error) throw `Could not delete exercise. Error: ${exercise.errors}`
             

@@ -9,7 +9,7 @@
     }
   },
   "scripts": {
-    "test": "jest",
+    "test": "NODE_ENV=test jest",
     "start": "node index.js"
   },
   "author": "Liam King",
@@ -22,6 +22,6 @@
     "express": "^4.17.1",
     "mongodb": "^3.6.2",
     "mongodb-memory-server": "^6.9.2",
-    "mongoose": "^5.10.12"
+    "mongoose": "^5.10.13"
   }
 }

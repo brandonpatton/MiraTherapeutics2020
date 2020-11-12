@@ -36,10 +36,9 @@ describe('retrieve', () => {
             specialInstructions: 'Please let me know if you need any help!'
 		});
 
-		const mongoUri = await mongoServer.getUri();
 		const insertFlashback = await flashbackExercise.save()
 
-		const res = await assignmentData.getExercise(mongoUri, insertFlashback._id)
+		const res = await assignmentData.getExercise(insertFlashback._id)
 		expect(res._id).toEqual(insertFlashback._id);
 		expect(res.exerciseTitle).toEqual(insertFlashback.exerciseTitle);
 		expect(res.exerciseType).toEqual(insertFlashback.exerciseType);
