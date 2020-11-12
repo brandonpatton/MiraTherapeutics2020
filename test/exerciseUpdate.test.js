@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Exercise } = require('../data/models/exercise');
-const assignmentData = require('../data/methods/exercises')
+const assignmentData = require('../data/methods/exercises');
+const { Assignment } = require('../data/models/assignment');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -36,10 +37,9 @@ describe('remove', () => {
             specialInstructions: 'Please let me know if you need any help!'
 		});
 
-		const mongoUri = await mongoServer.getUri();
 		const insertFlashback = await flashbackExercise.save()
 
-        const newFlashbackExercise =  new Exercise({
+        const updatedFlashbackExercise =  new Exercise({
             exerciseTitle: 'New Flashback Grounding',
             exerciseType: 'New Grounding',
             dueDate: testDateAssigned,
@@ -50,7 +50,8 @@ describe('remove', () => {
             specialInstructions: 'Please do not let me know if you need any help!'
 		});
 
-		const res = await assignmentData.updateExercise(mongoUri, newFlashbackExercise)
+		const res = await assignmentData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
+		const newFlashbackExercise = await Exercise.findOne({_id: insertFlashback._id});
 		expect(res._id).toEqual(newFlashbackExercise._id);
 		expect(res.exerciseTitle).toEqual(newFlashbackExercise.exerciseTitle);
 		expect(res.exerciseType).toEqual(newFlashbackExercise.exerciseType);

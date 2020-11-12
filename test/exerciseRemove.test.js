@@ -36,10 +36,9 @@ describe('remove', () => {
             specialInstructions: 'Please let me know if you need any help!'
 		});
 
-		const mongoUri = await mongoServer.getUri();
 		const insertFlashback = await flashbackExercise.save()
 
-		const res = await assignmentData.removeExercise(mongoUri, insertFlashback._id)
+		const res = await assignmentData.removeExercise(insertFlashback._id)
 		expect(`Removed exercise with id:${insertFlashback._id}`)
 
 	});

@@ -51,7 +51,7 @@ describe('retrieve', () => {
 		const insertInfo = await johnDoeAssignment.save()
 		const insertInfo2 = await johnDoeAssignment2.save()
 
-		const res = await assignmentData.getAssignmentsByPatientId(mongoUri, 'PjohnDoe1')
+		const res = await assignmentData.getAssignmentsByPatientId('PjohnDoe1')
 		for (let i = 0; i < res.length; i++){
 			expect(res[i].patientId).toEqual('PjohnDoe1');
 		}  

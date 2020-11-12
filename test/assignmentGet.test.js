@@ -37,10 +37,9 @@ describe('retrieve', () => {
 			visitNumber: 1
 		});
 
-		const mongoUri = await mongoServer.getUri();
 		const insertInfo = await noExerciseAssignment.save()
 
-		const res = await assignmentData.getAssignment(mongoUri, insertInfo._id)
+		const res = await assignmentData.getAssignment(insertInfo._id)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length);
 		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
@@ -56,7 +55,6 @@ describe('retrieve', () => {
 	it('should retrieve an assignment with exercises from the database', async () => {
 
 		let testDateAssigned = new Date();
-		const mongoUri = await mongoServer.getUri();
 
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
@@ -98,7 +96,7 @@ describe('retrieve', () => {
 		
 		const insertInfo = await assignmentWithExercises.save()
 
-		const res = await assignmentData.getAssignment(mongoUri, insertInfo._id)
+		const res = await assignmentData.getAssignment(insertInfo._id)
 		expect.assertions(10 + res.exerciseList.length)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)

@@ -37,10 +37,9 @@ describe('remove', () => {
 			visitNumber: 1
 		});
 
-		const mongoUri = await mongoServer.getUri();
 		const insertInfo = await noExerciseAssignment.save()
 
-		const res = await assignmentData.removeAssignment(mongoUri, insertInfo._id)
+		const res = await assignmentData.removeAssignment(insertInfo._id)
 		expect(`Successfully removed assignment with id:${insertInfo._id}`)
 	});
 
@@ -89,7 +88,7 @@ describe('remove', () => {
 		
 		const insertInfo = await assignmentWithExercises.save()
 
-		const res = await assignmentData.removeAssignment(mongoUri, insertInfo._id)
+		const res = await assignmentData.removeAssignment(insertInfo._id)
 		expect(`Successfully removed assignment with id:${insertInfo._id}`)
 
 	});
