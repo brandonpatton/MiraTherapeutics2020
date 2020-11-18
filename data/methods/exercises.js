@@ -1,5 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const { Exercise } = require('../models/exercise');
+const assignment = require('./assignments')
 
 module.exports = {
     async createExercise(exercise) {
@@ -40,9 +41,16 @@ module.exports = {
         return await this.getExercise(id);
     },
     async removeExercise(id){
-        const exercise = await Exercise.deleteOne({_id: id})
-        if(exercise.error) throw `Could not delete exercise. Error: ${exercise.errors}`
-            
+        const exercise = await this.getExercise(id) 
+        const patientAssignments = await assignment.getAssignmentsByPatientId(exercise.patientId)
+        if(patientAssignments.exerciseList.includes(id)){
+            const index = patientAssignments.exerciseList.indexOf(id)
+            patientAssignments.exerciseList.splice(index,1)
+        }
+        const delExercise = await Exercise.deleteOne({_id: id})
+        if(delExercise.error) throw `Could not delete exercise. Error: ${delExercise.errors}`
+        
+
         return `Removed exercise with id:${id}`
     }
 
