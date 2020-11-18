@@ -21,8 +21,8 @@ afterAll(async () => {
 	await mongoServer.stop();
 });
 
-describe('remove', () => {
-	it('should remove an exercise from the database', async () => {
+describe('update', () => {
+	it('should update an exercise from the database', async () => {
 		//expect.assertions(9)
 
 		let testDateAssigned = new Date();

@@ -7,7 +7,7 @@ const assignmentData = require('../data/methods/assignments')
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
 
-beforeAll(async () => {
+beforeEach(async () => {
 	mongoServer = new MongoMemoryServer();
 	const mongoUri = await mongoServer.getUri();
 	await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
