@@ -3,6 +3,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Assignment } = require('../data/models/assignment');
 const { Exercise } = require('../data/models/exercise');
 const assignmentData = require('../data/methods/assignments')
+const exerciseData = require('../data/methods/exercises')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -37,8 +38,7 @@ describe('insert', () => {
 			visitNumber: 1
 		});
 
-		const mongoUri = await mongoServer.getUri();
-		let insertInfo = await assignmentData.createAssignment(mongoUri, noExerciseAssignment);
+		let insertInfo = await assignmentData.createAssignment(noExerciseAssignment);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id });
 		expect(res._id).toEqual(insertInfo._id);
@@ -55,7 +55,6 @@ describe('insert', () => {
 
 	it('should insert an assignment with exercises', async () => {
 		let testDateAssigned = new Date();
-		const mongoUri = await mongoServer.getUri();
 
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
@@ -95,7 +94,7 @@ describe('insert', () => {
 		});
 
 		
-		const insertInfo = await assignmentData.createAssignment(mongoUri, assignmentWithExercises);
+		const insertInfo = await assignmentData.createAssignment(assignmentWithExercises);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id})
 		expect.assertions(10 + res.exerciseList.length)
@@ -233,7 +232,6 @@ describe('remove', () => {
 	it('should remove an assignment with exercises from the database', async () => {
 
 		let testDateAssigned = new Date();
-		const mongoUri = await mongoServer.getUri();
 
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
@@ -359,8 +357,7 @@ describe('insert', () => {
             specialInstructions: 'Please let me know if you need any help!'
 		});
 
-		const mongoUri = await mongoServer.getUri();
-		const insertFlashback = await assignmentData.createExercise(mongoUri, flashbackExercise);
+		const insertFlashback = await exerciseData.createExercise(flashbackExercise);
 
 		const res = await Exercise.findOne({ _id: insertFlashback._id })
 		expect(res._id).toEqual(insertFlashback._id);
@@ -394,7 +391,7 @@ describe('retrieve', () => {
 
 		const insertFlashback = await flashbackExercise.save()
 
-		const res = await assignmentData.getExercise(insertFlashback._id)
+		const res = await exerciseData.getExercise(insertFlashback._id)
 		expect(res._id).toEqual(insertFlashback._id);
 		expect(res.exerciseTitle).toEqual(insertFlashback.exerciseTitle);
 		expect(res.exerciseType).toEqual(insertFlashback.exerciseType);
@@ -426,7 +423,7 @@ describe('remove', () => {
 
 		const insertFlashback = await flashbackExercise.save()
 
-		const res = await assignmentData.removeExercise(insertFlashback._id)
+		const res = await exerciseData.removeExercise(insertFlashback._id)
 		expect(`Removed exercise with id:${insertFlashback._id}`)
 
 	});
@@ -461,7 +458,7 @@ describe('update', () => {
             specialInstructions: 'Please do not let me know if you need any help!'
 		});
 
-		const res = await assignmentData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
+		const res = await exerciseData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
 		const newFlashbackExercise = await Exercise.findOne({_id: insertFlashback._id});
 		expect(res._id).toEqual(newFlashbackExercise._id);
 		expect(res.exerciseTitle).toEqual(newFlashbackExercise.exerciseTitle);
@@ -503,7 +500,6 @@ describe('retrieve', () => {
 			visitNumber: 2
 		});
 
-		const mongoUri = await mongoServer.getUri();
 		const insertInfo = await johnDoeAssignment.save()
 		const insertInfo2 = await johnDoeAssignment2.save()
 
