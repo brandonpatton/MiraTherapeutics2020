@@ -2,8 +2,11 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Assignment } = require('../data/models/assignment');
 const { Exercise } = require('../data/models/exercise');
+const { Therapist } = require('../data/models/therapists');
+const { Patient } = require('../data/models/patients')
 const assignmentData = require('../data/methods/assignments')
-const exerciseData = require('../data/methods/exercises')
+const exerciseData = require('../data/methods/exercises');
+const therapistData = require('../data/methods/therapists')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -507,6 +510,128 @@ describe('retrieve', () => {
 		for (let i = 0; i < res.length; i++){
 			expect(res[i].patientId).toEqual('PjohnDoe1');
 		}  
+    });
+    
+})
+
+describe('retrieve', () => {
+	it('should retrieve the patients that are associated with the therapist', async () => {
+		expect.assertions(6)
+
+		const therapistJD = new Therapist({
+			therapistName: 'John Doe',
+			therapistEmail: 'jdoe@therapy.com'
+		});
+
+		const therapistTP = new Therapist({
+			therapistName: 'Therra Pea',
+			therapistEmail: 'tpea@therapy.com'
+		});
+
+		const insertJD = await therapistJD.save()
+		const insertTP = await therapistTP.save()
+
+
+		const jd = await therapistData.getTherapist(insertJD._id)
+		const tp = await therapistData.getTherapist(insertTP._id)
+		try {
+			expect(jd.therapistName).toEqual('John Doe')
+			expect(jd.therapistEmail).toEqual('jdoe@therapy.com')
+			expect(tp.therapistName).toEqual('Therra Pea')
+			expect(tp.therapistEmail).toEqual('tpea@therapy.com')
+			await therapistData.getPatientsByTherapistId()
+		} catch (e) {
+			expect(e).toEqual('No ID provided')
+		}
+		try {
+			await therapistData.getPatientsByTherapistId('badID')
+		} catch (e) {
+			expect(e).toEqual('CastError: Cast to ObjectId failed for value "badID" at path "_id" for model "Therapist"')
+		}
+    });
+    
+})
+
+describe('retrieve', () => {
+	it('should retrieve the patients that are associated with the therapist', async () => {
+		expect.assertions(4)
+
+		const therapistJD = new Therapist({
+			therapistName: 'John Doe',
+			therapistEmail: 'jdoe@therapy.com'
+		});
+
+		const therapistTP = new Therapist({
+			therapistName: 'Therra Pea',
+			therapistEmail: 'tpea@therapy.com'
+		});
+
+		const insertJD = await therapistJD.save()
+		const insertTP = await therapistTP.save()
+
+		const patientPM = new Patient({
+			patientName: 'Patient McPatientFace',
+			patientEmail: 'pm@patient.com',
+			therapistId: insertJD._id,
+		})
+		patientPM.save()
+
+		const patientCK = new Patient({
+			patientName: 'Clark Kent',
+			patientEmail: 'ck@patient.com',
+			therapistId: insertJD._id,
+		})
+		patientCK.save()
+
+		const patientBW = new Patient({
+			patientName: 'Bruce Wayne',
+			patientEmail: 'pm@patient.com',
+			therapistId: insertJD._id,
+		})
+		patientBW.save()
+
+		const patientDP = new Patient({
+			patientName: 'Diana Prince',
+			patientEmail: 'dp@patient.com',
+			therapistId: insertJD._id,
+		})
+		patientDP.save()
+
+		const patientBA = new Patient({
+			patientName: 'Barry Allen',
+			patientEmail: 'ba@patient.com',
+			therapistId: insertJD._id,
+		})
+		patientBA.save()
+
+		const patientSR = new Patient({
+			patientName: 'Steve Rogers',
+			patientEmail: 'sr@patient.com',
+			therapistId: insertTP._id,
+		})
+		patientSR.save()
+
+		const patientBB = new Patient({
+			patientName: 'Bruce Banner',
+			patientEmail: 'bb@patient.com',
+			therapistId: insertTP._id,
+		})
+		patientBB.save()
+
+		const jdPatients = await therapistData.getPatientsByTherapistId(insertJD._id)
+		const tpPatients = await therapistData.getPatientsByTherapistId(insertTP._id)
+		try {
+			expect(jdPatients.length).toEqual(5)
+			expect(tpPatients.length).toEqual(2)
+			await therapistData.getPatientsByTherapistId()
+		} catch (e) {
+			expect(e).toEqual('No ID provided')
+		}
+		try {
+			await therapistData.getPatientsByTherapistId('badID')
+		} catch (e) {
+			expect(e).toEqual('CastError: Cast to ObjectId failed for value "badID" at path "_id" for model "Therapist"')
+		}
     });
     
 })
