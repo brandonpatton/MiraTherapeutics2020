@@ -9,7 +9,7 @@ services:
     volumes:
       - ./:/app
     environment: 
-      NODE_ENV: dev
+      NODE_ENV: prod
   mongodb:
     image: mongo:latest
     container_name: mongodb
