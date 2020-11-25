@@ -27,7 +27,7 @@ afterEach(async () => {
 
 describe('insert', () => {
 	it('should insert an assignment with no exercises', async () => {
-		expect.assertions(9)
+		expect.assertions(10)
 
 		let testDateAssigned = new Date();
 		const noExerciseAssignment = new Assignment({
@@ -38,7 +38,8 @@ describe('insert', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: "Good luck with this assignment"
 		});
 
 		let insertInfo = await assignmentData.createAssignment(noExerciseAssignment);
@@ -53,6 +54,7 @@ describe('insert', () => {
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
 
 	});
 
@@ -93,14 +95,15 @@ describe('insert', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'This sure is an exercise'
 		});
 
 		
 		const insertInfo = await assignmentData.createAssignment(assignmentWithExercises);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id})
-		expect.assertions(10 + res.exerciseList.length)
+		expect.assertions(11 + res.exerciseList.length)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
 		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
@@ -112,6 +115,7 @@ describe('insert', () => {
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
 
 	});
 
@@ -120,7 +124,7 @@ describe('insert', () => {
 
 describe('retrieve', () => {
 	it('should retrieve an assignment with no exercises from the database', async () => {
-		expect.assertions(9)
+		expect.assertions(10)
 
 		let testDateAssigned = new Date();
 		const noExerciseAssignment = new Assignment({
@@ -131,7 +135,8 @@ describe('retrieve', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'What a great assignment we have here'
 		});
 
 		const insertInfo = await noExerciseAssignment.save()
@@ -146,6 +151,7 @@ describe('retrieve', () => {
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
 
 	});
 
@@ -187,14 +193,15 @@ describe('retrieve', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'You can do it!'
 		});
 
 		
 		const insertInfo = await assignmentWithExercises.save()
 
 		const res = await assignmentData.getAssignment(insertInfo._id)
-		expect.assertions(10 + res.exerciseList.length)
+		expect.assertions(11 + res.exerciseList.length)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
 		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
@@ -206,6 +213,7 @@ describe('retrieve', () => {
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
 
 	});
 })
@@ -223,7 +231,8 @@ describe('remove', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'John Doe not mess this up haha right'
 		});
 
 		const insertInfo = await noExerciseAssignment.save()
@@ -270,7 +279,8 @@ describe('remove', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'Here is your assignment'
 		});
 
 		
@@ -310,7 +320,8 @@ describe('update', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'Woah this one does not have any exercises'
 		});
  
 		let insertInfo = await noExerciseAssignment.save();
@@ -325,7 +336,8 @@ describe('update', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 25,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'We got some exercises now'
         }
 
         const updatedAssignment = await assignmentData.updateAssignment(res._id, noExerciseUpdated)
@@ -340,6 +352,7 @@ describe('update', () => {
 		expect(updatedAssignment.therapistId).toEqual(retrievedUpdatedAssignment.therapistId);
 		expect(updatedAssignment.assignmentProgress).toEqual(retrievedUpdatedAssignment.assignmentProgress);
 		expect(updatedAssignment.visitNumber).toEqual(retrievedUpdatedAssignment.visitNumber);
+		expect(updatedAssignment.specialInstructions).toEqual(retrievedUpdatedAssignment.specialInstructions);
 
 	});
 })
@@ -489,7 +502,8 @@ describe('retrieve', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			specialInstructions: 'This is your first assignment, John'
 		});
 
 		const johnDoeAssignment2 = new Assignment({
@@ -500,7 +514,8 @@ describe('retrieve', () => {
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 2
+			visitNumber: 2,
+			specialInstructions: 'And this is the second one'
 		});
 
 		const insertInfo = await johnDoeAssignment.save()
