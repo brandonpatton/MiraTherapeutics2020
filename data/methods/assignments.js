@@ -40,7 +40,7 @@ module.exports = {
     },
 
     async updateAssignment(id, newAssignment) {
-        await Assignment.updateOne({ _id: id}, {
+        const updatedAssignment = await Assignment.updateOne({ _id: id}, {
             exerciseList: newAssignment.exerciseList,
             dateAssigned: newAssignment.dateAssigned,
 			patientName: newAssignment.patientName,
@@ -50,13 +50,14 @@ module.exports = {
 			assignmentProgress: newAssignment.assignmentProgress,
 			visitNumber: newAssignment.visitNumber
         })
+        if (updatedAssignment.updatedCount === 0) throw 'Could not update assignment'
         return await this.getAssignment(id);
 
     },
     
     async getAssignmentsByPatientId(patientIdInput){
         const assignments = await Assignment.find({patientId: patientIdInput})
-        if (assignments === null) throw 'No assignment exists with that patientId'
+        if (assignments.length === 0) throw 'No assignment exists with that patientId'
         return assignments
     }
 }

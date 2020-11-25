@@ -36,12 +36,12 @@ module.exports = {
             progress: newExercise.progress,
             specialInstructions: newExercise.specialInstructions
         })
-        if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
+        if (updatedInfo.updatedCount === 0) throw `Could not update exercise`
         return await this.getExercise(id);
     },
     async removeExercise(id){
         const exercise = await Exercise.deleteOne({_id: id})
-        if(exercise.error) throw `Could not delete exercise. Error: ${exercise.errors}`
+        if(exercise.deletedCount == 0) throw `No exercise exists with that ID`
             
         return `Removed exercise with id:${id}`
     }
