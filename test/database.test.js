@@ -27,7 +27,7 @@ afterEach(async () => {
 
 describe('insert', () => {
 	it('should insert an assignment with no exercises', async () => {
-		expect.assertions(10)
+		expect.assertions(11)
 
 		let testDateAssigned = new Date();
 		const noExerciseAssignment = new Assignment({
@@ -55,6 +55,8 @@ describe('insert', () => {
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
 		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
+
+		await expect(assignmentData.createAssignment()).rejects.toThrow()
 
 	});
 
@@ -362,7 +364,7 @@ describe('update', () => {
 
 describe('insert', () => {
 	it('should insert an exercise from the database', async () => {
-		expect.assertions(9)
+		expect.assertions(10)
 
 		let testDateAssigned = new Date();
 		const flashbackExercise = new Exercise({
@@ -388,6 +390,8 @@ describe('insert', () => {
 		expect(res.patientId).toEqual(insertFlashback.patientId);
 		expect(res.progress).toEqual(insertFlashback.progress);
 		expect(res.specialInstructions).toEqual(insertFlashback.specialInstructions);
+
+		await expect(exerciseData.createExercise()).rejects.toThrow()
 
 	});
 })
@@ -493,8 +497,6 @@ describe('update', () => {
 		expect(res.patientId).toEqual(newFlashbackExercise.patientId);
 		expect(res.progress).toEqual(newFlashbackExercise.progress);
 		expect(res.specialInstructions).toEqual(newFlashbackExercise.specialInstructions);
-
-		await expect(exerciseData.updateExercise(insertFlashback._id, 'badObject')).rejects.toEqual()
 
 	});
 })
