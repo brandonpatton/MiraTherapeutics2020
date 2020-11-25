@@ -27,7 +27,7 @@ afterEach(async () => {
 
 describe('insert', () => {
 	it('should insert an assignment with no exercises', async () => {
-		expect.assertions(11)
+		expect.assertions(10)
 
 		let testDateAssigned = new Date();
 		const noExerciseAssignment = new Assignment({
