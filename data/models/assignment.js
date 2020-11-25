@@ -8,7 +8,8 @@ const assignmentSchema = new mongoose.Schema({
     therapistName: String,
     therapistId: String,
     assignmentProgress: Number,
-    visitNumber: Number
+    visitNumber: Number,
+    specialInstructions: String
 });
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);

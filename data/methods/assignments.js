@@ -12,7 +12,8 @@ module.exports = {
             therapistName:assignment.therapistName,
             therapistId:assignment.therapistId,
             assignmentProgress:assignment.assignmentProgress,
-            visitNumber:assignment.visitNumber
+            visitNumber:assignment.visitNumber,
+            specialInstructions: assignment.specialInstructions
         });
         const insertInfo = await newAssignment.save();
         if (insertInfo.errors) throw `Could not add assignment. Error: ${insertInfo.errors}`
@@ -48,7 +49,8 @@ module.exports = {
 			therapistName: newAssignment.therapistName,
 			therapistId: newAssignment.therapistId,
 			assignmentProgress: newAssignment.assignmentProgress,
-			visitNumber: newAssignment.visitNumber
+            visitNumber: newAssignment.visitNumber,
+            specialInstructions: newAssignment.specialInstructions
         })
         return await this.getAssignment(id);
 
