@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">92.31% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/24</span>
+                <span class='fraction'>24/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/8</span>
+                <span class='fraction'>8/10</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.24% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>20/21</span>
+                <span class='fraction'>22/22</span>
             </div>
         
             
@@ -120,7 +120,10 @@
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -136,6 +139,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -143,15 +147,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -172,13 +176,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -197,7 +203,8 @@ module.exports = {
             therapistName:assignment.therapistName,
             therapistId:assignment.therapistId,
             assignmentProgress:assignment.assignmentProgress,
-            visitNumber:assignment.visitNumber
+            visitNumber:assignment.visitNumber,
+            specialInstructions: assignment.specialInstructions
         });
         const insertInfo = await newAssignment.save();
         <span class="missing-if-branch" title="if path not taken" >I</span>if (insertInfo.errors) <span class="cstat-no" title="statement not covered" >throw `Could not add assignment. Error: ${insertInfo.errors}`</span>
@@ -207,14 +214,14 @@ module.exports = {
 &nbsp;
     async getAssignment(id) {
         const assignment = await Assignment.findOne({_id: id})
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (assignment === null) <span class="cstat-no" title="statement not covered" >throw 'No assignment exists with that id'</span>
+        if (assignment === null) throw 'No assignment exists with that id'
         return assignment
     },
     async removeAssignment(id){
         //const assignmentCollection = await assignments()
         const assignment = await Assignment.deleteOne({_id: id})
-        <span class="missing-if-branch" title="if path not taken" >I</span>if(assignment.deletedCount == 0){
-<span class="cstat-no" title="statement not covered" >        throw 'No assignment exists with that id'</span>
+        if(assignment.deletedCount == 0){
+        throw 'No assignment exists with that id'
         }
         //for(i=0;i&lt;length.exerciseList;i++){
           //  Exercise.removeExercise(mongoUri, exerciseList[i].id)
@@ -225,7 +232,7 @@ module.exports = {
     },
 &nbsp;
     async updateAssignment(id, newAssignment) {
-        await Assignment.updateOne({ _id: id}, {
+        const updatedAssignment = await Assignment.updateOne({ _id: id}, {
             exerciseList: newAssignment.exerciseList,
             dateAssigned: newAssignment.dateAssigned,
 			patientName: newAssignment.patientName,
@@ -233,15 +240,17 @@ module.exports = {
 			therapistName: newAssignment.therapistName,
 			therapistId: newAssignment.therapistId,
 			assignmentProgress: newAssignment.assignmentProgress,
-			visitNumber: newAssignment.visitNumber
+            visitNumber: newAssignment.visitNumber,
+            specialInstructions: newAssignment.specialInstructions
         })
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (updatedAssignment.updatedCount === 0) <span class="cstat-no" title="statement not covered" >throw 'Could not update assignment'</span>
         return await this.getAssignment(id);
 &nbsp;
     },
     
     async getAssignmentsByPatientId(patientIdInput){
         const assignments = await Assignment.find({patientId: patientIdInput})
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (assignments === null) <span class="cstat-no" title="statement not covered" >throw 'No assignment exists with that patientId'</span>
+        if (assignments.length === 0) throw 'No assignment exists with that patientId'
         return assignments
     }
 }
@@ -253,7 +262,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Nov 25 2020 00:58:39 GMT-0500 (Eastern Standard Time)
+                at Wed Nov 25 2020 15:20:17 GMT-0500 (Eastern Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

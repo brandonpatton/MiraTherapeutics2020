@@ -124,7 +124,7 @@ describe('insert', () => {
 
 describe('retrieve', () => {
 	it('should retrieve an assignment with no exercises from the database', async () => {
-		expect.assertions(10)
+		expect.assertions(11)
 
 		let testDateAssigned = new Date();
 		const noExerciseAssignment = new Assignment({
@@ -152,6 +152,8 @@ describe('retrieve', () => {
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
 		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
+		let badId = mongoose.Types.ObjectId()
+		await expect(assignmentData.getAssignment(badId)).rejects.toEqual('No assignment exists with that id')
 
 	});
 
@@ -288,6 +290,7 @@ describe('remove', () => {
 
 		const res = await assignmentData.removeAssignment(insertInfo._id)
 		expect(`Successfully removed assignment with id:${insertInfo._id}`)
+		await expect(assignmentData.removeAssignment(insertInfo._id)).rejects.toEqual('No assignment exists with that id')
 
 	});	
 })
@@ -391,7 +394,7 @@ describe('insert', () => {
 
 describe('retrieve', () => {
 	it('should retrieve an exercise from the database', async () => {
-		expect.assertions(9)
+		expect.assertions(10)
 
 		let testDateAssigned = new Date();
 		const flashbackExercise = new Exercise({
@@ -418,6 +421,9 @@ describe('retrieve', () => {
 		expect(res.progress).toEqual(insertFlashback.progress);
 		expect(res.specialInstructions).toEqual(insertFlashback.specialInstructions);
 
+		let badId = mongoose.Types.ObjectId();
+		await expect(exerciseData.getExercise(badId)).rejects.toEqual('No exercise exists with that id')
+
 	});	
 })
 
@@ -441,6 +447,8 @@ describe('remove', () => {
 
 		const res = await exerciseData.removeExercise(insertFlashback._id)
 		expect(`Removed exercise with id:${insertFlashback._id}`)
+
+		await expect(exerciseData.removeExercise(insertFlashback._id)).rejects.toEqual('No exercise exists with that ID')
 
 	});
 })
@@ -486,12 +494,14 @@ describe('update', () => {
 		expect(res.progress).toEqual(newFlashbackExercise.progress);
 		expect(res.specialInstructions).toEqual(newFlashbackExercise.specialInstructions);
 
+		await expect(exerciseData.updateExercise(insertFlashback._id, 'badObject')).rejects.toEqual()
+
 	});
 })
 
 describe('retrieve', () => {
 	it('should retrieve an assignment with a matching patientId from the database', async () => {
-		expect.assertions(2)
+		expect.assertions(3)
 
 		let testDateAssigned = new Date();
 		const johnDoeAssignment = new Assignment({
@@ -524,13 +534,15 @@ describe('retrieve', () => {
 		const res = await assignmentData.getAssignmentsByPatientId('PjohnDoe1')
 		for (let i = 0; i < res.length; i++){
 			expect(res[i].patientId).toEqual('PjohnDoe1');
-		}  
+		}
+
+		await expect(assignmentData.getAssignmentsByPatientId('badPatientId')).rejects.toEqual('No assignment exists with that patientId')
     });
     
 })
 
 describe('retrieve', () => {
-	it('should retrieve the patients that are associated with the therapist', async () => {
+	test('should retrieve therapists from their ID', async () => {
 		expect.assertions(6)
 
 		const therapistJD = new Therapist({
@@ -549,20 +561,13 @@ describe('retrieve', () => {
 
 		const jd = await therapistData.getTherapist(insertJD._id)
 		const tp = await therapistData.getTherapist(insertTP._id)
-		try {
 			expect(jd.therapistName).toEqual('John Doe')
 			expect(jd.therapistEmail).toEqual('jdoe@therapy.com')
 			expect(tp.therapistName).toEqual('Therra Pea')
 			expect(tp.therapistEmail).toEqual('tpea@therapy.com')
-			await therapistData.getPatientsByTherapistId()
-		} catch (e) {
-			expect(e).toEqual('No ID provided')
-		}
-		try {
-			await therapistData.getPatientsByTherapistId('badID')
-		} catch (e) {
-			expect(e).toEqual('CastError: Cast to ObjectId failed for value "badID" at path "_id" for model "Therapist"')
-		}
+			await expect(therapistData.getTherapist()).rejects.toEqual('No ID provided');
+			let badId = mongoose.Types.ObjectId()
+			await expect(therapistData.getTherapist(badId)).rejects.toEqual('No therapist exists with that id');
     });
     
 })
@@ -635,18 +640,11 @@ describe('retrieve', () => {
 
 		const jdPatients = await therapistData.getPatientsByTherapistId(insertJD._id)
 		const tpPatients = await therapistData.getPatientsByTherapistId(insertTP._id)
-		try {
 			expect(jdPatients.length).toEqual(5)
 			expect(tpPatients.length).toEqual(2)
-			await therapistData.getPatientsByTherapistId()
-		} catch (e) {
-			expect(e).toEqual('No ID provided')
-		}
-		try {
-			await therapistData.getPatientsByTherapistId('badID')
-		} catch (e) {
-			expect(e).toEqual('CastError: Cast to ObjectId failed for value "badID" at path "_id" for model "Therapist"')
-		}
+			let badId = mongoose.Types.ObjectId()
+			await expect(therapistData.getPatientsByTherapistId(badId)).rejects.toEqual('No therapist exists with that id');
+			await expect(therapistData.getPatientsByTherapistId()).rejects.toEqual('No ID provided');
     });
     
 })
