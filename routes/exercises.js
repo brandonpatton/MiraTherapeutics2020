@@ -5,19 +5,21 @@ const exerciseData = require('../data/methods/exercises')
 router.get('/:id', async (req, res) => {
     const id = req.params.id
     try {
-        exercise = await exerciseData.getExercise(id)
+        const exercise = await exerciseData.getExercise(id)
+        res.json(exercise)
     } catch(e) {
+        res.status(500).json({"Error": e})
         console.log(e)
     }
-    return exercise
 })
 
-router.post('/:id', async (req, res) => {
+router.post('/', async (req, res) => {
     const exerciseId = req.params.id
     try {
         const newExercise = await exerciseData.createExercise(req.body);
         res.json(newExercise);
     } catch(e) {
+        res.status(500).json({"Error": e})
         console.log(e)
     }
 })
@@ -25,20 +27,22 @@ router.post('/:id', async (req, res) => {
 router.post('/:id/edit', async (req, res) => {
     const id = req.params.id
     try {
-        const updatedExercise = await exerciseData.updateExercise(id)
-        res.json(updatedexercise)
+        const updatedExercise = await exerciseData.updateExercise(id, req.body)
+        res.json(updatedExercise)
     } catch (e) {
+        res.status(500).json({"Error": e})
         console.log(e)
     }
 })
 
 router.delete('/:id', async (req, res) => {
-    const id = re.params.id
+    const id = req.params.id
     try {
-        var exercise = exerciseData.getExercise(id)
+        var exercise = await exerciseData.getExercise(id)
         await exerciseData.removeExercise(id)
-        return true
+        res.json({"Removed": true})
     } catch (e) {
+        res.status(500).json({"Error": e})
         console.log(e)
     }
 })
