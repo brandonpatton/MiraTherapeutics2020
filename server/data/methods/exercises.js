@@ -10,8 +10,9 @@ module.exports = {
             frequency: exercise.frequency,
             patientName: exercise.patientName,
             patientId: exercise.patientId,
-            progress: exercise.progress,
-            specialInstructions: exercise.specialInstructions
+            progress: (exercise.progress/exercise.goal)*100,
+            specialInstructions: exercise.specialInstructions,
+            goal:exercise.goal
         });
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
@@ -23,8 +24,7 @@ module.exports = {
         const exercise = await Exercise.findOne({_id: id})
         if (exercise === null) throw 'No exercise exists with that id'
         return exercise
-    },
-    async updateExercise(id, newExercise){
+    },    async updateExercise(id, newExercise){
         const exercise = await this.getExercise(id)
         const updatedInfo = await Exercise.updateOne({ _id: id}, { 
             exerciseTitle: newExercise.exerciseTitle,
@@ -33,16 +33,24 @@ module.exports = {
             frequency: newExercise.frequency,
             patientName: newExercise.patientName,
             patientId: newExercise.patientId,
-            progress: newExercise.progress,
-            specialInstructions: newExercise.specialInstructions
+            progress: (newExercise.progress/newExercise.goal)*100,
+            specialInstructions: newExercise.specialInstructions,
+            goal:newExercise.goal
         })
-        if (updatedInfo.updatedCount === 0) throw `Could not update exercise`
+        if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
         return await this.getExercise(id);
     },
     async removeExercise(id){
-        const exercise = await Exercise.deleteOne({_id: id})
-        if(exercise.deletedCount == 0) throw `No exercise exists with that ID`
-            
+        const exercise = await this.getExercise(id) 
+        const patientAssignments = await assignment.getAssignmentsByPatientId(exercise.patientId)
+        if(patientAssignments.exerciseList.includes(id)){
+            const index = patientAssignments.exerciseList.indexOf(id)
+            patientAssignments.exerciseList.splice(index,1)
+        }
+        const delExercise = await Exercise.deleteOne({_id: id})
+        if(delExercise.error) throw `Could not delete exercise. Error: ${delExercise.errors}`
+        
+
         return `Removed exercise with id:${id}`
     }
 

@@ -8,7 +8,8 @@ const exerciseSchema = new mongoose.Schema({
     patientName: String,
     patientId: String,
     progress: Number,
-    specialInstructions: String
+    specialInstructions: String,
+    goal:Number
 });
 
 const Exercise = mongoose.model('Exercise', exerciseSchema);
