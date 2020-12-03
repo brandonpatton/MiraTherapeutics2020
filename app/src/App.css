@@ -52,6 +52,61 @@
 .App-link {
   color: #61dafb;
 }
+.card-body{
+  top: 300px;
+  width: 500px;
+  height: 450px;
+  float:left;
+  
+  }
+.card-body-2{
+  top: 300px;
+  width: 500px;
+  height: 450px;
+  left: 150px;
+
+}
+.App-logo-container{
+  position: absolute;
+  align-self: flex-start;
+  left: 20px;
+  top: 30px;
+}
+
+.App-logo {
+  pointer-events: none;
+  position: relative; 
+  z-index: 5;
+  max-width: 85%;
+  height: auto;
+}
+
+.Mira-site-header{
+  position: absolute;
+  align-self: flex-start;
+  left: 11%;
+  top: 5%
+}
+.Mira-banner{
+  position: relative;
+  width: 150%;
+  height: auto;
+}
+.Username{
+  border:none;
+  position: relative;
+
+}
+.Password{
+  border:none;
+  position: relative;
+}
+.Login-container{
+  position: absolute;
+  padding-top: 75px;
+
+}
+
 
 /*@keyframes App-logo-spin {
   from {                                      //amount of spin
