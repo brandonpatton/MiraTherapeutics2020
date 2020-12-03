@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import logo from './logo.svg';
+import logo from './Mira.png';
 import './App.css';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
@@ -24,11 +25,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+        <div className = "App-logo-container">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-          <Button variant="outline-danger">This is button</Button>
-        </header>
+        </div>
+        <div className = "App-background-container">
+          <div className = "bg"></div>
+        </div> 
         <p className="App-intro">{this.state.apiResponse}</p>
       </div>
     );
