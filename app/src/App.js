@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import logo from './Mira.jpg';
 import banner from './MiraBanner.png';
+import bubble from './bubbles.png';
 import './App.css';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
@@ -36,6 +37,12 @@ class App extends Component {
           <div className = "bg"></div>
         </div> 
         </body>
+        <div className = "bubbles">
+        <img src={bubble} className="bubble1" alt="bubble" />
+        </div>
+        <div className = "bubbles2">
+        <img src={bubble} className="bubble2" alt="bubble" />
+        </div>
         <div className = "Login-container">
           <form>
             <input className = "Username" type="text" placeholder="Username" id="unamee" name="username"></input>
@@ -43,6 +50,13 @@ class App extends Component {
          </form>
         </div>
         <div>
+        <button  className = "Button" type="button">Log In</button>
+        <div className = "New-user-container">
+        <a href = "www.google.com" className = "user">New User?</a>
+        </div>
+        <div className = "Forgot-password-container">
+        <a href = "www.google.com" className= "pword">Forgot Password?</a>
+        </div>
           
         <MDBContainer className = "Card">
           <MDBCard className="card-body">
@@ -50,8 +64,6 @@ class App extends Component {
             <MDBCardText>
               Articles from Miratx
             </MDBCardText>
-            <div className="flex-row">
-            </div>
           </MDBCard>
           
   </MDBContainer>
@@ -62,8 +74,6 @@ class App extends Component {
             <MDBCardText>
               Articles from Miratx
             </MDBCardText>
-            <div className="flex-row-2">
-            </div>
           </MDBCard>
           
   </MDBContainer>

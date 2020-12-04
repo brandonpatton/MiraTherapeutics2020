@@ -66,6 +66,7 @@
   left: 150px;
 
 }
+
 .App-logo-container{
   position: absolute;
   align-self: flex-start;
@@ -95,16 +96,65 @@
 .Username{
   border:none;
   position: relative;
+  width: 35%;
+  right:49px;
+  outline:none;
 
 }
 .Password{
   border:none;
   position: relative;
+  width: 35%;
+  outline:none;
 }
 .Login-container{
   position: absolute;
   padding-top: 75px;
+  top: 16px;
+  right:290px;
 
+}
+.Button{
+  position:absolute;
+  top: 85px;
+  right: 225px;
+  background-color:#346B7A;
+  color:white;
+  border-radius: 25px;
+  width: 95px;
+  height:35px;
+
+}
+.bubbles{
+  position: absolute;
+  z-index: -100;
+  top: 70px;
+  right:330px;
+  height: auto;
+}
+.bubbles2{
+  position: absolute;
+  top: 70px;
+  right: 510px;
+  flex:right;
+}
+.New-user-container{
+  position:absolute;
+  top: 145px;
+  right:560px;
+  
+}
+.Forgot-password-container{
+  position:absolute;
+  top: 145px;
+  right:355px;
+  
+}
+.user{
+  color:gray;
+}
+.pword{
+  color:gray;
 }
 
 
