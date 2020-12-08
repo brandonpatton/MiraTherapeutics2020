@@ -1,6 +1,5 @@
 import React from "react";
 import Table from 'react-bootstrap/Table';
-import { render } from "react-dom";
 import { Component } from "react";
 import ReactDOM from 'react-dom';
 
@@ -9,24 +8,23 @@ import ReactDOM from 'react-dom';
       super(props);
       this.state = { apiResponse: "" };
       this.listItems = []
+      this.numbers = [1, 2, 3, 4, 5];
     }
 
+    render(){
+      return(
+        <NumberList numbers = {this.numbers} />
+      )
     }
+  }
       
-    
-
-  function NumberList(props) {
-    const numbers = props.numbers;
-    const listItems = numbers.map((number) =>
-      <li>{number}</li>
-    );
-    return (
-      <ul>{listItems}</ul>
-    );
-  }   
-  const numbers = [1, 2, 3, 4, 5];
-  ReactDOM.render(
-    <NumberList numbers={numbers} />,
-    document.getElementById('root')
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) =>
+    <li>{number}</li>
   );
- export default PracticeView;
+  return (
+    <ul>{listItems}</ul>
+  );
+}
+export default PracticeView;
