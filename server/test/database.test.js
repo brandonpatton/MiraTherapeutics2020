@@ -69,7 +69,8 @@ describe('insert', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+			specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -82,7 +83,8 @@ describe('insert', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Do this one once a week!'
+            specialInstructions: 'Do this one once a week!',
+			goal:10
 		})
 
 		const insertTraumaStory = await traumaStoryExercise.save()
@@ -166,7 +168,8 @@ describe('retrieve', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+            specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -179,7 +182,8 @@ describe('retrieve', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Do this one once a week!'
+            specialInstructions: 'Do this one once a week!',
+			goal:10
 		})
 
 		const insertTraumaStory = await traumaStoryExercise.save()
@@ -249,7 +253,8 @@ describe('remove', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+            specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -262,7 +267,8 @@ describe('remove', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Do this one once a week!'
+            specialInstructions: 'Do this one once a week!',
+			goal:10
 		})
 
 		const insertTraumaStory = await traumaStoryExercise.save()
@@ -301,7 +307,8 @@ describe('update', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+			specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -363,7 +370,8 @@ describe('insert', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+			specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await exerciseData.createExercise(flashbackExercise);
@@ -378,6 +386,7 @@ describe('insert', () => {
 		expect(res.patientId).toEqual(insertFlashback.patientId);
 		expect(res.progress).toEqual(insertFlashback.progress);
 		expect(res.specialInstructions).toEqual(insertFlashback.specialInstructions);
+		expect(res.goal).toEqual(insertFlashback.goal);
 
 		await expect(exerciseData.createExercise()).rejects.toThrow()
 
@@ -397,7 +406,8 @@ describe('retrieve', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+			specialInstructions: 'Please let me know if you need any help!',
+			goal: 10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -412,6 +422,7 @@ describe('retrieve', () => {
 		expect(res.patientId).toEqual(insertFlashback.patientId);
 		expect(res.progress).toEqual(insertFlashback.progress);
 		expect(res.specialInstructions).toEqual(insertFlashback.specialInstructions);
+		expect(res.goal).toEqual(insertFlashback.goal);
 
 		let badId = mongoose.Types.ObjectId();
 		await expect(exerciseData.getExercise(badId)).rejects.toEqual('No exercise exists with that id')
@@ -432,7 +443,8 @@ describe('remove', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+			specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -458,7 +470,8 @@ describe('update', () => {
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
             progress: 0,
-            specialInstructions: 'Please let me know if you need any help!'
+			specialInstructions: 'Please let me know if you need any help!',
+			goal:10
 		});
 
 		const insertFlashback = await flashbackExercise.save()
@@ -471,7 +484,8 @@ describe('update', () => {
             patientName: 'New John Doe',
             patientId: 'PjohnDoe2',
             progress: 0,
-            specialInstructions: 'Please do not let me know if you need any help!'
+			specialInstructions: 'Please do not let me know if you need any help!',
+			goal:10
 		});
 
 		const res = await exerciseData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
