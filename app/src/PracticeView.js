@@ -1,13 +1,32 @@
 import React from "react";
+import Table from 'react-bootstrap/Table';
+import { render } from "react-dom";
+import { Component } from "react";
+import ReactDOM from 'react-dom';
 
-function Page2() {
+  class PracticeView extends Component {
+    constructor(props) {
+      super(props);
+      this.state = { apiResponse: "" };
+      this.listItems = []
+    }
 
-     return (
-       <div>
-         <p>This is the second page.</p>
-       </div>
-     );
+    }
+      
+    
 
- }
-
- export default Page2;
+  function NumberList(props) {
+    const numbers = props.numbers;
+    const listItems = numbers.map((number) =>
+      <li>{number}</li>
+    );
+    return (
+      <ul>{listItems}</ul>
+    );
+  }   
+  const numbers = [1, 2, 3, 4, 5];
+  ReactDOM.render(
+    <NumberList numbers={numbers} />,
+    document.getElementById('root')
+  );
+ export default PracticeView;

@@ -61,7 +61,7 @@ class App extends Component {
         </div>
 
 
-        <Link to = "/page2"><Button  className = "Button" onclick="window.location.href='/page2'"type="button">Log In</Button></Link>
+        <Link to = "/PracticeView"><Button  className = "Button" onClick="window.location.href='/PracticeView'"type="button">Log In</Button></Link>
 
         <div className = "New-user-container">
           <a href = "www.google.com" className = "user">New User?</a>

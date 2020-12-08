@@ -6,13 +6,13 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import Page1 from "./App";
-import Page2 from "./PracticeView";
+import PracticeView from "./PracticeView";
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <BrowserRouter>
   <Switch>
    <Route exact path="/" component={Page1} />
-   <Route path="/page2" component={Page2} />
+   <Route path="/PracticeView" component={PracticeView} />
  </Switch>
  </BrowserRouter>,
  rootElement
