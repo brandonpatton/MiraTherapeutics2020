@@ -125,14 +125,14 @@
   height:35px;
 
 }
-.bubbles{
+.Username-bubble-image{
   position: absolute;
   z-index: -100;
   top: 70px;
   right:330px;
   height: auto;
 }
-.bubbles2{
+.Password-bubble-image{
   position: absolute;
   top: 70px;
   right: 510px;
@@ -155,6 +155,12 @@
 }
 .pword{
   color:gray;
+}
+
+
+.Card2-title{
+  position:relative;
+  padding-top: 18px;
 }
 
 
