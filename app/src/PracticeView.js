@@ -1,4 +1,5 @@
 import React from "react";
+import green from './Green.PNG';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -9,6 +10,7 @@ import { Component } from "react";
 import picture from './Bonelli-RECT.jpg';
 import Image from 'react-bootstrap/Image';
 import './PracticeView.css'
+
 
   class PracticeView extends Component {
     constructor(props) {
@@ -109,6 +111,7 @@ class TableRow extends Component {
         <td>Tracked Symptoms {patient.trackedSymptoms} times</td>
         <td>Grounding Exercises used {patient.groundingExercises} times</td>
         <td>Completed {this.getCompleted(patient.assignments)}/{patient.assignments.length} homework assignments</td>
+        <td><Image src={green} Green/></td>
         
       </tr>
     );
