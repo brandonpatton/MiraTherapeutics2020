@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import logo from './Mira.jpg';
 import banner from './MiraBanner.png';
 import bubble from './bubbles.png';

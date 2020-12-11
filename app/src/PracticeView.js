@@ -3,13 +3,23 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
+import Button from 'react-bootstrap/Button'
+import Card from 'react-bootstrap/Card'
 import { Component } from "react";
+import picture from './Bonelli-RECT.jpg';
+import Image from 'react-bootstrap/Image';
+import './App.css'
 
   class PracticeView extends Component {
     constructor(props) {
       super(props);
       this.state = { apiResponse: "" };
       this.listItems = []
+      this.therapist = {
+        name: 'Eduardo Bonelli',
+        nextSession: '11/19',
+        status: 'Ongoing',
+      }
       this.patients = [
         {
           name: 'James Acaster',
@@ -50,9 +60,28 @@ import { Component } from "react";
           <Container>
             <Row>
               <Col>
-                <h1>Profile</h1>
+              <Card>
+                <Card.Body>
+                  <Row>
+                    <Image src={picture} roundedCircle className="App-logo"/>
+                  </Row>
+                  <Row>
+                    <Card bg="info">{this.therapist.name}</Card>
+                  </Row>
+                  <Row>
+                    <Card bg="info">{this.therapist.nextSession}</Card>
+                  </Row>
+                  <Row>
+                    <Card bg="info">{this.therapist.status}</Card>
+                  </Row>
+                  <Row>
+                    <Button variant="info">Go To Client View</Button>
+                  </Row>
+                </Card.Body>
+              </Card>
               </Col>
-              <Col xs={10}>
+              <Col xs={6}>
+                <h1>Practice View</h1>
                 <Table>
                 <tbody>
                   <TableRow patients = {this.patients} />
