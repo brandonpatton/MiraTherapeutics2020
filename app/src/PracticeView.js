@@ -8,7 +8,7 @@ import Card from 'react-bootstrap/Card'
 import { Component } from "react";
 import picture from './Bonelli-RECT.jpg';
 import Image from 'react-bootstrap/Image';
-import './App.css'
+import './PracticeView.css'
 
   class PracticeView extends Component {
     constructor(props) {
@@ -57,32 +57,31 @@ import './App.css'
     render(){
       return(
         <div>
-          <Container>
+          <Container className = "Profile">
             <Row>
               <Col>
-              <Card>
-                <Card.Body>
-                  <Row>
+              <div className = "border">
+                <Row className = "Name-Row justify-content-md-center">
                     <Image src={picture} roundedCircle className="App-logo"/>
+                    </Row>
+                  <Row className = "Name-Row justify-content-md-center">
+                    <Card className = "Name-Card">{this.therapist.name}</Card>
                   </Row>
-                  <Row>
-                    <Card bg="info">{this.therapist.name}</Card>
+                  <Row className= "Name-Row justify-content-md-center">
+                    <Card className = "Next-Session-Date">{this.therapist.nextSession}</Card>
                   </Row>
-                  <Row>
-                    <Card bg="info">{this.therapist.nextSession}</Card>
+                  <Row className = "Name-Row justify-content-md-center">
+                    <Card className = "Status">{this.therapist.status}</Card>
                   </Row>
-                  <Row>
-                    <Card bg="info">{this.therapist.status}</Card>
-                  </Row>
-                  <Row>
-                    <Button variant="info">Go To Client View</Button>
-                  </Row>
-                </Card.Body>
-              </Card>
+                  <Row className = "Name-Row justify-content-md-center">
+                    <Button variant="info" className = "Client-View-Button">Go To Client View</Button>
+                  </Row>   
+                  </div>             
               </Col>
-              <Col xs={6}>
+              
+              <Col xs={8}>
                 <h1>Practice View</h1>
-                <Table>
+                <Table className = "Table">
                 <tbody>
                   <TableRow patients = {this.patients} />
                 </tbody>
@@ -110,6 +109,7 @@ class TableRow extends Component {
         <td>Tracked Symptoms {patient.trackedSymptoms} times</td>
         <td>Grounding Exercises used {patient.groundingExercises} times</td>
         <td>Completed {this.getCompleted(patient.assignments)}/{patient.assignments.length} homework assignments</td>
+        
       </tr>
     );
     return rowItems;

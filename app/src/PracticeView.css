@@ -1,0 +1,44 @@
+.Name-Card{
+    background-color:#ACE0F8;
+    color:#707070;
+}
+.Next-Session-Date{
+    background-color:#ACE0F8;
+    color:#707070;
+}
+.Status{
+    background-color:#ACE0F8;
+    color:#707070;
+}
+.Client-View-Button{
+    background-color:#ACE0F8;
+    color:#707070;
+}
+.Card{
+}
+.App-logo{
+    border:none;
+    max-width: 50%;
+    margin-bottom: 40px;
+}
+.Name-Row{
+    bottom:-20px;
+    padding-bottom: 20px;
+    
+}
+.Next-Session-Row{
+    top:-20px;
+    padding-bottom:20px;
+    
+}
+.Table{
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+.Profile{
+margin-top:20px; 
+}
+.border{
+    border-style:solid;
+   
+}
