@@ -62,30 +62,32 @@ import './PracticeView.css'
           <Container className = "Profile">
             <Row>
               <Col>
-              <div className = "border">
-                <Row className = "Name-Row justify-content-md-center">
-                    <Image src={picture} roundedCircle className="App-logo"/>
+                <div className = "border">
+                  <div className = "Profile-info">
+                    <Row className = "Name-Row justify-content-md-center">
+                      <Image src={picture} roundedCircle className="picture"/>
                     </Row>
-                  <Row className = "Name-Row justify-content-md-center">
-                    <Card className = "Name-Card">{this.therapist.name}</Card>
-                  </Row>
-                  <Row className= "Name-Row justify-content-md-center">
-                    <Card className = "Next-Session-Date">{this.therapist.nextSession}</Card>
-                  </Row>
-                  <Row className = "Name-Row justify-content-md-center">
-                    <Card className = "Status">{this.therapist.status}</Card>
-                  </Row>
-                  <Row className = "Name-Row justify-content-md-center">
-                    <Button variant="info" className = "Client-View-Button">Go To Client View</Button>
-                  </Row>   
-                  </div>             
+                    <Row className = "Name-Row justify-content-md-center">
+                      <Card className = "Name-Card">{this.therapist.name}</Card>
+                    </Row>
+                    <Row className= "Name-Row justify-content-md-center">
+                      <Card className = "Next-Session-Date">{this.therapist.nextSession}</Card>
+                    </Row>
+                    <Row className = "Name-Row justify-content-md-center">
+                      <Card className = "Status">{this.therapist.status}</Card>
+                    </Row>
+                    <Row className = "Name-Row justify-content-md-center">
+                      <Button variant="info" className = "Client-View-Button">Go To Client View</Button>
+                    </Row> 
+                  </div>  
+                </div>             
               </Col>
               
               <Col xs={8}>
-                <h1>Practice View</h1>
+                <h1 className = "Practice-view-title">Practice View</h1>
                 <Table className = "Table">
                 <tbody>
-                  <TableRow patients = {this.patients} />
+                  <TableRow className = "Patients" patients = {this.patients} />
                 </tbody>
                 </Table>
               </Col>
@@ -107,11 +109,15 @@ class TableRow extends Component {
   getRow(patients) {
     const rowItems = patients.map((patient) =>
       <tr>
-        <td>Client: {patient.name}</td>
-        <td>Tracked Symptoms {patient.trackedSymptoms} times</td>
-        <td>Grounding Exercises used {patient.groundingExercises} times</td>
-        <td>Completed {this.getCompleted(patient.assignments)}/{patient.assignments.length} homework assignments</td>
-        <td><Image src={green} Green/></td>
+        <td className = "Patient-name">Client: {patient.name}</td>
+        <p className = "Tab"></p>
+        <td className = "Tracked-symptoms">Tracked Symptoms {patient.trackedSymptoms} times</td>
+        <p className = "Tab"></p>
+        <td className = "Exercise-use">Grounding Exercises used {patient.groundingExercises} times</td>
+        <p className = "Tab"></p>
+        <td className = "Completion">Completed {this.getCompleted(patient.assignments)}/{patient.assignments.length} homework assignments</td>
+        <p className = "Tab"></p>
+        <td className = "Completion-indicator"><Image src={green} Green/></td>
         
       </tr>
     );
