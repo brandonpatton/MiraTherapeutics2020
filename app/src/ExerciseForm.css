@@ -1,0 +1,40 @@
+.Exercise-form-title-container{
+    position: absolute;
+    top: 6.5%;
+    left: 9%
+}
+.Exercise-form-title-text{
+    position: relative;
+    color: #707070;
+    font: Nunito; 
+    font-size: 45px;
+    font-weight: 500;
+}
+.Added-exercise-list-container{
+    position: absolute;
+    top: 22%;
+    left: 6.7%;
+}
+
+.Added-exercise-list-text{
+    position: relative;
+    font-size: 35px;
+}
+.Exercise-type-dropdown-container{
+    position: absolute;
+    align-self: flex-end;
+}
+
+.Exercise-preview-body{
+    margin-left: 10%;
+    margin-right: auto;
+    top: 220px;
+    width: 625px;
+    height: 630px;
+}
+
+.Exercise-preview-placeholder-text{
+    text-align: center;
+}
+
+
