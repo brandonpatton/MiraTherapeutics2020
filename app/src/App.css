@@ -25,10 +25,10 @@
 
 .bg{
   background-color: #346B7A;
-  position: relative;
+  /* position: relative;
   padding: 100px;
   padding-left: 30%;
-  padding-bottom: 27%;
+  padding-bottom: 27%; */
   z-index: -1;
 }
 

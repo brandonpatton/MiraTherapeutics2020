@@ -26,15 +26,23 @@
 }
 
 .Exercise-preview-body{
-    margin-left: 10%;
-    margin-right: auto;
-    top: 220px;
+    /* margin-left: 10%;
+    margin-right: auto; */
     width: 625px;
     height: 630px;
 }
 
 .Exercise-preview-placeholder-text{
     text-align: center;
+}
+
+.exerciseCard{
+    color: #346B7A;
+}
+
+.added{
+    color: black;
+    text-align: right;
 }
 
 
