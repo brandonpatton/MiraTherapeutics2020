@@ -6,13 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import Page1 from "./App";
-import PracticeView from "./PracticeView";
+import PracticeView from "./views/PracticeView";
+import ExerciseForm from "./views/ExerciseForm"
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <BrowserRouter>
   <Switch>
    <Route exact path="/" component={Page1} />
    <Route path="/PracticeView" component={PracticeView} />
+   <Route path="/ExerciseForm" component={ExerciseForm} />
  </Switch>
  </BrowserRouter>,
  rootElement

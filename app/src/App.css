@@ -38,7 +38,7 @@
   }
 }*/
 
-/*.App-header {
+.App-header {
   background-color: #790f0f;
   min-height: 0vh;
   display: flex;
@@ -47,7 +47,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}*/
+}
 
 .App-link {
   color: #61dafb;

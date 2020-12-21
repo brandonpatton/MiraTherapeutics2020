@@ -1,5 +1,5 @@
 import React from "react";
-import green from './Green.PNG';
+import green from '../Green.PNG';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -7,9 +7,9 @@ import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { Component } from "react";
-import picture from './Bonelli-RECT.jpg';
+import picture from '../Bonelli-RECT.jpg';
 import Image from 'react-bootstrap/Image';
-import './PracticeView.css'
+import '../PracticeView.css'
 
 
   class PracticeView extends Component {
