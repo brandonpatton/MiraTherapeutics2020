@@ -25,10 +25,10 @@
 
 .bg{
   background-color: #346B7A;
-  /* position: relative;
+  position: relative;
   padding: 100px;
   padding-left: 30%;
-  padding-bottom: 27%; */
+  padding-bottom: 27%;
   z-index: -1;
 }
 
@@ -38,7 +38,7 @@
   }
 }*/
 
-/*.App-header {
+.App-header {
   background-color: #790f0f;
   min-height: 0vh;
   display: flex;
@@ -47,7 +47,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}*/
+}
 
 .App-link {
   color: #61dafb;

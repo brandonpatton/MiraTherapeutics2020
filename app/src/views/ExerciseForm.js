@@ -49,10 +49,12 @@ class ExerciseForm extends Component {
               <Dropdown.Item as="a" value = "Something Else">Something else</Dropdown.Item>
             </DropdownButton> */}
               
-            <Container className = "App-background-container">
-              <Row className = "bg">
-                <Col>
-                  <Row className = "Added-exercise-list-text">Added Exercises:</Row>
+            <Container fluid className = "background-container">
+              <Row className = "background">
+                <Col className = "Added-exercise-list">
+                  
+                    <Row className = "Added-exercise-list-text">Added Exercises:</Row>
+                  
                   <ExerciseRow exercises={this.exercises} />
                 </Col>
                 <Col>
