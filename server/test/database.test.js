@@ -499,6 +499,7 @@ describe('update', () => {
 		expect(res.patientId).toEqual(newFlashbackExercise.patientId);
 		expect(res.progress).toEqual(newFlashbackExercise.progress);
 		expect(res.specialInstructions).toEqual(newFlashbackExercise.specialInstructions);
+		expect(res.goal).toEqual(newFlashbackExercise.goal);
 
 	});
 })
