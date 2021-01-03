@@ -44,8 +44,8 @@ class ClientPage extends Component {
                     <div className = "Exercise-form-title-container">
                         <p className = "Exercise-form-title-text">{this.patient.name}</p>
                     </div>
-                <Container className = "background-container">
-                    <Row>
+                <Container className = "background-container" fluid>
+                    <Row className = "background">
                         <Col>
                             <div className = "border">
                                 <div className = "Profile-info">
@@ -71,13 +71,17 @@ class ClientPage extends Component {
                             <Row>
                                 <Col>
                                 <Card>
-                                    <Row>
-                                        {this.patient.assignments[0].status} {this.patient.assignments[0].due}
-                                    </Row>
-                                    <Row>
-                                        
-                                    </Row>
-                                        
+                                    <Card.Body>
+                                        <Row>
+                                            {this.patient.assignments[0].status} Due: <u>{this.patient.assignments[0].due}</u>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <p>Assignment Completion</p>
+                                                <ExerciseProgress exercises={this.patient.assignments[0].exercises} />
+                                            </Col>
+                                        </Row>
+                                    </Card.Body>
                                 </Card>
                                 </Col>
                             </Row>
@@ -87,6 +91,29 @@ class ClientPage extends Component {
             </div>
         )
     }
+}
+
+class ExerciseProgress extends Component {
+    constructor(props) {
+        super(props);
+        this.exercises = props.exercises;
+    }
+
+    getExercises(exercises) {
+        const result = exercises.map((exercise) =>
+          <Row>
+              <div>
+                <p>{exercise.name}</p>
+                <p>Due: {exercise.due}</p>
+              </div>
+          </Row>
+        );
+        return result;
+      }
+
+    render() {
+        return(this.getExercises(this.exercises))
+      }
 }
 
 export default ClientPage;
