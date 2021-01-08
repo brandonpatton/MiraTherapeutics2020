@@ -40,6 +40,13 @@ module.exports = {
     },
 
     async updateAssignment(id, newAssignment) {
+        var i
+        let sumProgress = 0
+        for(i = 0; i < newAssignment.exerciseList.length; i++){
+            sumProgress = sumProgress + newAssignment.exerciseList[i]
+        }
+        let total = i+1
+        let totalProgress = sumProgress/total
         await Assignment.updateOne({ _id: id}, {
             exerciseList: newAssignment.exerciseList,
             dateAssigned: newAssignment.dateAssigned,
@@ -47,7 +54,7 @@ module.exports = {
 			patientId: newAssignment.patientId,
 			therapistName: newAssignment.therapistName,
 			therapistId: newAssignment.therapistId,
-			assignmentProgress: newAssignment.assignmentProgress,
+			assignmentProgress: totalProgress,
 			visitNumber: newAssignment.visitNumber
         })
         return await this.getAssignment(id);
