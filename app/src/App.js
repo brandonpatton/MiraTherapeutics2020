@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import logo from './Mira.jpg';
 import banner from './MiraBanner.png';
 import bubble from './bubbles.png';
-import './App.css';
+import './css/App.css';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';

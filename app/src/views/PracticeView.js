@@ -9,7 +9,7 @@ import Card from 'react-bootstrap/Card'
 import { Component } from "react";
 import picture from '../Bonelli-RECT.jpg';
 import Image from 'react-bootstrap/Image';
-import '../PracticeView.css'
+import '../css/PracticeView.css'
 
 
   class PracticeView extends Component {
