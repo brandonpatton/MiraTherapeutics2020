@@ -1,0 +1,107 @@
+.Client-view-title-container{
+    position: absolute;
+    top: 6.5%;
+    left: 9%
+}
+
+.background-container{
+    position: absolute;
+    top: 25%;
+    width: 100%;
+    z-index: -2; 
+}
+
+.Progress-bubbles-container{
+    position: absolute;
+    top: 5%;
+    width: 80%;
+    left: 10%;
+    display: flex;
+    flex-direction: row;
+    z-index: 20;
+}
+.Progress-bubbles{
+    padding-left: 5%;
+}
+
+.background{
+    background-color: #346B7A;
+    position: relative;
+    padding-bottom: 1.5%;
+    z-index: -1;
+  }
+
+.Client-view-title-text{
+    position: relative;
+    color: #707070;
+    font: Nunito; 
+    font-size: 45px;
+    font-weight: 500;
+}
+.Client-information-container{
+    width: 25%;
+    height: 650px;
+}
+.Client-information{
+    align-items: center;
+    width: 100%;
+    height: 70%;
+    top: 80px;
+    left: 15%;
+}
+.clientInfoCardContainer{
+    text-align: center;
+    padding-top: 5%;
+    width: 35%;
+}
+.picture{
+    padding-top: 5%;
+}
+.clientInfoCard{
+    padding: 2%;
+}
+
+.Added-exercise-list-text{
+    position: relative;
+    font-size: 35px;
+}
+.Exercise-type-dropdown-container{
+    position: absolute;
+    align-self: flex-end;
+}
+
+.Assignment-completion-body{
+    /* margin-left: 10%;
+    margin-right: auto; */
+    float: right;
+    width: 87%;
+    height: 75%;
+    top: 25%;
+    right: 4%;
+}
+.Assignment-completion-status-text-container{
+    position: absolute;
+    
+}
+
+.Assignment-completion-status-text{
+    left: 20px;
+}
+
+.Added-exercise-list{
+    left: 10%;
+}
+
+
+.exerciseCard{
+    color: #346B7A;
+    width: 250px;
+    
+}
+
+.added{
+    color: black;
+    text-align: right;
+}
+
+
