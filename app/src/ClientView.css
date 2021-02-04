@@ -60,48 +60,50 @@
 .clientInfoCard{
     padding: 2%;
 }
-
-.Added-exercise-list-text{
-    position: relative;
-    font-size: 35px;
-}
-.Exercise-type-dropdown-container{
-    position: absolute;
-    align-self: flex-end;
-}
-
 .Assignment-completion-body{
-    /* margin-left: 10%;
-    margin-right: auto; */
     float: right;
     width: 87%;
-    height: 75%;
-    top: 25%;
+    height: 100%;
+    top: 39%;
     right: 4%;
 }
 .Assignment-completion-status-text-container{
     position: absolute;
+    padding-top: 2%;
+    left: 6%;
+}
+
+.Assignment-due-date-container{
+    position: absolute;
+    padding-top: 2%;
     
 }
 
 .Assignment-completion-status-text{
-    left: 20px;
+    color:#3D8FB4;
 }
 
-.Added-exercise-list{
-    left: 10%;
+.Assignment-progress-container{
+    position: absolute;
+    padding-top: 15%;
+    left: 6%;
 }
 
+.Assignment-completion-title-text{
+    color: #707070;
+}
 
-.exerciseCard{
-    color: #346B7A;
-    width: 250px;
+.Exercise-data-container{
+    padding-top: 15%;
+    padding-left: 5%;
     
 }
 
-.added{
-    color: black;
-    text-align: right;
+.Exercise-data{
+    width: 785%;
+    /* NEED THE COLORS TO MATCH (bubbles and bars)*/
 }
+
+
 
 

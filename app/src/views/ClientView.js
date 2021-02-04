@@ -8,13 +8,11 @@ import { FormControl } from '@material-ui/core';
 import '../ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../Mira.jpg';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
+import {Row, Col, Container, Image, Card, Button} from 'react-bootstrap'
 import Form from 'react-bootstrap/Form';
 import picture from '../Bonelli-RECT.jpg';
-import Button from 'react-bootstrap/Button';
-import Image from 'react-bootstrap/Image';
+
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   CircularProgressbar,
@@ -22,22 +20,60 @@ import {
   buildStyles
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 class ClientView extends Component {
   
     constructor(props) {
       super(props);
-      
+      this.patient = {
+            name: 'Eduardo Bonelli',
+            nextSession: '1/1/2021',
+            startDate: '1/1/2020',
+            assignments: [
+                {
+                    due: '11/17',
+                    status: 'Ongoing',
+                    exercises: [
+                        {
+                            name: "Breathing Exercises",
+                            due: '11/12',
+                            completionStatus: "danger",
+                            completionAmount: 75
+                        },
+                        {
+                            name: "PCL-5 Assessments",
+                            due: '11/15',
+                            completionStatus: "success",
+                            completionAmount: 100
+                        },
+                        {
+                            name: "Readings",
+                            due: '11/17',
+                            completionAmount: "info",
+                            completionAmount: 50
+                            
+                        }
+                    ]
+                }
+            ]
+          }
       this.bubbleInfo = [
         {
           bubble1Percentage: 100,
           bubble1Date: "11/20",
           bubble2Percentage: 50,
+          bubble2Date: "11/27",
           bubble3Percentage: 100,
+          bubble3Date: "12/04",
           bubble4Percentage: 100,
+          bubble4Date: "12/12",
           bubble5Percentage: 100,
+          bubble5Date: "12/19",
           bubble6Percentage: 100,
-          bubble7Percentage: 50
+          bubble6Date: "12/26",
+          bubble7Percentage: 50,
+          bubble7Date: "1/02"
         }
       ]
       this.clientInfo = [
@@ -82,12 +118,39 @@ class ClientView extends Component {
                   </MDBCard>         
                 </Col>*/} 
                 <Col>
-                  
-                    <MDBCard className="Assignment-completion-body">
-                      <div className = "Assignment-completion-status-text-container">
-                        <MDBCardTitle className="Assignment-completion-status-text">Ongoing</MDBCardTitle> {/*Get this from patient data*/}
-                      </div>
-                    </MDBCard> 
+                      <Row>
+                      </Row>
+                      <Row>
+                          <Col>
+                          <Card className="Assignment-completion-body">
+                              <Card.Body>
+                                  <Row>
+                                      <Col>
+                                        <div className = "Assignment-completion-status-text-container">
+                                          <MDBCardTitle className="Assignment-completion-status-text">{this.patient.assignments[0].status}</MDBCardTitle> {/*Get this from patient data*/}
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className = "Assignment-due-date-container">
+                                          <MDBCardTitle className="Assignment-due-date-text">Due: <u>{this.patient.assignments[0].due}</u> </MDBCardTitle> {/*Get this from patient data*/}
+                                        </div>
+                                      </Col>
+                                       
+                                  </Row>
+                                  <Row>
+                                      <Col>
+                                        <div className = "Assignment-progress-container">
+                                          <MDBCardTitle className="Assignment-completion-title-text">Assignment Completion</MDBCardTitle>
+                                          <div className="Exercise-data-container">
+                                            <ExerciseProgress exercises={this.patient.assignments[0].exercises} />
+                                          </div>
+                                        </div>
+                                      </Col>
+                                  </Row>
+                              </Card.Body>
+                          </Card>
+                          </Col>
+                      </Row> 
                   
                   <Row>
                     {/*<MDBCard className="Assignment">
@@ -146,72 +209,72 @@ class BubbleInfo extends Component {
             background
             backgroundPadding={6}
             styles={buildStyles({
-              backgroundColor: "#3e98c7",
+              backgroundColor: "#2F9C3A",
               textColor: "#fff",
-              pathColor: "#fff",
+              pathColor: "transparent",
               trailColor: "transparent"
             })} />
                 
           <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble2Percentage}
-            text={`${bubbles.bubble2Percentage}%`}
+            text={`${bubbles.bubble2Date}`}
             background
             backgroundPadding={6}
             styles={buildStyles({
-              backgroundColor: "#3e98c7",
+              backgroundColor: "#EB5050",
               textColor: "#fff",
-              pathColor: "#fff",
+              pathColor: "transparent",
               trailColor: "transparent"
             })} />
 
             <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble3Percentage}
-              text={`${bubbles.bubble3Percentage}%`}
+              text={`${bubbles.bubble3Date}`}
               background
               backgroundPadding={6}
               styles={buildStyles({
-                backgroundColor: "#3e98c7",
+                backgroundColor: "#2F9C3A",
                 textColor: "#fff",
-                pathColor: "#fff",
+                pathColor: "transparent",
                 trailColor: "transparent"
             })} />
 
             <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble4Percentage}
-              text={`${bubbles.bubble4Percentage}%`}
+              text={`${bubbles.bubble4Date}`}
               background
               backgroundPadding={6}
               styles={buildStyles({
-                backgroundColor: "#3e98c7",
+                backgroundColor: "#2F9C3A",
                 textColor: "#fff",
-                pathColor: "#fff",
+                pathColor: "transparent",
                 trailColor: "transparent"
             })} />
             <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble5Percentage}
-              text={`${bubbles.bubble5Percentage}%`}
+              text={`${bubbles.bubble5Date}`}
               background
               backgroundPadding={6}
               styles={buildStyles({
-                backgroundColor: "#3e98c7",
+                backgroundColor: "#2F9C3A",
                 textColor: "#fff",
-                pathColor: "#fff",
+                pathColor: "transparent",
                 trailColor: "transparent"
             })} />
             <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble6Percentage}
-              text={`${bubbles.bubble6Percentage}%`}
+              text={`${bubbles.bubble6Date}`}
               background
               backgroundPadding={6}
               styles={buildStyles({
-                backgroundColor: "#3e98c7",
+                backgroundColor: "#2F9C3A",
                 textColor: "#fff",
-                pathColor: "#fff",
+                pathColor: "transparent",
                 trailColor: "transparent"
             })} />
             <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble7Percentage}
-              text={`${bubbles.bubble7Percentage}%`}
+              text={`${bubbles.bubble7Date}`}
               background
               backgroundPadding={6}
               styles={buildStyles({
                 backgroundColor: "#3e98c7",
                 textColor: "#fff",
-                pathColor: "#fff",
+                pathColor: "transparent",
                 trailColor: "transparent"
             })} />
         </div>
@@ -221,6 +284,34 @@ class BubbleInfo extends Component {
   render() {
     return(this.getBubbleInfo(this.bubbleInfo))
   }
+}
+
+class ExerciseProgress extends Component {
+  constructor(props) {
+      super(props);
+      this.exercises = props.exercises;
+  }
+
+  getExercises(exercises) {
+      const result = exercises.map((exercise) =>
+      <div className = "Exercise-data">
+        <Row>
+            <Col>
+              <ProgressBar variant = {exercise.completionStatus} now = {exercise.completionAmount}/>
+            </Col>
+            <Col>
+                <p>{exercise.name}</p>
+                <p>Due: {exercise.due}</p>
+            </Col>
+          </Row>
+      </div>
+      );
+      return result;
+    }
+
+  render() {
+      return(this.getExercises(this.exercises))
+    }
 }
 
   //#region Exercise Type Dropdown
