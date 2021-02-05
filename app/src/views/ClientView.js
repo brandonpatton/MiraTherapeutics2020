@@ -90,20 +90,12 @@ class ClientView extends Component {
       const percentage = 66;
       return(
         <div>
-          {/* <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta> */}
             <div className = "App-logo-container">
                 <img src={logo} className="App-logo" alt="logo" />
             </div>
             <div className = "Client-view-title-container">
                 <p className = "Client-view-title-text">Eduardo Bonelli</p> {/*Get this from previous page*/}
             </div>
-            
-            {/* <DropdownButton id="dropdown-item-button" title = "Dropdown">
-              <Dropdown.ItemText>Dropdown item text</Dropdown.ItemText>
-              <Dropdown.Item as="a" value = "Action">Action</Dropdown.Item>
-              <Dropdown.Item as="a" value = "Another Action">Another action</Dropdown.Item>
-              <Dropdown.Item as="a" value = "Something Else">Something else</Dropdown.Item>
-            </DropdownButton> */}
               
             <Container fluid className = "background-container">
               <Row className = "background">
