@@ -7,7 +7,7 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MDBCard, MDBCardBody, MDBContainer,MDBCardTitle,MDBCardText } from "mdbreact";
-import {Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 class App extends Component {
   constructor(props) {

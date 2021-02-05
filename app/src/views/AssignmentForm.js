@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/AssignmentForm.css'
 import { Plus } from 'react-bootstrap-icons';
+import { Link } from "react-router-dom";
 
 class AssignmentForm extends Component {
   
@@ -78,7 +79,11 @@ class AssignmentForm extends Component {
                                 <ExerciseRow exercises={this.assignment.exercises} />
                                 <Row>
                                     <MDBCard className = "Plus">
-                                        <Plus/>
+                                        <Link to = "/ExerciseForm">
+                                            <Button variant="link">
+                                                <Plus size={100}/>
+                                            </Button>
+                                        </Link>
                                     </MDBCard>
                                 </Row>
                                 
@@ -97,9 +102,11 @@ class AssignmentForm extends Component {
                                             <Form.Control placeholder="" />
                                         </Form.Group>
                                         <div className = "Assignment-form-finish-button">
-                                            <Button variant="primary" type="submit" >
-                                                FINISH
-                                            </Button>
+                                            <Link to = "/ClientView">
+                                                <Button variant="primary" type="submit" >
+                                                    FINISH
+                                                </Button>
+                                            </Link>
                                         </div>
                                     </Form>
                             </MDBCard>          
