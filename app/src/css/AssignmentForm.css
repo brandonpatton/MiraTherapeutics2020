@@ -1,0 +1,46 @@
+.Assignment-information-background-container{
+    position: absolute;
+    top: 18.5%;
+    width: 100%;
+    z-index: -2; 
+}
+
+.Assignment-information-background{
+    background-color: #346B7A;
+    position: relative;
+    padding-bottom: 0.5%;
+    z-index: -1;
+  }
+
+.Assignment-information-container{
+    position: relative;
+    padding-top: 0.5%;
+    width: 50%;
+}
+
+.Exercise-card-container{
+    position: relative;
+    left: 5%;
+}
+
+.Overall-instructions-container{
+    position: relative;
+    padding-top: 0.5%;
+    width: 50%;
+    
+}
+
+.Overall-instructions-body{
+    height: 712px;
+    
+}
+
+.Overall-instructions-title{
+    text-align: center;
+    padding-top: 20%;
+}
+
+.Assignment-form-finish-button{
+    padding-top: 10%;
+    text-align: center;
+}

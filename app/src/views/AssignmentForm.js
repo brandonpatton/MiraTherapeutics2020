@@ -9,7 +9,7 @@ import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/App.css'
+import '../css/AssignmentForm.css'
 import { Plus } from 'react-bootstrap-icons';
 
 class AssignmentForm extends Component {
@@ -63,18 +63,20 @@ class AssignmentForm extends Component {
             <div className = "Client-view-title-container">
                 <p className = "Client-view-title-text">Assignment Form</p> {/*Get this from previous page*/}
             </div>
-            <Container fluid className = "background-container">
-              <Row className = "background">
-                <div className = "Client-information-container">
+            <Container fluid className = "Assignment-information-background-container">
+              <Row className = "Assignment-information-background">
+                <div className = "Assignment-information-container">
                   <Col>
-                    <MDBContainer className = "Card">
-                        <MDBCard className="card-body">
+                    <MDBContainer className = "Assignment-information-card">
+                        <MDBCard>
                             <MDBCardTitle className = "Card1-title">Assignment Information</MDBCardTitle>
                             <p>Date Assigned: {this.assignment.dateAssigned} Session Number: {this.assignment.visitNumber}</p>
                             <p>Therapist: {this.assignment.therapistName}</p>
                             <p>Client Name: {this.assignment.clientName}</p>
                             <h2>Exercises</h2>
-                            <ExerciseRow exercises={this.assignment.exercises} />
+                            <div className = "Exercise-card-container">
+                                <ExerciseRow exercises={this.assignment.exercises} />
+                            </div>
                             <Row>
                                 <MDBCard>
                                     <Plus/>
@@ -86,24 +88,25 @@ class AssignmentForm extends Component {
                     </MDBContainer>
                   </Col>
                 </div>
-                <Col>
-                    <MDBContainer className = "Card-2">
-                        <MDBCard className="card-body-2">
-                            <MDBCardTitle className = "Card2-title">Miratx Articles</MDBCardTitle>
-                            <MDBCardText>
-                                Overall Instructions
-                                <Form>
-                                    <Form.Group controlId="exerciseTitle">
-                                        <Form.Control placeholder="" />
-                                    </Form.Group>
-                                    <Button variant="primary" type="submit">
-                                        Submit
-                                    </Button>
-                                </Form>
-                            </MDBCardText>
-                        </MDBCard>          
-                    </MDBContainer>
-                </Col>
+                <div className = "Overall-instructions-container">
+                    <Col>
+                        <MDBContainer className = "Overall-instructions-card">
+                            <MDBCard className = "Overall-instructions-body">
+                                <MDBCardTitle className = "Overall-instructions-title">Overall Instructions</MDBCardTitle>
+                                    <Form>
+                                        <Form.Group controlId="exerciseTitle">
+                                            <Form.Control placeholder="" />
+                                        </Form.Group>
+                                        <div className = "Assignment-form-finish-button">
+                                            <Button variant="primary" type="submit" >
+                                                FINISH
+                                            </Button>
+                                        </div>
+                                    </Form>
+                            </MDBCard>          
+                        </MDBContainer>
+                    </Col>
+                </div>
               </Row>
             </Container> 
         </div>

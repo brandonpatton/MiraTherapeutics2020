@@ -5,7 +5,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import useState from 'react';
 import { FormControl } from '@material-ui/core';
-import '../ClientView.css';
+import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../Mira.jpg';
 import {Row, Col, Container, Image, Card, Button} from 'react-bootstrap'
