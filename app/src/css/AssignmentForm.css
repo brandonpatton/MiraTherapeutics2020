@@ -1,6 +1,6 @@
 .Assignment-information-background-container{
     position: absolute;
-    top: 18.5%;
+    top: 19.5%;
     width: 100%;
     z-index: -2; 
 }
@@ -18,21 +18,26 @@
     width: 50%;
 }
 
+.Assignment-information-body{
+    height: 712px;
+}
+
 .Exercise-card-container{
     position: relative;
     left: 5%;
+    display: flex;
+    flex-flow: column wrap;
+    max-height: 520px;
 }
 
 .Overall-instructions-container{
     position: relative;
     padding-top: 0.5%;
     width: 50%;
-    
 }
 
 .Overall-instructions-body{
     height: 712px;
-    
 }
 
 .Overall-instructions-title{
@@ -43,4 +48,11 @@
 .Assignment-form-finish-button{
     padding-top: 10%;
     text-align: center;
+}
+
+.Plus{
+    width: 250px;
+    height: 150px;
+    align-items: center;
+    padding-top: 13%;
 }

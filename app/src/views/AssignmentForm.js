@@ -68,22 +68,21 @@ class AssignmentForm extends Component {
                 <div className = "Assignment-information-container">
                   <Col>
                     <MDBContainer className = "Assignment-information-card">
-                        <MDBCard>
-                            <MDBCardTitle className = "Card1-title">Assignment Information</MDBCardTitle>
+                        <MDBCard className = "Assignment-information-body">
+                            <MDBCardTitle className = "Assignment-information-title">Assignment Information</MDBCardTitle>
                             <p>Date Assigned: {this.assignment.dateAssigned} Session Number: {this.assignment.visitNumber}</p>
                             <p>Therapist: {this.assignment.therapistName}</p>
                             <p>Client Name: {this.assignment.clientName}</p>
                             <h2>Exercises</h2>
                             <div className = "Exercise-card-container">
                                 <ExerciseRow exercises={this.assignment.exercises} />
+                                <Row>
+                                    <MDBCard className = "Plus">
+                                        <Plus/>
+                                    </MDBCard>
+                                </Row>
+                                
                             </div>
-                            <Row>
-                                <MDBCard>
-                                    <Plus/>
-                                </MDBCard>
-                            </Row>
-                            <MDBCardText>
-                            </MDBCardText>
                         </MDBCard>          
                     </MDBContainer>
                   </Col>
