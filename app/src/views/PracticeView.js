@@ -9,6 +9,7 @@ import Card from 'react-bootstrap/Card'
 import { Component } from "react";
 import picture from '../Bonelli-RECT.jpg';
 import Image from 'react-bootstrap/Image';
+import { Link } from "react-router-dom";
 import '../css/PracticeView.css'
 
 
@@ -77,7 +78,7 @@ import '../css/PracticeView.css'
                       <Card className = "Status">{this.therapist.status}</Card>
                     </Row>
                     <Row className = "Name-Row justify-content-md-center">
-                      <Button variant="info" className = "Client-View-Button">Go To Client View</Button>
+                      <Link to = "/ClientView"><Button variant="info" className = "Client-View-Button">Go To Client View</Button></Link>
                     </Row> 
                   </div>  
                 </div>             
