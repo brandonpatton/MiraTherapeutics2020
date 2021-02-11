@@ -29,7 +29,6 @@ module.exports = {
     },    
     async updateExercise(id, newExercise){
         const exercise = await this.getExercise(id)
-        let eprogress = (newExercise.progress/newExercise.goal)*100
         const updatedInfo = await Exercise.updateOne({ _id: id}, { 
             exerciseTitle: newExercise.exerciseTitle,
             exerciseType: newExercise.exerciseType,
@@ -37,7 +36,7 @@ module.exports = {
             frequency: newExercise.frequency,
             patientName: newExercise.patientName,
             patientId: newExercise.patientId,
-            progress: eprogress,
+            progress: NewExercise.progress,
             specialInstructions: newExercise.specialInstructions,
             goal:newExercise.goal
         })
@@ -46,7 +45,7 @@ module.exports = {
             assign = Assignments.getAssignmentsByPatientId(newExercise.patientId)
             assign.assignmentProgress += 1
             
-            Assignments.updateAssignment(assign.id)
+            Assignments.updateAssignment(assign.id, assign)
         }
         return await this.getExercise(id);
     },
