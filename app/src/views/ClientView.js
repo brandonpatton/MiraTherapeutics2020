@@ -26,38 +26,22 @@ class ClientView extends Component {
   
     constructor(props) {
       super(props);
-      this.patient = {
-            name: 'Eduardo Bonelli',
-            nextSession: '1/1/2021',
-            startDate: '1/1/2020',
-            assignments: [
-                {
-                    due: '11/17',
-                    status: 'Ongoing',
-                    exercises: [
-                        {
-                            name: "Breathing Exercises",
-                            due: '11/12',
-                            completionStatus: "danger",
-                            completionAmount: 75
-                        },
-                        {
-                            name: "PCL-5 Assessments",
-                            due: '11/15',
-                            completionStatus: "success",
-                            completionAmount: 100
-                        },
-                        {
-                            name: "Readings",
-                            due: '11/17',
-                            completionAmount: "info",
-                            completionAmount: 50
-                            
-                        }
-                    ]
-                }
-            ]
-          }
+      this.state = {
+        patient: {
+          name: props.location.data.name,
+          nextSession: '1/1/2021',
+          startDate: '1/1/2020',
+          assignments: [
+              {
+                  due: '11/17',
+                  status: 'Ongoing',
+                  exercises: [
+                  ]
+              }
+          ]
+        },
+
+      }
       this.bubbleInfo = [
         {
           bubble1Percentage: 100,
@@ -79,12 +63,20 @@ class ClientView extends Component {
       this.clientInfo = [
         {
           picture: picture,
-          name: 'Eduardo Bonelli', //Get this from previous page
+          name: props.location.data.name, //Get this from previous page
           clientSince: '11/10/19',
           nextSession: '11/28'
         }
       ]
     }
+
+    componentDidMount() {
+      fetch("http://localhost:3080/assignments/patient/PjohnDoe1")
+          .then(res => res.json())
+          .then(data => {this.setState({patient: {assignments: data}})});
+    }
+
+    
 
     render(){
       const percentage = 66;
@@ -94,7 +86,7 @@ class ClientView extends Component {
                 <img src={logo} className="App-logo" alt="logo" />
             </div>
             <div className = "Client-view-title-container">
-                <p className = "Client-view-title-text">Eduardo Bonelli</p> {/*Get this from previous page*/}
+                <p className = "Client-view-title-text">{this.state.patient.name}</p> {/*Get this from previous page*/}
             </div>
               
             <Container fluid className = "background-container">
@@ -119,12 +111,12 @@ class ClientView extends Component {
                                   <Row>
                                       <Col>
                                         <div className = "Assignment-completion-status-text-container">
-                                          <MDBCardTitle className="Assignment-completion-status-text">{this.patient.assignments[0].status}</MDBCardTitle> {/*Get this from patient data*/}
+                                          <MDBCardTitle className="Assignment-completion-status-text">{this.state.patient.assignments[0].status}</MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
                                       <Col>
                                         <div className = "Assignment-due-date-container">
-                                          <MDBCardTitle className="Assignment-due-date-text">Due: <u>{this.patient.assignments[0].due}</u> </MDBCardTitle> {/*Get this from patient data*/}
+                                          <MDBCardTitle className="Assignment-due-date-text">Due: <u>{this.state.patient.assignments[0].due}</u> </MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
                                        
@@ -134,7 +126,7 @@ class ClientView extends Component {
                                         <div className = "Assignment-progress-container">
                                           <MDBCardTitle className="Assignment-completion-title-text">Assignment Completion</MDBCardTitle>
                                           <div className="Exercise-data-container">
-                                            <ExerciseProgress exercises={this.patient.assignments[0].exercises} />
+                                            <ExerciseProgress exercises={this.state.patient.assignments[0].exercises} />
                                           </div>
                                         </div>
                                       </Col>

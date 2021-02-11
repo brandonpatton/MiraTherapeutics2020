@@ -17,6 +17,18 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+router.get('/patient/:id', async (req, res) => {
+    const id = req.params.id
+    try {
+        const assignment = await assignmentData.getAssignmentsByPatientId(id)
+        res.json(assignment)
+        return assignment
+    } catch(e) {
+        res.status(500).json({"Error": e})
+        console.log(e)
+    }
+})
+
 router.post('/', async (req, res) => {
     try {
         const newAssignment = await assignmentData.createAssignment(req.body);

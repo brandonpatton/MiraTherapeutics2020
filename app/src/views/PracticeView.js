@@ -7,19 +7,31 @@ import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { Component } from "react";
-import picture from '../Bonelli-RECT.jpg';
+import bonelliPicture from '../Bonelli-RECT.jpg';
+import acasterPicture from '../james-acaster.jpg'
 import Image from 'react-bootstrap/Image';
 import { Link } from "react-router-dom";
 import '../css/PracticeView.css'
 
 
+function patientClick(patient) {
+  this.setState(() => ({
+    selectedPatient: patient
+  }));
+}
+
   class PracticeView extends Component {
     constructor(props) {
       super(props);
-      this.state = { apiResponse: "" };
+      this.state = { selectedPatient: {
+                    name: '',
+                    trackedSymptoms: 0,
+                    groundingExercises: 0,
+                    assignments: [],
+                    } };
       this.listItems = []
       this.therapist = {
-        name: 'Eduardo Bonelli',
+        name: 'Miranda Cosgrove',
         nextSession: '11/19',
         status: 'Ongoing',
       }
@@ -37,24 +49,27 @@ import '../css/PracticeView.css'
           assignments: [true, false],
         },
         {
-          name: 'Eduardo Bonelli',
+          name: 'George Bush',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
         },
         {
-          name: 'Eduardo Bonelli',
+          name: 'Craig Ferguson',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
         },
         {
-          name: 'Eduardo Bonelli',
+          name: 'Scooby Doo',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
         }
       ];
+
+      patientClick = patientClick.bind(this);
+
     }
 
     render(){
@@ -66,7 +81,7 @@ import '../css/PracticeView.css'
                 <div className = "border">
                   <div className = "Profile-info">
                     <Row className = "Name-Row justify-content-md-center">
-                      <Image src={picture} roundedCircle className="picture"/>
+                      <Image src={acasterPicture} roundedCircle className="picture"/>
                     </Row>
                     <Row className = "Name-Row justify-content-md-center">
                       <Card className = "Name-Card">{this.therapist.name}</Card>
@@ -78,7 +93,10 @@ import '../css/PracticeView.css'
                       <Card className = "Status">{this.therapist.status}</Card>
                     </Row>
                     <Row className = "Name-Row justify-content-md-center">
-                      <Link to = "/ClientView"><Button variant="info" className = "Client-View-Button">Go To Client View</Button></Link>
+                      <Link to = {{
+                          pathname: "/ClientView",
+                          data: {name: this.state.selectedPatient.name} // your data array of objects
+                        }}><Button variant="info" className = "Client-View-Button">Go To Client View</Button></Link>
                     </Row> 
                   </div>  
                 </div>             
@@ -109,8 +127,8 @@ class TableRow extends Component {
 
   getRow(patients) {
     const rowItems = patients.map((patient) =>
-      <tr>
-        <td className = "Patient-name">Client: {patient.name}</td>
+      <tr onClick = {() => patientClick(patient)}>
+        <td className = "Patient-name" >Client: {patient.name}</td>
         <p className = "Tab"></p>
         <td className = "Tracked-symptoms">Tracked Symptoms {patient.trackedSymptoms} times</td>
         <p className = "Tab"></p>
@@ -140,4 +158,4 @@ class TableRow extends Component {
   }
 
 };
-export default PracticeView;
+export default PracticeView
