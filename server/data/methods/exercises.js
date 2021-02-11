@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
-const { Exercise } = require('../models/exercise');
+const { Exercise } = require('../models/exercise')
+const Assignments = require('./assignments')
 
 module.exports = {
     async createExercise(exercise) {
+
         let newExercise = new Exercise({
             exerciseTitle: exercise.exerciseTitle,
             exerciseType: exercise.exerciseType,
@@ -10,7 +12,7 @@ module.exports = {
             frequency: exercise.frequency,
             patientName: exercise.patientName,
             patientId: exercise.patientId,
-            progress: (exercise.progress/exercise.goal)*100,
+            progress: newExercise.progress,
             specialInstructions: exercise.specialInstructions,
             goal:exercise.goal
         });
@@ -24,8 +26,10 @@ module.exports = {
         const exercise = await Exercise.findOne({_id: id})
         if (exercise === null) throw 'No exercise exists with that id'
         return exercise
-    },    async updateExercise(id, newExercise){
+    },    
+    async updateExercise(id, newExercise){
         const exercise = await this.getExercise(id)
+        let eprogress = (newExercise.progress/newExercise.goal)*100
         const updatedInfo = await Exercise.updateOne({ _id: id}, { 
             exerciseTitle: newExercise.exerciseTitle,
             exerciseType: newExercise.exerciseType,
@@ -33,11 +37,17 @@ module.exports = {
             frequency: newExercise.frequency,
             patientName: newExercise.patientName,
             patientId: newExercise.patientId,
-            progress: (newExercise.progress/newExercise.goal)*100,
+            progress: eprogress,
             specialInstructions: newExercise.specialInstructions,
             goal:newExercise.goal
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
+        if(eprogress == newExercise.goal){
+            assign = Assignments.getAssignmentsByPatientId(newExercise.patientId)
+            assign.assignmentProgress += 1
+            
+            Assignments.updateAssignment(assign.id)
+        }
         return await this.getExercise(id);
     },
     async removeExercise(id){

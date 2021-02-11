@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const { Assignment } = require('../models/assignment');
-const { Exercise } = require('./exercises');
+const { Assignment } = require('../models/assignment')
+const { Exercise } = require('./exercises')
 
 module.exports = {
     async createAssignment(assignment) {
@@ -26,14 +26,15 @@ module.exports = {
         return assignment
     },
     async removeAssignment(id){
-        //const assignmentCollection = await assignments()
+        //for(i=0;i<length.exerciseList;i++){
+        //    Exercise.removeExercise(mongoUri, exerciseList[i].id)
+        //}
+        
         const assignment = await Assignment.deleteOne({_id: id})
         if(assignment.deletedCount == 0){
         throw 'No assignment exists with that id'
         }
-        //for(i=0;i<length.exerciseList;i++){
-          //  Exercise.removeExercise(mongoUri, exerciseList[i].id)
-       // }
+
 
 
         return `Successfully removed assignment with id:${id}`
