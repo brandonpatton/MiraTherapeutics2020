@@ -11,6 +11,7 @@ import bonelliPicture from '../Bonelli-RECT.jpg';
 import acasterPicture from '../james-acaster.jpg'
 import Image from 'react-bootstrap/Image';
 import { Link } from "react-router-dom";
+import { Redirect } from 'react-router-dom'
 import '../css/PracticeView.css'
 
 
@@ -49,7 +50,7 @@ function patientClick(patient) {
           assignments: [true, false],
         },
         {
-          name: 'George Bush',
+          name: 'Bruce Wayne',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
@@ -71,6 +72,13 @@ function patientClick(patient) {
       patientClick = patientClick.bind(this);
 
     }
+
+    componentDidMount() {
+      window.onpopstate = function(event) {
+        // Allows back and forth action
+        if (event.currentTarget.location.pathname == "/PracticeView") window.location.reload()
+    }
+  }
 
     render(){
       return(

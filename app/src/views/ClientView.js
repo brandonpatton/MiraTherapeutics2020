@@ -7,10 +7,12 @@ import useState from 'react';
 import { FormControl } from '@material-ui/core';
 import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
+import {Redirect,Switch} from 'react-router-dom';
 import logo from '../Mira.jpg';
 import {Row, Col, Container, Image, Card, Button} from 'react-bootstrap'
 import Form from 'react-bootstrap/Form';
 import picture from '../Bonelli-RECT.jpg';
+import { useHistory } from 'react-router-dom'
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -73,10 +75,12 @@ class ClientView extends Component {
     componentDidMount() {
       fetch("http://localhost:3080/assignments/patient/PjohnDoe1")
           .then(res => res.json())
-          .then(data => {this.setState({patient: {assignments: data}})});
-    }
+          .then(data => {
+            data.sort((a, b) => b.visitNumber - a.visitNumber)
+            this.setState({patient: {assignments: data}})
+          });
 
-    
+    }
 
     render(){
       const percentage = 66;
@@ -126,7 +130,7 @@ class ClientView extends Component {
                                         <div className = "Assignment-progress-container">
                                           <MDBCardTitle className="Assignment-completion-title-text">Assignment Completion</MDBCardTitle>
                                           <div className="Exercise-data-container">
-                                            <ExerciseProgress exercises={this.state.patient.assignments[0].exercises} />
+                                            {getExercises(this.state.patient.assignments[0].exerciseList)}
                                           </div>
                                         </div>
                                       </Col>
@@ -270,13 +274,8 @@ class BubbleInfo extends Component {
   }
 }
 
-class ExerciseProgress extends Component {
-  constructor(props) {
-      super(props);
-      this.exercises = props.exercises;
-  }
-
-  getExercises(exercises) {
+ function getExercises(exercises) {
+      if (exercises){
       const result = exercises.map((exercise) =>
       <div className = "Exercise-data">
         <Row>
@@ -291,12 +290,9 @@ class ExerciseProgress extends Component {
       </div>
       );
       return result;
+      }
     }
 
-  render() {
-      return(this.getExercises(this.exercises))
-    }
-}
 
   //#region Exercise Type Dropdown
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
