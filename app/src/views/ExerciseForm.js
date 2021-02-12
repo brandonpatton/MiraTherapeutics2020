@@ -9,7 +9,6 @@ import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from "react-router-dom";
 
 
 
@@ -17,16 +16,32 @@ import { Link } from "react-router-dom";
 class ExerciseForm extends Component {
     constructor(props) {
       super(props);
-      this.exercises = [
-        {
-          name: 'Flashback Grounding',
-          frequency: 'Daily',
-          due: '1 week',
-          specialInstructions: 'Yes'
-        }
-      ]
-    }
+      this.state = {
+        chosenExerciseType: "Grounding"
+      }
+      this.exerciseTypes = {
+        "Grounding": ["Flashback Grounding", "Color Finder", "Breathing Exercise", "Vibration Tool", "Bilateral Simulation", "5, 4, 3, 2, 1 Grounding", "Any", "All"],
+        "Reading": ["PTSD Content", "Trauma Story"],
+        "Writing": ["Write About Trauma", "Free Writing"],
+        "Worksheets": ["CPT Worksheet", "PTP Worksheet", "Upload Your Own"],
+        "Assessments": ["PCL-5 Questionnaire", "PHQ-9 Questionnaire"],
+        "Lists": ["Gratefullness List", "Self-Care", "Stuck Points", "Create Your Own List", "Track Symptoms", "Track Triggers"]      
+      }
+      this.exercises = [];
 
+    }
+    getExerciseFormData(data){
+      const result = Object.keys(data).map((d) =>
+        <option>{d}</option>
+      );
+      return result;
+    }
+    getExerciseTitle(data, choice){
+        const result = data[choice].map((d) =>
+        <option>{d}</option>
+        );
+        return result;
+    }
     render(){
       return(
         <div>
@@ -40,9 +55,7 @@ class ExerciseForm extends Component {
             <Container fluid className = "background-container">
               <Row className = "background">
                 <Col className = "Added-exercise-list">
-                  
                     <Row className = "Added-exercise-list-text">Added Exercises:</Row>
-                  
                   <ExerciseRow exercises={this.exercises} />
                 </Col>
                 <Col>
@@ -54,12 +67,13 @@ class ExerciseForm extends Component {
                   <Form>
                     <Form.Group controlId="exerciseType">
                       <Form.Label>Exercise Type</Form.Label>
-                      <Form.Control as="select" custom>
-                        <option>Grounding</option>
+                      <Form.Control  onChange = {event => this.setState(()=>({chosenExerciseType: event.target.value}))} as="select" custom>
+                        {this.getExerciseFormData(this.exerciseTypes)}
                       </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="exerciseTitle">
-                      <Form.Control placeholder="Exercise Title" />
+                    <Form.Group controlId="exerciseTitle" as = "select" custom>
+                      
+                      {this.getExerciseTitle(this.exerciseTypes, this.state.chosenExerciseType)}
                     </Form.Group>
                     <Form.Group controlId="frequency">
                       <Form.Label>Frequency</Form.Label>
@@ -71,12 +85,11 @@ class ExerciseForm extends Component {
                     <Form.Group controlId="specialInstructions">
                       <Form.Control placeholder="Special Instructions" />
                     </Form.Group>
-                    <Link to = "/AssignmentForm">
-                      <Button variant="primary" type="submit">
-                        Submit
-                      </Button>
-                    </Link>
+                    <Button variant="primary" type="submit">
+                      Submit
+                    </Button>
                   </Form>
+                
                 </Col>
               </Row>
             </Container> 
@@ -110,6 +123,23 @@ class ExerciseRow extends Component {
     return(this.getExercises(this.exercises))
   }
 }
+
+class ExerciseFormData extends Component {
+  constructor(props) {
+    super(props);
+    this.exerciseFormData = props.data;
+  }
+  
+  
+  
+  render() {
+    return(this.getExerciseFormData(this.exerciseFormData))
+  }
+}
+
+
+
+
  
 
 export default ExerciseForm;
