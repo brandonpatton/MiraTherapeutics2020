@@ -1,5 +1,5 @@
 import React from "react";
-import { Component } from "react";
+import { Component, useState } from "react";
 import '../css/ExerciseForm.css';
 import { MDBCard, MDBCardBody, MDBContainer,MDBCardTitle,MDBCardText } from "mdbreact";
 import logo from '../Mira.jpg';
@@ -8,18 +8,36 @@ import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/AssignmentForm.css'
-import { Plus } from 'react-bootstrap-icons';
+import EditIcon from '@material-ui/icons/Edit';
 import { Link } from "react-router-dom";
 
+function SetUpNextSession(){
+    const [startDate, setStartDate] = useState(new Date());
+}
+
 class AssignmentForm extends Component {
+    
   
     constructor(props) {
-      super(props);
+        super(props);
+        
+        this.state = {
+            startDate: new Date()
+          };
+        this.handleChange = this.handleChange.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this);
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        today = mm + '/' + dd + '/' + yyyy;
         this.assignment = 
         {
-            dateAssigned: "1/1",
+            dateAssigned: today,
             visitNumber: 3,
             therapistName: "Miranda Cosgrove",
             clientName: "Eduardo Bonelli",
@@ -54,8 +72,17 @@ class AssignmentForm extends Component {
             ]
         }
     }
-
+    handleChange(date) {
+        this.setState({
+            startDate: date
+        })
+    }
+    onFormSubmit(e) {
+        e.preventDefault();
+    }
+     
     render(){
+        
         return(
         <div>
             <div className = "App-logo-container">
@@ -70,23 +97,33 @@ class AssignmentForm extends Component {
                   <Col>
                     <MDBContainer className = "Assignment-information-card">
                         <MDBCard className = "Assignment-information-body">
-                            <MDBCardTitle className = "Assignment-information-title">Assignment Information</MDBCardTitle>
-                            <p>Date Assigned: {this.assignment.dateAssigned} Session Number: {this.assignment.visitNumber}</p>
-                            <p>Therapist: {this.assignment.therapistName}</p>
-                            <p>Client Name: {this.assignment.clientName}</p>
+                            <p className = "Assignment-information-top">Date Created: {this.assignment.dateAssigned} Visit Number: {this.assignment.visitNumber}</p>
+                            <p className = "Assignment-information-top">Next Session: 
+                                <form onSubmit={ this.onFormSubmit }>
+                                    <div>
+                                        <DatePicker
+                                            selected={ this.state.startDate }
+                                            onChange={ this.handleChange }
+                                            name="startDate"
+                                            dateFormat="MM/dd/yyyy"
+                                        />
+                                    </div>
+                                </form>
+                            </p>
+                            <p className = "Assignment-information-top">Therapist: {this.assignment.therapistName}</p>
+                            <p className = "Assignment-information-top">Client Name: {this.assignment.clientName}</p>
                             <h2>Exercises</h2>
                             <div className = "Exercise-card-container">
                                 <ExerciseRow exercises={this.assignment.exercises} />
                                 <Row>
-                                    <MDBCard className = "Plus">
+                                    <MDBCard className = "Add-exercise">
                                         <Link to = "/ExerciseForm">
-                                            <Button variant="link">
-                                                <Plus size={100}/>
+                                            <Button variant="link" size="lg">
+                                                Add Exercise
                                             </Button>
                                         </Link>
                                     </MDBCard>
                                 </Row>
-                                
                             </div>
                         </MDBCard>          
                     </MDBContainer>
@@ -104,7 +141,7 @@ class AssignmentForm extends Component {
                                         <div className = "Assignment-form-finish-button">
                                             <Link to = "/ClientView">
                                                 <Button variant="primary" type="submit" >
-                                                    FINISH
+                                                    Assign {/*Need to make sure this button submits for all the user-inputted data on screen (next session for ex) */}
                                                 </Button>
                                             </Link>
                                         </div>
@@ -129,12 +166,14 @@ class AssignmentForm extends Component {
     getExercises(exercises) {
         const result = exercises.map((exercise) =>
         <Row>
-            <MDBCard>
-            <p className="exerciseCard">{exercise.name}</p>
-            <p className="exerciseCard">{exercise.frequency}</p>
-            <p className="exerciseCard">{exercise.due}</p>
-            <p className="exerciseCard">{exercise.specialInstructions}</p>
-            </MDBCard>
+            <div className = "Exercise-card-row">
+                <MDBCard className = "Exercise-card-body">
+                        <p className="exerciseTitle">{exercise.name} <EditIcon className = "Edit-icon"/></p>
+                        <p className="exerciseCard">{exercise.frequency}</p>
+                        <p className="exerciseCard">Due By: {exercise.due}</p>
+                        <p className="exerciseCard">Special Instructions: {exercise.specialInstructions}</p>
+                </MDBCard>
+            </div>
         </Row>
         );
         return result;
@@ -144,5 +183,24 @@ class AssignmentForm extends Component {
         return(this.getExercises(this.exercises))
     }
 }
+  /*class NextSession extends Component {
+    
+    constructor(props) {
+        super(props);
+        
+    }
+    setNextSession() {
+        
+        <div>
+            <p>Next Visit:</p>
+            <DatePicker 
+            value = {value}
+            onSelect = {this.handleDate}
+            onChange = {date => setStartDate(date)}
+            />
+        </div>
+        
+    }
+    }*/
 
     export default AssignmentForm;
