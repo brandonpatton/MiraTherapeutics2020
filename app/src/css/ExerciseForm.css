@@ -6,15 +6,17 @@
 
 .background-container{
     position: absolute;
-    top: 25%;
     width: 100%; 
+    top: 30%;
     z-index: -2;
 }
 
 .background{
     background-color: #346B7A;
     position: relative;
-    padding-bottom: 1.5%;
+    height: 650px;
+    top: 30%;
+    padding-top: 1.5%;
     z-index: -1;
   }
 .Exercise-form-title-text{
@@ -34,6 +36,11 @@
     position: relative;
     font-size: 35px;
 }
+
+.Exercise-form-container{
+    margin-left: 30%;
+}
+
 .Exercise-type-dropdown-container{
     position: absolute;
     align-self: flex-end;
