@@ -20,7 +20,8 @@ import {
   buildStyles
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import ProgressBar from 'react-bootstrap/ProgressBar';
+import { LinearProgress } from '@material-ui/core';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 class ClientView extends Component {
   
@@ -33,8 +34,8 @@ class ClientView extends Component {
           startDate: '1/1/2020',
           assignments: [
               {
-                  due: '11/17',
-                  status: 'Ongoing',
+                  due: '',
+                  status: '',
                   exercises: [
                   ]
               }
@@ -245,17 +246,46 @@ class ClientInfo extends Component {
 }
 
  function getExercises(exercises) {
-      if (exercises){
+      if (exercises) 
+      {
+        const ActualLinearProgress = withStyles((theme) => ({
+          root: {
+            height: 30,
+            borderRadius: 10
+          },
+          colorPrimary: {
+            backgroundColor: "#BBBBBB"
+          },
+          bar: {
+            backgroundColor: "#ac6ef3"
+          }
+        }))(LinearProgress);
+
+        const ExpectedLinearProgress = withStyles((theme) => ({
+          root: {
+            height: 30,
+            borderRadius: 10
+          },
+          colorPrimary: {
+            backgroundColor: "#BBBBBB"
+          },
+          bar: {
+            backgroundColor: "#20315f"
+          }
+        }))(LinearProgress);
+        
       const result = exercises.map((exercise) =>
       <div className = "Exercise-data">
         <Row>
             <Col>
-              <ProgressBar variant = {exercise.completionStatus} now = {exercise.completionAmount}/>
+              <ActualLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {exercise.completionAmount} color = "primary" thickness={5}/>
+              <ExpectedLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {exercise.completionStatus} color = "secondary"/>
             </Col>
             <Col>
                 <p>{exercise.name}<br></br>{exercise.due}</p>
             </Col>
-          </Row>
+        </Row>
+        <br></br>
       </div>
       );
       return result;
