@@ -27,7 +27,6 @@ module.exports = {
         return exercise
     },    
     async updateExercise(id, newExercise){
-        const exercise = await this.getExercise(id)
         const updatedInfo = await Exercise.updateOne({ _id: id}, { 
             exerciseTitle: newExercise.exerciseTitle,
             exerciseType: newExercise.exerciseType,
@@ -40,9 +39,24 @@ module.exports = {
             goal:newExercise.goal
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
+        
         if(newExercise.progress == newExercise.goal){
-            assign = Assignments.getAssignmentsByPatientId(newExercise.patientId)
-            assign.assignmentProgress += 1
+            
+            let assignments = await Assignments.getAssignmentsByPatientId(newExercise.patientId)
+            let assign
+
+            for(i=0; i<assignments.length;i++){
+                for(j=0; j<assignments[i].exerciseList.length;j++){
+                    if(assignments[i].exerciseList[j].id=id){
+                        assign = assignments[i]
+                    }
+                }
+                
+            }
+            let temp = assign.assignmentProgress
+
+            temp = temp + 1
+            assign.assignmentProgress = temp
             
             Assignments.updateAssignment(assign.id, assign)
         }

@@ -636,3 +636,63 @@ describe('retrieve', () => {
     });
     
 })
+describe('update', () => {
+	it('should update an assignment upon exercise completion', async () => {
+		//expect.assertions(9)
+
+		let testDateAssigned = new Date();
+		const flashbackExercise = new Exercise({
+            exerciseTitle: 'Flashback Grounding',
+            exerciseType: 'Grounding',
+            dueDate: testDateAssigned,
+            frequency: 'Weekly',
+            patientName: 'John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 0,
+            specialInstructions: 'Please let me know if you need any help!',
+            goal:10
+		});
+
+		const insertFlashback = await flashbackExercise.save()
+
+		testDateAssigned = new Date();
+		const ExerciseAssignment = new Assignment({
+			exerciseList: [flashbackExercise],
+			dateAssigned: testDateAssigned,
+			patientName: 'John Doe',
+			patientId: 'PjohnDoe1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 1
+		});
+ 
+		let insertInfo = await ExerciseAssignment.save();
+
+
+        const updatedFlashbackExercise =  new Exercise({
+            exerciseTitle: 'New Flashback Grounding',
+            exerciseType: 'New Grounding',
+            dueDate: testDateAssigned,
+            frequency: 'New Weekly',
+            patientName: 'New John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 10,
+            specialInstructions: 'Exercise Complete :)',
+            goal:10
+		});
+
+		const res = await exerciseData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
+		const updatedAssignment = await Assignment.findOne({_id: ExerciseAssignment._id});
+		expect(updatedAssignment._id).toEqual(ExerciseAssignment._id);
+		expect(updatedAssignment.exerciseList.length).toEqual(ExerciseAssignment.exerciseList.length);
+		expect(updatedAssignment.dateAssigned).toEqual(ExerciseAssignment.dateAssigned);
+		expect(updatedAssignment.patientName).toEqual(ExerciseAssignment.patientName);
+		expect(updatedAssignment.patientId).toEqual(ExerciseAssignment.patientId);
+		expect(updatedAssignment.therapistName).toEqual(ExerciseAssignment.therapistName);
+		expect(updatedAssignment.therapistId).toEqual(ExerciseAssignment.therapistId);
+		expect(updatedAssignment.assignmentProgress).toEqual(1);
+		expect(updatedAssignment.visitNumber).toEqual(ExerciseAssignment.visitNumber);
+
+	});
+})
