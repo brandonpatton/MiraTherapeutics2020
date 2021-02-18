@@ -13,8 +13,6 @@ import {Row, Col, Container, Image, Card, Button} from 'react-bootstrap'
 import Form from 'react-bootstrap/Form';
 import picture from '../Bonelli-RECT.jpg';
 import { useHistory } from 'react-router-dom'
-
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   CircularProgressbar,
@@ -22,7 +20,8 @@ import {
   buildStyles
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import ProgressBar from 'react-bootstrap/ProgressBar';
+import { LinearProgress } from '@material-ui/core';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 class ClientView extends Component {
   
@@ -35,31 +34,51 @@ class ClientView extends Component {
           startDate: '1/1/2020',
           assignments: [
               {
-                  due: '11/17',
-                  status: 'Ongoing',
+                  due: '',
+                  status: '',
                   exercises: [
                   ]
               }
           ]
         },
+        selectedAssignment: 0
 
       }
       this.bubbleInfo = [
         {
-          bubble1Percentage: 100,
-          bubble1Date: "11/20",
-          bubble2Percentage: 50,
-          bubble2Date: "11/27",
-          bubble3Percentage: 100,
-          bubble3Date: "12/04",
-          bubble4Percentage: 100,
-          bubble4Date: "12/12",
-          bubble5Percentage: 100,
-          bubble5Date: "12/19",
-          bubble6Percentage: 100,
-          bubble6Date: "12/26",
-          bubble7Percentage: 50,
-          bubble7Date: "1/02"
+          assignmentProgress: 100,
+          due: "11/20",
+          status: "Completed"
+        },
+        {
+          assignmentProgress: 50,
+          due: "11/27",
+          status: "Completed"
+        },
+        {
+          assignmentProgress: 100,
+          due: "12/04",
+          status: "Completed"
+        },
+        {
+          assignmentProgress: 100,
+          due: "12/12",
+          status: "Completed"
+        },
+        {
+          assignmentProgress: 100,
+          due: "12/19",
+          status: "Completed"
+        },
+        {
+          assignmentProgress: 100,
+          due: "12/26",
+          status: "Completed"
+        },
+        {
+          assignmentProgress: 100,
+          due: "1/02",
+          status: "Ongoing"
         }
       ]
       this.clientInfo = [
@@ -70,20 +89,22 @@ class ClientView extends Component {
           nextSession: '11/28'
         }
       ]
+
+      changeVisibleAssignment = changeVisibleAssignment.bind(this);
+
     }
 
     componentDidMount() {
       fetch("http://localhost:3080/assignments/patient/PjohnDoe1")
           .then(res => res.json())
           .then(data => {
-            data.sort((a, b) => b.visitNumber - a.visitNumber)
+            data.sort((a, b) => a.visitNumber - b.visitNumber)
             this.setState({patient: {assignments: data}})
           });
 
     }
 
     render(){
-      const percentage = 66;
       return(
         <div>
             <div className = "App-logo-container">
@@ -109,18 +130,26 @@ class ClientView extends Component {
                       <Row>
                       </Row>
                       <Row>
+                    {/*<MDBCard className="Assignment">
+                      <div className = "">
+                        <MDBCardTitle className="t">Ongoing</MDBCardTitle> {/*Get this from patient data}
+                      </div>
+                    </MDBCard> */}
+                        {getBubbleInfo(this.state.patient.assignments)}
+                      </Row>
+                      <Row>
                           <Col>
                           <Card className="Assignment-completion-body">
                               <Card.Body>
                                   <Row>
                                       <Col>
                                         <div className = "Assignment-completion-status-text-container">
-                                          <MDBCardTitle className="Assignment-completion-status-text">{this.state.patient.assignments[0].status}</MDBCardTitle> {/*Get this from patient data*/}
+                                          <MDBCardTitle className="Assignment-completion-status-text">{this.state.patient.assignments[this.state.selectedAssignment].status}</MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
                                       <Col>
                                         <div className = "Assignment-due-date-container">
-                                          <MDBCardTitle className="Assignment-due-date-text">Due: <u>{this.state.patient.assignments[0].due}</u> </MDBCardTitle> {/*Get this from patient data*/}
+                                          <MDBCardTitle className="Assignment-due-date-text">Due by: <u>{this.state.patient.assignments[this.state.selectedAssignment].due}</u> </MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
                                        
@@ -130,7 +159,7 @@ class ClientView extends Component {
                                         <div className = "Assignment-progress-container">
                                           <MDBCardTitle className="Assignment-completion-title-text">Assignment Completion</MDBCardTitle>
                                           <div className="Exercise-data-container">
-                                            {getExercises(this.state.patient.assignments[0].exerciseList)}
+                                            {getExercises(this.state.patient.assignments[this.state.selectedAssignment].exerciseList)}
                                           </div>
                                         </div>
                                       </Col>
@@ -138,17 +167,7 @@ class ClientView extends Component {
                               </Card.Body>
                           </Card>
                           </Col>
-                      </Row> 
-                  
-                  <Row>
-                    {/*<MDBCard className="Assignment">
-                      <div className = "">
-                        <MDBCardTitle className="t">Ongoing</MDBCardTitle> {/*Get this from patient data}
-                      </div>
-                    </MDBCard> */}
-                    <BubbleInfo bubbleInfo={this.bubbleInfo} />
-                    
-                  </Row>        
+                      </Row>      
                 </Col>
               </Row>
             </Container> 
@@ -156,6 +175,48 @@ class ClientView extends Component {
        )
     }
   }
+
+function changeVisibleAssignment(assignmentNumber) {
+  this.setState(() => ({
+    selectedAssignment: assignmentNumber
+  }))
+}
+
+let getBubbleInfo = (bubbleInfo) => {
+  const ongoingBubbleColor = '#00b5d9'
+  const completedBubbleColor = '#20315f'
+  const completedBubblePathColor = '#FFFFFF'
+    let progressBubbleComponents = []
+    // 7 Assignments visible at a time
+    for (let assignmentIndex = 6; assignmentIndex >= 0; assignmentIndex--) {
+      if (assignmentIndex >= bubbleInfo.length) {
+        progressBubbleComponents.unshift(
+          <div className = "Progress-bubble-column-hidden">
+            <CircularProgressbar  className = "Progress-bubbles"
+            background
+            backgroundPadding={6}/>
+          </div>
+        )
+      } else {
+        progressBubbleComponents.unshift(
+          <div className = "Progress-bubble-column" onClick = {() => changeVisibleAssignment(assignmentIndex)}>
+            <CircularProgressbar  className = "Progress-bubbles" value={bubbleInfo[assignmentIndex].assignmentProgress}
+            text={`${bubbleInfo[assignmentIndex].due}`}
+            background
+            backgroundPadding={6}
+            styles={buildStyles({
+              backgroundColor: `${bubbleInfo[assignmentIndex].status == "Ongoing" ? ongoingBubbleColor : completedBubbleColor}`,
+              textColor: "#fff",
+              pathColor: `${bubbleInfo[assignmentIndex].status == "Ongoing" ? '#000000' : completedBubblePathColor}`,
+              trailColor: "transparent"
+            })}/>
+          </div>)
+      }
+    }
+  return (<div className = "Progress-bubbles-container">
+    {progressBubbleComponents}
+  </div>)
+}
 
 class ClientInfo extends Component {
   constructor(props) {
@@ -184,109 +245,47 @@ class ClientInfo extends Component {
   }
 }
 
-class BubbleInfo extends Component {
-  constructor(props) {
-    super(props);
-    this.bubbleInfo = props.bubbleInfo;
-  }
-  getBubbleInfo(bubbleInfo) {
-    const result = bubbleInfo.map((bubbles) =>
-        <div className = "Progress-bubbles-container">
-          <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble1Percentage}
-            text={`${bubbles.bubble1Date}`}
-            background
-            backgroundPadding={6}
-            styles={buildStyles({
-              backgroundColor: "#2F9C3A",
-              textColor: "#fff",
-              pathColor: "transparent",
-              trailColor: "transparent"
-            })} />
-                
-          <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble2Percentage}
-            text={`${bubbles.bubble2Date}`}
-            background
-            backgroundPadding={6}
-            styles={buildStyles({
-              backgroundColor: "#EB5050",
-              textColor: "#fff",
-              pathColor: "transparent",
-              trailColor: "transparent"
-            })} />
-
-            <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble3Percentage}
-              text={`${bubbles.bubble3Date}`}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#2F9C3A",
-                textColor: "#fff",
-                pathColor: "transparent",
-                trailColor: "transparent"
-            })} />
-
-            <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble4Percentage}
-              text={`${bubbles.bubble4Date}`}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#2F9C3A",
-                textColor: "#fff",
-                pathColor: "transparent",
-                trailColor: "transparent"
-            })} />
-            <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble5Percentage}
-              text={`${bubbles.bubble5Date}`}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#2F9C3A",
-                textColor: "#fff",
-                pathColor: "transparent",
-                trailColor: "transparent"
-            })} />
-            <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble6Percentage}
-              text={`${bubbles.bubble6Date}`}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#2F9C3A",
-                textColor: "#fff",
-                pathColor: "transparent",
-                trailColor: "transparent"
-            })} />
-            <CircularProgressbar className = "Progress-bubbles" value={bubbles.bubble7Percentage}
-              text={`${bubbles.bubble7Date}`}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#3e98c7",
-                textColor: "#fff",
-                pathColor: "transparent",
-                trailColor: "transparent"
-            })} />
-        </div>
-    );
-    return result;
-  }
-  render() {
-    return(this.getBubbleInfo(this.bubbleInfo))
-  }
-}
-
  function getExercises(exercises) {
-      if (exercises){
+      if (exercises) 
+      {
+        const ActualLinearProgress = withStyles((theme) => ({
+          root: {
+            height: 30,
+            borderRadius: 10
+          },
+          colorPrimary: {
+            backgroundColor: "#BBBBBB"
+          },
+          bar: {
+            backgroundColor: "#ac6ef3"
+          }
+        }))(LinearProgress);
+
+        const ExpectedLinearProgress = withStyles((theme) => ({
+          root: {
+            height: 30,
+            borderRadius: 10
+          },
+          colorPrimary: {
+            backgroundColor: "#BBBBBB"
+          },
+          bar: {
+            backgroundColor: "#20315f"
+          }
+        }))(LinearProgress);
+        
       const result = exercises.map((exercise) =>
       <div className = "Exercise-data">
         <Row>
             <Col>
-              <ProgressBar variant = {exercise.completionStatus} now = {exercise.completionAmount}/>
+              <ActualLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {exercise.completionAmount} color = "primary" thickness={5}/>
+              <ExpectedLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {exercise.completionStatus} color = "secondary"/>
             </Col>
             <Col>
-                <p>{exercise.name}</p>
-                <p>Due: {exercise.due}</p>
+                <p>{exercise.name}<br></br>{exercise.due}</p>
             </Col>
-          </Row>
+        </Row>
+        <br></br>
       </div>
       );
       return result;
