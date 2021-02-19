@@ -89,7 +89,8 @@
     font-weight: 500;
 }
 
-.complete-assignment-button-div {
+.Complete-assignment-button-col {
+    padding-left: 210%;
     z-index: 25;
 }
 

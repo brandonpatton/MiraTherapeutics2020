@@ -124,12 +124,12 @@ class ClientView extends Component {
                                           <MDBCardTitle className="Assignment-completion-status-text">{this.completionStatusWords[this.state.selectedAssignment.status]}</MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
-                                      <Col>
+                                      <Col className = "Assignment-due-date-col">
                                         <div className = "Assignment-due-date-container">
                                           <MDBCardTitle className="Assignment-due-date-text">Due by: <u>{this.state.selectedAssignment.due}</u> </MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
-                                      <Col>
+                                      <Col className = "Complete-assignment-button-col">
                                         {completeAssignmentButton()}
                                       </Col>
                                   </Row>
@@ -211,19 +211,22 @@ function completeAssignment() {
     }
   }
 
-  // make a new barebones assignment so that a new bubbble can be made. Just exists with required fields
-  let newAssignmentForNewBubble = {
+  // Check if the newest assignment is an actual assignment. If not, make a new barebones assignment so that a new bubbble can be made. Just exists with required fields for visuals
+  if (data[data.length - 1].status !== 0) {
+    let newAssignmentForNewBubble = {
     visitNumber: data.length + 1,
-    due: "N/A",
+    due: "New",
     assignmentProgress: 0,
     status: 0
+    
+    }
+    data.push(newAssignmentForNewBubble)
   }
-  data.push(newAssignmentForNewBubble)
-  this.setState(() => ({
-    patient: {assignments: data},
-    selectedAssignment: data[data.length - 1],
-    assignmentCompletionDialogOpen: false
-  }))
+    this.setState(() => ({
+      patient: {assignments: data},
+      selectedAssignment: data[data.length - 1],
+      assignmentCompletionDialogOpen: false
+    }))
 }
 
 function changeVisibleAssignment(visitNumber) {
