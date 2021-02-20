@@ -75,7 +75,7 @@ function patientClick(patient) {
 
     componentDidMount() {
       window.onpopstate = function(event) {
-        // Allows back and forth action
+        // Allows back and forth action by refreshing the page if it was reached using the browser's back button
         if (event.currentTarget.location.pathname == "/PracticeView") window.location.reload()
     }
   }

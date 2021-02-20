@@ -1,3 +1,8 @@
+.App-logo {
+    max-width: 35%;
+    height: auto;
+}
+
 .Assignment-completion-body{
     float: right;
     width: 87%;
@@ -48,7 +53,7 @@
 }
 
 /* z-index value has to be higher than .Progress-bubbles-container */
-.clickMe {
+.Complete-assignment-button {
     z-index: 25;
 }
 

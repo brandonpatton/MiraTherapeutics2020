@@ -8,7 +8,7 @@ import { FormControl } from '@material-ui/core';
 import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import {Redirect,Switch} from 'react-router-dom';
-import logo from '../Mira.jpg';
+import logo from '../mira-new-medium.png';
 import {Row, Col, Container, Image, Card, /*Button*/} from 'react-bootstrap'
 import Form from 'react-bootstrap/Form';
 import picture from '../Bonelli-RECT.jpg';
@@ -172,7 +172,7 @@ function completeAssignmentButton() {
 
 
   return (<div className = "Complete-assignment-button-div">
-  <Button className = "clickMe" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {this.state.selectedAssignment.status == 2}>
+  <Button className = "Complete-assignment-button" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {this.state.selectedAssignment.status == 2}>
         {this.state.selectedAssignment.status == 0 ? "Create Assignment" : "Complete Assignment"}
       </Button>
       <Dialog
@@ -247,6 +247,7 @@ let getBubbleInfo = (assignmentsList) => {
   const ongoingBubbleColor = '#00b5d9'
   const completedBubbleColor = '#20315f'
   const completedBubblePathColor = '#FFFFFF'
+  const ongoingBubblePathColor = '#ac6ef3'
     let progressBubbleComponents = []
     // 7 Assignments on the row at a time
     for (let assignmentIndex = 0; assignmentIndex < 7; assignmentIndex++) {
@@ -271,7 +272,7 @@ let getBubbleInfo = (assignmentsList) => {
             styles={buildStyles({
               backgroundColor: `${targetAssignment.status == 2 ? completedBubbleColor : ongoingBubbleColor}`,
               textColor: "#fff",
-              pathColor: `${targetAssignment.status == 2 ? completedBubblePathColor : '#000000'}`,
+              pathColor: `${targetAssignment.status == 2 ? completedBubblePathColor : ongoingBubblePathColor}`,
               trailColor: "transparent"
             })}/>
           </div>)
@@ -318,7 +319,7 @@ class ClientInfo extends Component {
             borderRadius: 10
           },
           colorPrimary: {
-            backgroundColor: "#BBBBBB"
+            backgroundColor: "#FFFFFF"
           },
           bar: {
             backgroundColor: "#ac6ef3"
@@ -331,7 +332,7 @@ class ClientInfo extends Component {
             borderRadius: 10
           },
           colorPrimary: {
-            backgroundColor: "#BBBBBB"
+            backgroundColor: "#FFFFFF"
           },
           bar: {
             backgroundColor: "#20315f"
