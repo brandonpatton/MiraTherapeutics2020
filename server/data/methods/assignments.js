@@ -1,18 +1,20 @@
 const mongoose = require('mongoose')
 const { Assignment } = require('../models/assignment');
-const { Exercise } = require('./exercises');
 
 module.exports = {
     async createAssignment(assignment) {
         let newAssignment = new Assignment({
             exerciseList:assignment.exerciseList,
             dateAssigned:assignment.dateAssigned,
+            due: assignment.due,
             patientName:assignment.patientName,
             patientId:assignment.patientId,
             therapistName:assignment.therapistName,
             therapistId:assignment.therapistId,
             assignmentProgress:assignment.assignmentProgress,
-            visitNumber:assignment.visitNumber
+            visitNumber:assignment.visitNumber,
+            overallInstructions: assignment.overallInstructions,
+            completedByTherapist: assignment.completedByTherapist
         });
         const insertInfo = await newAssignment.save();
         if (insertInfo.errors) throw `Could not add assignment. Error: ${insertInfo.errors}`
@@ -31,9 +33,6 @@ module.exports = {
         if(assignment.deletedCount == 0){
         throw 'No assignment exists with that id'
         }
-        //for(i=0;i<length.exerciseList;i++){
-          //  Exercise.removeExercise(mongoUri, exerciseList[i].id)
-       // }
 
 
         return `Successfully removed assignment with id:${id}`
@@ -43,12 +42,15 @@ module.exports = {
         const updatedAssignment = await Assignment.updateOne({ _id: id}, {
             exerciseList: newAssignment.exerciseList,
             dateAssigned: newAssignment.dateAssigned,
+            due: newAssignment.due,
 			patientName: newAssignment.patientName,
 			patientId: newAssignment.patientId,
 			therapistName: newAssignment.therapistName,
 			therapistId: newAssignment.therapistId,
 			assignmentProgress: newAssignment.assignmentProgress,
-			visitNumber: newAssignment.visitNumber
+			visitNumber: newAssignment.visitNumber,
+            overallInstructions: newAssignment.overallInstructions,
+            completedByTherapist: newAssignment.completedByTherapist
         })
         if (updatedAssignment.updatedCount === 0) throw 'Could not update assignment'
         return await this.getAssignment(id);
