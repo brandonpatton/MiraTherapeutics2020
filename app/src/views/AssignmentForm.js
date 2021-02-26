@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Component, useState } from "react";
 import '../css/ExerciseForm.css';
 import { MDBCard, MDBCardBody, MDBContainer,MDBCardTitle,MDBCardText } from "mdbreact";
@@ -15,26 +15,30 @@ import '../css/AssignmentForm.css'
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from "react-router-dom";
 
-function SetUpNextSession(){
+
+
+/*function SetUpNextSession(){
     const [startDate, setStartDate] = useState(new Date());
-}
+}*/
 
 class AssignmentForm extends Component {
     
   
     constructor(props) {
         super(props);
-        
-        this.state = {
-            startDate: new Date()
-          };
-        this.handleChange = this.handleChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
         var yyyy = today.getFullYear();
         today = mm + '/' + dd + '/' + yyyy;
+
+        
+        
+        this.state = {
+            startDate: new Date()
+          };
+        
         this.assignment = 
         {
             dateAssigned: today,
@@ -43,27 +47,31 @@ class AssignmentForm extends Component {
             clientName: "Eduardo Bonelli",
             due: '11/17',
             status: 'Ongoing',
+            nextSession: "",
             exercises: [
                 {
-                    name: "Breathing Exercises",
+                    type: "Grounding",
+                    name: "Breathing Exercise",
                     due: '11/12',
-                    completionStatus: "danger",
+                    completionStatus: "Danger",
                     completionAmount: 75,
                     frequency: 'Daily',
                     specialInstructions: 'Yes'
                 },
                 {
-                    name: "PCL-5 Assessments",
+                    type: "Assessments",
+                    name: "PHQ-9 Questionnaire",
                     due: '11/15',
-                    completionStatus: "success",
+                    completionStatus: "Success",
                     completionAmount: 100,
-                    frequency: 'Daily',
+                    frequency: 'Weekly',
                     specialInstructions: 'Yes'
                 },
                 {
-                    name: "Readings",
+                    type: "Reading",
+                    name: "Trauma Story",
                     due: '11/17',
-                    completionAmount: "info",
+                    completionStatus: "Ongoing",
                     completionAmount: 50,
                     frequency: 'Daily',
                     specialInstructions: 'Yes'
@@ -72,11 +80,32 @@ class AssignmentForm extends Component {
             ]
         }
     }
-    handleChange(date) {
-        this.setState({
-            startDate: date
-        })
+
+    
+
+
+    getExercises(exercises, next) {
+        
+        const result = exercises.map((exercise) =>
+        <Row>
+            <div className = "Exercise-card-row">
+                <MDBCard className = "Exercise-card-body">
+                    <p className="exerciseTitle">{exercise.name} <Link to = {{
+                        pathname: "/ExerciseForm",
+                        data: {editExercise: exercise,
+                                addedExercises: exercises,
+                                nextSessionDate: [String(next.getMonth() + 1), String(next.getDate()), String(next.getFullYear())]}}}><EditIcon className = "Edit-icon"/></Link></p>
+                    <p className="exerciseCard">{exercise.frequency}</p>
+                    <p className="exerciseCard">Due By: {exercise.due}</p>
+                    <p className="exerciseCard">Special Instructions: {exercise.specialInstructions}</p>
+                </MDBCard>
+            </div>
+        </Row>
+        );
+        return result;
     }
+
+
     onFormSubmit(e) {
         e.preventDefault();
     }
@@ -99,25 +128,33 @@ class AssignmentForm extends Component {
                         <MDBCard className = "Assignment-information-body">
                             <p className = "Assignment-information-top">Date Created: {this.assignment.dateAssigned} Visit Number: {this.assignment.visitNumber}</p>
                             <p className = "Assignment-information-top">Next Session: 
-                                <form onSubmit={ this.onFormSubmit }>
+                                
                                     <div>
                                         <DatePicker
-                                            selected={ this.state.startDate }
-                                            onChange={ this.handleChange }
+                                            selected={this.state.startDate}
+                                            onSelect={selected => this.setState(() => ({startDate: new Date(selected.getFullYear(), selected.getMonth(), selected.getDate())}))}
+                                            
+                                            //onChange={selected => this.setState({startDate: selected})}
                                             name="startDate"
-                                            dateFormat="MM/dd/yyyy"
                                         />
+                                        {console.log(this.state.startDate)}
                                     </div>
-                                </form>
+                                
                             </p>
                             <p className = "Assignment-information-top">Therapist: {this.assignment.therapistName}</p>
                             <p className = "Assignment-information-top">Client Name: {this.assignment.clientName}</p>
                             <h2>Exercises</h2>
                             <div className = "Exercise-card-container">
-                                <ExerciseRow exercises={this.assignment.exercises} />
+                            {console.log(this.state.startDate)}
+                            {this.getExercises(this.assignment.exercises, this.state.startDate)}
                                 <Row>
                                     <MDBCard className = "Add-exercise">
-                                        <Link to = "/ExerciseForm">
+                                        
+                                        <Link to = {{ 
+                                            pathname: "/ExerciseForm",
+                                            data: {addedExercises: this.assignment.exercises,
+                                                    nextSessionDate: [String(this.state.startDate.getMonth() + 1), String(this.state.startDate.getDate()), String(this.state.startDate.getFullYear())] }
+                                            }}>
                                             <Button variant="link" size="lg">
                                                 Add Exercise
                                             </Button>
@@ -158,20 +195,29 @@ class AssignmentForm extends Component {
     }
   }
 
-  class ExerciseRow extends Component {
+  /*class ExerciseRow extends Component {
+    
     constructor(props) {
       super(props);
+      console.log(props);
       this.exercises = props.exercises;
+      this.nextSession = props.nextSession;
     }
+    
     getExercises(exercises) {
+        console.log(props);
         const result = exercises.map((exercise) =>
         <Row>
             <div className = "Exercise-card-row">
                 <MDBCard className = "Exercise-card-body">
-                        <p className="exerciseTitle">{exercise.name} <EditIcon className = "Edit-icon"/></p>
-                        <p className="exerciseCard">{exercise.frequency}</p>
-                        <p className="exerciseCard">Due By: {exercise.due}</p>
-                        <p className="exerciseCard">Special Instructions: {exercise.specialInstructions}</p>
+                    <p className="exerciseTitle">{exercise.name} <Link to = {{
+                        pathname: "/ExerciseForm",
+                        data: {editExercise: exercise,
+                                addedExercises: this.exercises,
+                                nextSessionDate: this.nextSession}}}><EditIcon className = "Edit-icon"/></Link></p>
+                    <p className="exerciseCard">{exercise.frequency}</p>
+                    <p className="exerciseCard">Due By: {exercise.due}</p>
+                    <p className="exerciseCard">Special Instructions: {exercise.specialInstructions}</p>
                 </MDBCard>
             </div>
         </Row>
@@ -182,7 +228,7 @@ class AssignmentForm extends Component {
     render() {
         return(this.getExercises(this.exercises))
     }
-}
+}*/
   /*class NextSession extends Component {
     
     constructor(props) {

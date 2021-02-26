@@ -9,7 +9,7 @@ import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Redirect} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 
 
 
@@ -18,11 +18,20 @@ class ExerciseForm extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        chosenExerciseType: "Grounding",
-        redirect: false,
+        chosenExercise: {
+          type: "",
+          name: "",
+          due: '',
+          frequency: '',
+          specialInstructions: ''
+        },
+        exerciseToEdit: props.location.data.editExercise,
+        added: props.location.data.addedExercises,
+        nextSession: props.location.data.nextSessionDate
+        
       }
       
-
+      console.log(this.state.added);
 
       this.exerciseTypes = {
         "Grounding": ["Flashback Grounding", "Color Finder", "Breathing Exercise", "Vibration Tool", "Bilateral Simulation", "5, 4, 3, 2, 1 Grounding", "Any", "All"],
@@ -32,14 +41,75 @@ class ExerciseForm extends Component {
         "Assessments": ["PCL-5 Questionnaire", "PHQ-9 Questionnaire"],
         "Lists": ["Gratefullness List", "Self-Care", "Stuck Points", "Create Your Own List", "Track Symptoms", "Track Triggers"]      
       }
-      this.exercises = [];
+      this.dueByChoices = ["Next Session", "Custom Days", "Custom Weeks", "Choose Date"];
+      this.frequenceyChoices = ["Daily", "Weekly", "Bi-Weekly", "Custom per Week"];
+      if (this.state.added == [] || !this.state.added){
+        this.exercises = [];
+      } else {
+        this.exercises = this.state.added;
+      }
+      
+      if (this.state.exerciseToEdit == [] || this.state.exerciseToEdit == undefined){
+        this.state.chosenExercise = {
+          type: "Grounding",
+          name: "Flashback Grounding",
+          due: 'Next Session',
+          frequency: 'Daily',
+          specialInstructions: ''
+      };
+      } else {
+        this.state.chosenExercise = {
+          type: this.state.exerciseToEdit.type,
+          name: this.state.exerciseToEdit.name,
+          due: this.state.exerciseToEdit.due,
+          frequency: this.state.exerciseToEdit.frequency,
+          specialInstructions: this.state.exerciseToEdit.specialInstructions
+      }
+    }
+    }
+    
+    bigFilter(exerciseList, exercise){
+      const converted = [];
+      for (let i = 0; i < exerciseList.length; i++){
+        if (exerciseList[i].type == exercise.type && exerciseList[i].name == exercise.name && exerciseList[i].due == exercise.due && exerciseList[i].frequency == exercise.frequency && exerciseList[i].specialInstructions == exercise.specialInstructions){
+            exerciseList.splice(i, 1);
+            i--;
+            //delete exerciseList[i];
+        }
+      }
+      for (let j = 0; j < exerciseList.length; j++){
+        converted.push(Object.values(exerciseList[j]));
+      }
+      exerciseList = converted; 
       
 
+      //delete exerciseList[exerc]
+      //var filtered = exerciseList.filter(function(value, index, arr))
+      console.log(exerciseList);
+      console.log(this.state.added);
+      console.log(exercise);
+      return exerciseList;
+    }
+
+    getExercises(exercises) {
+      const result = exercises.map((exercise) =>
+      <Row>
+          <div className = "Exercise-card-row">
+              <MDBCard className = "Exercise-card-body">
+                  <p className="exerciseTitle">{exercise[1]}</p>
+                  <p className="exerciseCard">{exercise[5]}</p>
+                  <p className="exerciseCard">Due By: {exercise[2]}</p>
+                  <p className="exerciseCard">Special Instructions: {exercise[6]}</p >
+              </MDBCard>
+          </div>
+      </Row>
+      );
+      return result;
     }
     getExerciseFormData(data){
       const result = Object.keys(data).map((d) =>
         <option>{d}</option>
-      );
+      );      
       return result;
     }
     getExerciseTitle(data, choice){
@@ -58,6 +128,7 @@ class ExerciseForm extends Component {
           return <Redirect to='/AssignmentForm'/>
       } 
     }
+    
     render(){
       return(
         <div>
@@ -72,7 +143,7 @@ class ExerciseForm extends Component {
               <Row className = "background">
                 <Col className = "Added-exercise-list">
                     <Row className = "Added-exercise-list-text">Added Exercises:</Row>
-                  <ExerciseRow exercises={this.exercises} />
+                    {this.getExercises(this.bigFilter(this.exercises, this.state.chosenExercise))}
                 </Col>
                 {/*<Col>
                   <MDBCard className="Exercise-preview-body">
@@ -84,20 +155,20 @@ class ExerciseForm extends Component {
                     <Form>
                       <Form.Group controlId="exerciseType">
                         <Form.Label>Exercise Type</Form.Label>
-                        <Form.Control  onChange = {event => this.setState(()=>({chosenExerciseType: event.target.value}))} as="select" custom>
+                        <Form.Control  onChange = {event => this.setState(()=>({chosenExercise: {type: event.target.value}}))} as="select" defaultValue = {this.state.chosenExercise.type} custom>
                           {this.getExerciseFormData(this.exerciseTypes)}
                         </Form.Control>
                       </Form.Group>
                       <Form.Group controlId="exerciseTitle">
                         <Form.Label>Exercise Title</Form.Label>
-                        <Form.Control as="select" custom>
-                          {this.getExerciseTitle(this.exerciseTypes, this.state.chosenExerciseType)}
+                        <Form.Control onChange = {event => this.setState(()=>({chosenExercise: {name: event.target.value}}))} as="select" defaultValue = {this.state.chosenExercise.name} custom>
+                          {this.getExerciseTitle(this.exerciseTypes, this.state.chosenExercise.type)}
                         </Form.Control>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label>Due By</Form.Label>
-                        <Form.Control as="select" custom>
-                          <option>Next Session</option>
+                        <Form.Control onChange = {event => this.setState(()=>({chosenExercise: {due: event.target.value}}))} as="select" defaultValue = {"Next Session:" + toString(this.state.nextSession)} custom>
+                          <option>{`Next Session: ${this.state.nextSession[0]}/${this.state.nextSession[1]}/${this.state.nextSession[2]}`}</option>
                           <option>Days</option>
                           <option>Weeks</option>
                           <option>Choose Date</option>
@@ -105,7 +176,7 @@ class ExerciseForm extends Component {
                       </Form.Group>
                       <Form.Group controlId="frequency">
                         <Form.Label>Frequency</Form.Label>
-                        <Form.Control as="select" custom>
+                        <Form.Control onChange = {event => this.setState(()=>({chosenExercise: {due: event.target.value}}))} as="select" defaultValue = {this.state.chosenExercise.frequency} custom>
                           <option>Daily</option>
                           <option>Weekly</option>
                           <option>Bi-Weekly</option>
@@ -115,13 +186,18 @@ class ExerciseForm extends Component {
                       
                       <Form.Group controlId="specialInstructions">
                         <Form.Label>Special Instructions</Form.Label>
-                        <Form.Control as = "textarea" placeholder="Enter Special Instructions" rows = {4} />
+                        <Form.Control onChange = {event => this.setState(()=>({chosenExercise: {specialInstructions: event.target.value}}))} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} />
                       </Form.Group>
-                      <Button onClick={this.setRedirect} variant="primary" type="Submit">
-                        
-                        Add
-                      </Button>
-                      
+                      <Link to = {{
+                        pathname: "/AssignmentForm",
+                        data: {editedExerciseList: this.exercises,
+                                nextSession: this.state.nextSession} 
+                      }}>
+                        <Button onClick={this.setRedirect} variant="primary" type="Submit">
+                          
+                          Add
+                        </Button>
+                      </Link>
                     </Form>
                   </div>
                 </Col>
@@ -133,7 +209,7 @@ class ExerciseForm extends Component {
     }
   }
 
-class ExerciseRow extends Component {
+/*class ExerciseRow extends Component {
   constructor(props) {
     super(props);
     this.exercises = props.exercises;
@@ -157,7 +233,7 @@ class ExerciseRow extends Component {
   render() {
     return(this.getExercises(this.exercises))
   }
-}
+}*/
  
 
 export default ExerciseForm;
