@@ -1,3 +1,8 @@
+.App-logo {
+    max-width: 35%;
+    height: auto;
+}
+
 .Assignment-completion-body{
     float: right;
     width: 87%;
@@ -47,6 +52,11 @@
     z-index: -2;
 }
 
+/* z-index value has to be higher than .Progress-bubbles-container */
+.Complete-assignment-button {
+    z-index: 25;
+}
+
 .clientInfoCard{
     padding: 2%;
 }
@@ -84,6 +94,11 @@
     font-weight: 500;
 }
 
+.Complete-assignment-button-col {
+    padding-left: 210%;
+    z-index: 25;
+}
+
 .Exercise-data{
     width: 785%;
     /* NEED THE COLORS TO MATCH (bubbles and bars)*/
@@ -108,7 +123,6 @@
 
 .Progress-bubble-column {
     padding-left: 6%;
-    bottom: 10%;
 }
 
 .Progress-bubble-column-hidden {
