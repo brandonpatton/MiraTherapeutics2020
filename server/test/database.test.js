@@ -27,18 +27,22 @@ afterEach(async () => {
 
 describe('insert', () => {
 	it('should insert an assignment with no exercises', async () => {
-		expect.assertions(10)
+		expect.assertions(13)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
 		const noExerciseAssignment = new Assignment({
 			exerciseList: [],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'Do your best!',
+			completedByTherapist: false
 		});
 
 		let insertInfo = await assignmentData.createAssignment(noExerciseAssignment);
@@ -47,12 +51,15 @@ describe('insert', () => {
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length);
 		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
+		expect(res.due).toEqual(insertInfo.due);
 		expect(res.patientName).toEqual(insertInfo.patientName);
 		expect(res.patientId).toEqual(insertInfo.patientId);
 		expect(res.therapistName).toEqual(insertInfo.therapistName);
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
+		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
 
 		await expect(assignmentData.createAssignment()).rejects.toThrow()
 
@@ -60,6 +67,7 @@ describe('insert', () => {
 
 	it('should insert an assignment with exercises', async () => {
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
 
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
@@ -90,30 +98,36 @@ describe('insert', () => {
 		const assignmentWithExercises = new Assignment({
 			exerciseList: [insertFlashback._id, insertTraumaStory._id],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'Hooray!',
+			completedByTherapist: false
 		});
 
 		
 		const insertInfo = await assignmentData.createAssignment(assignmentWithExercises);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id})
-		expect.assertions(10 + res.exerciseList.length)
+		expect.assertions(13 + res.exerciseList.length)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
 		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
 		for (let i = 0; i < res.exerciseList.length; i++) expect(res.exerciseList[i]).toEqual(insertInfo.exerciseList[i])
 		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
+		expect(res.due).toEqual(insertInfo.due);
 		expect(res.patientName).toEqual(insertInfo.patientName);
 		expect(res.patientId).toEqual(insertInfo.patientId);
 		expect(res.therapistName).toEqual(insertInfo.therapistName);
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
+		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
 
 	});
 
@@ -122,18 +136,23 @@ describe('insert', () => {
 
 describe('retrieve', () => {
 	it('should retrieve an assignment with no exercises from the database', async () => {
-		expect.assertions(11)
+		expect.assertions(13)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const noExerciseAssignment = new Assignment({
 			exerciseList: [],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'This sure is an assignment',
+			completedByTherapist: false
 		});
 
 		const insertInfo = await noExerciseAssignment.save()
@@ -142,13 +161,15 @@ describe('retrieve', () => {
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length);
 		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
+		expect(res.due).toEqual(insertInfo.due);
 		expect(res.patientName).toEqual(insertInfo.patientName);
 		expect(res.patientId).toEqual(insertInfo.patientId);
 		expect(res.therapistName).toEqual(insertInfo.therapistName);
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
-		expect(res.specialInstructions).toEqual(insertInfo.specialInstructions);
+		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
+		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
 		let badId = mongoose.Types.ObjectId()
 		await expect(assignmentData.getAssignment(badId)).rejects.toEqual('No assignment exists with that id')
 
@@ -157,6 +178,7 @@ describe('retrieve', () => {
 	it('should retrieve an assignment with exercises from the database', async () => {
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
 
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
@@ -187,30 +209,36 @@ describe('retrieve', () => {
 		const assignmentWithExercises = new Assignment({
 			exerciseList: [insertFlashback._id, insertTraumaStory._id],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'Bonjour',
+			completedByTherapist: false
 		});
 
 		
 		const insertInfo = await assignmentWithExercises.save()
 
 		const res = await assignmentData.getAssignment(insertInfo._id)
-		expect.assertions(10 + res.exerciseList.length)
+		expect.assertions(13 + res.exerciseList.length)
 		expect(res._id).toEqual(insertInfo._id);
 		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
 		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
 		for (let i = 0; i < res.exerciseList.length; i++) expect(res.exerciseList[i]).toEqual(insertInfo.exerciseList[i])
 		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
+		expect(res.due).toEqual(insertInfo.due);
 		expect(res.patientName).toEqual(insertInfo.patientName);
 		expect(res.patientId).toEqual(insertInfo.patientId);
 		expect(res.therapistName).toEqual(insertInfo.therapistName);
 		expect(res.therapistId).toEqual(insertInfo.therapistId);
 		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
 		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
+		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
+		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
 
 	});
 })
@@ -220,15 +248,20 @@ describe('remove', () => {
 		//expect.assertions(9)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+		
 		const noExerciseAssignment = new Assignment({
 			exerciseList: [],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'Good luck!',
+			completedByTherapist: false
 		});
 
 		const insertInfo = await noExerciseAssignment.save()
@@ -240,6 +273,7 @@ describe('remove', () => {
 	it('should remove an assignment with exercises from the database', async () => {
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
 
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
@@ -270,12 +304,15 @@ describe('remove', () => {
 		const assignmentWithExercises = new Assignment({
 			exerciseList: [insertFlashback._id, insertTraumaStory._id],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'This is just a test',
+			completedByTherapist: false
 		});
 
 		
@@ -293,6 +330,8 @@ describe('update', () => {
 		//expect.assertions(9)
 
         let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
         const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
             exerciseType: 'Grounding',
@@ -308,15 +347,20 @@ describe('update', () => {
 
 
 		testDateAssigned = new Date();
+		testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const noExerciseAssignment = new Assignment({
 			exerciseList: [],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'Have some instructions',
+			completedByTherapist: false
 		});
  
 		let insertInfo = await noExerciseAssignment.save();
@@ -326,12 +370,15 @@ describe('update', () => {
         const noExerciseUpdated = {
             exerciseList: [insertFlashback],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 25,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'This one has progress!',
+			completedByTherapist: false
         }
 
         const updatedAssignment = await assignmentData.updateAssignment(res._id, noExerciseUpdated)
@@ -340,12 +387,15 @@ describe('update', () => {
 		expect(updatedAssignment._id).toEqual(retrievedUpdatedAssignment._id);
 		expect(updatedAssignment.exerciseList.length).toEqual(retrievedUpdatedAssignment.exerciseList.length);
 		expect(updatedAssignment.dateAssigned).toEqual(retrievedUpdatedAssignment.dateAssigned);
+		expect(updatedAssignment.due).toEqual(retrievedUpdatedAssignment.due);
 		expect(updatedAssignment.patientName).toEqual(retrievedUpdatedAssignment.patientName);
 		expect(updatedAssignment.patientId).toEqual(retrievedUpdatedAssignment.patientId);
 		expect(updatedAssignment.therapistName).toEqual(retrievedUpdatedAssignment.therapistName);
 		expect(updatedAssignment.therapistId).toEqual(retrievedUpdatedAssignment.therapistId);
 		expect(updatedAssignment.assignmentProgress).toEqual(retrievedUpdatedAssignment.assignmentProgress);
 		expect(updatedAssignment.visitNumber).toEqual(retrievedUpdatedAssignment.visitNumber);
+		expect(updatedAssignment.overallInstructions).toEqual(retrievedUpdatedAssignment.overallInstructions);
+		expect(updatedAssignment.completedByTherapist).toEqual(retrievedUpdatedAssignment.completedByTherapist);
 
 	});
 })
@@ -355,6 +405,8 @@ describe('insert', () => {
 		expect.assertions(10)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
             exerciseType: 'Grounding',
@@ -389,6 +441,8 @@ describe('retrieve', () => {
 		expect.assertions(10)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
             exerciseType: 'Grounding',
@@ -424,6 +478,8 @@ describe('remove', () => {
 		//expect.assertions(9)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
             exerciseType: 'Grounding',
@@ -450,6 +506,8 @@ describe('update', () => {
 		//expect.assertions(9)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
             exerciseType: 'Grounding',
@@ -494,26 +552,34 @@ describe('retrieve', () => {
 		expect.assertions(3)
 
 		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
 		const johnDoeAssignment = new Assignment({
 			exerciseList: [],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 1
+			visitNumber: 1,
+			overallInstructions: 'Hang in there',
+			completedByTherapist: false
 		});
 
 		const johnDoeAssignment2 = new Assignment({
 			exerciseList: [],
 			dateAssigned: testDateAssigned,
+			due: testDue,
 			patientName: 'John Doe',
 			patientId: 'PjohnDoe1',
 			therapistName: 'Jane Doe',
 			therapistId: 'TjaneDoe1',
 			assignmentProgress: 0,
-			visitNumber: 2
+			visitNumber: 2,
+			overallInstructions: 'This is for the second visit',
+			completedByTherapist: false
 		});
 
 		const insertInfo = await johnDoeAssignment.save()
@@ -635,4 +701,74 @@ describe('retrieve', () => {
 			await expect(therapistData.getPatientsByTherapistId()).rejects.toEqual('No ID provided');
     });
     
+})
+describe('update', () => {
+	it('should update an assignment upon exercise completion', async () => {
+		//expect.assertions(9)
+
+		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
+		const flashbackExercise = new Exercise({
+            exerciseTitle: 'Flashback Grounding',
+            exerciseType: 'Grounding',
+            dueDate: testDateAssigned,
+            frequency: 'Weekly',
+            patientName: 'John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 0,
+            specialInstructions: 'Please let me know if you need any help!',
+            goal:10
+		});
+
+		const insertFlashback = await flashbackExercise.save()
+
+		testDateAssigned = new Date();
+		testDue = new Date(testDateAssigned.getTime() + 60000)
+
+		const ExerciseAssignment = new Assignment({
+			exerciseList: [flashbackExercise],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'John Doe',
+			patientId: 'PjohnDoe1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 1,
+			overallInstructions: 'You have a nice name',
+			completedByTherapist: false
+		});
+ 
+		let insertInfo = await ExerciseAssignment.save();
+
+
+        const updatedFlashbackExercise =  new Exercise({
+            exerciseTitle: 'New Flashback Grounding',
+            exerciseType: 'New Grounding',
+            dueDate: testDateAssigned,
+            frequency: 'New Weekly',
+            patientName: 'New John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 10,
+            specialInstructions: 'Exercise Complete :)',
+            goal:10
+		});
+
+		const res = await exerciseData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
+		const updatedAssignment = await Assignment.findOne({_id: ExerciseAssignment._id});
+		expect(updatedAssignment._id).toEqual(ExerciseAssignment._id);
+		expect(updatedAssignment.exerciseList.length).toEqual(ExerciseAssignment.exerciseList.length);
+		expect(updatedAssignment.dateAssigned).toEqual(ExerciseAssignment.dateAssigned);
+		expect(updatedAssignment.due).toEqual(ExerciseAssignment.due);
+		expect(updatedAssignment.patientName).toEqual(ExerciseAssignment.patientName);
+		expect(updatedAssignment.patientId).toEqual(ExerciseAssignment.patientId);
+		expect(updatedAssignment.therapistName).toEqual(ExerciseAssignment.therapistName);
+		expect(updatedAssignment.therapistId).toEqual(ExerciseAssignment.therapistId);
+		expect(updatedAssignment.assignmentProgress).toEqual(1);
+		expect(updatedAssignment.visitNumber).toEqual(ExerciseAssignment.visitNumber);
+		expect(updatedAssignment.overallInstructions).toEqual(ExerciseAssignment.overallInstructions);
+		expect(updatedAssignment.completedByTherapist).toEqual(ExerciseAssignment.completedByTherapist);
+
+	});
 })
