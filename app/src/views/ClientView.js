@@ -47,7 +47,9 @@ class ClientView extends Component {
               }
           ]
         },
-        selectedAssignment: {},
+        selectedAssignment: {
+          due: new Date()
+        },
         assignmentCompletionDialogOpen: false
 
       }
@@ -64,6 +66,7 @@ class ClientView extends Component {
       changeVisibleAssignment = changeVisibleAssignment.bind(this);
       completeAssignmentButton = completeAssignmentButton.bind(this)
       completeAssignment = completeAssignment.bind(this)
+      calculateExpectedExerciseProgress = calculateExpectedExerciseProgress.bind(this)
 
     }
 
@@ -73,6 +76,17 @@ class ClientView extends Component {
           .then(data => {
             // sort the assignments based on the number of the visit during which they were assigned
             data.sort((a, b) => a.visitNumber - b.visitNumber)
+            // add an extra assignment to allow for a new one to be created
+            if (data[data.length - 1].completedByTherapist) {
+              let newAssignmentForNewBubble = {
+                visitNumber: data.length + 1,
+                due: undefined,
+                assignmentProgress: 0,
+                status: 0
+                
+                }
+                data.push(newAssignmentForNewBubble)
+            }
             // update the state with the assignments in the right order
             this.setState(() => ({patient: {assignments: data}}))
             // make the assignment that's visible to the therapist the most recent one
@@ -121,12 +135,14 @@ class ClientView extends Component {
                                   <Row>
                                       <Col>
                                         <div className = "Assignment-completion-status-text-container">
-                                          <MDBCardTitle className="Assignment-completion-status-text">{this.completionStatusWords[this.state.selectedAssignment.status]}</MDBCardTitle> {/*Get this from patient data*/}
+                                          <MDBCardTitle className="Assignment-completion-status-text">{this.state.selectedAssignment.completedByTherapist ? 'Completed' : 'Ongoing'}</MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
                                       <Col className = "Assignment-due-date-col">
                                         <div className = "Assignment-due-date-container">
-                                          <MDBCardTitle className="Assignment-due-date-text">Due by: <u>{this.state.selectedAssignment.due}</u> </MDBCardTitle> {/*Get this from patient data*/}
+                                          <MDBCardTitle className="Assignment-due-date-text">
+                                            Due by: <u>{this.state.selectedAssignment.due ? `${new Date(this.state.selectedAssignment.due).getMonth() + 1}/${new Date(this.state.selectedAssignment.due).getDate()}` : ''}</u>
+                                          </MDBCardTitle> {/*Get this from patient data*/}
                                         </div>
                                       </Col>
                                       <Col className = "Complete-assignment-button-col">
@@ -156,6 +172,53 @@ class ClientView extends Component {
     }
   }
 
+// Take in an exercise and calculate expected progress. Due date is in model, assigned date is in exercise
+// Use the frequency to see how many times it should have been done by now
+function calculateExpectedExerciseProgress(exercise) {
+  // Return 100 if past the due date
+  if (new Date().getTime() > new Date(exercise.dueDate).getTime()) return 100
+  const millisecondsInADay = 1000*60*60*42
+  // frequency is included in the model. Will be Daily, Weekly, Bi-Weekly, or X times per week
+  const frequency = exercise.frequency
+  // progress is included in the model. It indicates how many times the exercise has been completed
+  const totalCompletions = exercise.goal
+  // Get the day the exercise was assigned
+  const assignmentDate = new Date(this.state.selectedAssignment.dateAssigned)
+  // Get the day the exercise is due
+  const dueDate = new Date(exercise.dueDate)
+  // Get today's date as a reference point
+  const today = new Date()
+  // Calculate how many days have passed since the exercise was assigned
+  let daysSinceAssignment;
+  daysSinceAssignment = (today.getTime() - assignmentDate.getTime()) / millisecondsInADay
+  // Calculate how many days there were to complete the assignment
+  let daysToCompleteExercise;
+  daysToCompleteExercise = (dueDate.getTime() - assignmentDate.getTime()) / millisecondsInADay
+  // Will indicate how many times the exercise should have been completed
+  let expectedCompletions = 0
+  switch (frequency) {
+    case "Daily":
+      expectedCompletions = daysSinceAssignment
+      break
+    case "Weekly":
+      expectedCompletions = daysSinceAssignment/7
+      break
+    case "Bi-Weekly":
+      expectedCompletions = daysSinceAssignment/3.5
+      break
+    default:
+      // X per week case
+      const completionsPerWeek = frequency.split(" ")[0]
+      expectedCompletions = daysSinceAssignment/(7/completionsPerWeek)
+      break
+  }
+
+  // Return it as a percent
+  return 100 * expectedCompletions/totalCompletions
+
+}
+
+
 function completeAssignmentButton() {
 
   const handleClickOpen = () => {
@@ -172,8 +235,8 @@ function completeAssignmentButton() {
 
 
   return (<div className = "Complete-assignment-button-div">
-  <Button className = "Complete-assignment-button" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {this.state.selectedAssignment.status == 2}>
-        {this.state.selectedAssignment.status == 0 ? "Create Assignment" : "Complete Assignment"}
+  <Button className = "Complete-assignment-button" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {this.state.selectedAssignment.completedByTherapist}>
+        {this.state.selectedAssignment.due != undefined ? "Complete Assignment" : "Create Assignment"}
       </Button>
       <Dialog
         open = {this.state.assignmentCompletionDialogOpen}
@@ -181,14 +244,14 @@ function completeAssignmentButton() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{this.state.selectedAssignment.status == 1 ? "Complete Assignment?" : "Create Assignment?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{this.state.selectedAssignment.due != undefined ? "Complete Assignment?" : "Create Assignment?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {this.state.selectedAssignment.status == 1 ? "Are you sure you want to complete the selected assignment?" : "Would you like to create a new assignment?"}
+            {this.state.selectedAssignment.due != undefined ? "Are you sure you want to complete the selected assignment?" : "Would you like to create a new assignment?"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.state.selectedAssignment.status == 1 ? completeAssignment : (() => {alert("You want to make a new assignment"); this.setState(() => ({assignmentCompletionDialogOpen: false}))})} color="primary">
+          <Button onClick={this.state.selectedAssignment.due != undefined ? completeAssignment : (() => {alert("You want to make a new assignment"); this.setState(() => ({assignmentCompletionDialogOpen: false}))})} color="primary">
             Yes
           </Button>
           <Button onClick={handleClose} color="primary" autoFocus>
@@ -206,16 +269,26 @@ function completeAssignment() {
   let data = this.state.patient.assignments
   for (let assignment of data) {
     if (assignment.visitNumber == targetVisitNumber) {
-      assignment.status = 2
+      assignment.completedByTherapist = true
+      const postSettings = {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(assignment),
+      }
+      fetch(`http://localhost:3080/assignments/${assignment._id}/edit`, postSettings)
+        .then(res => res.json())
       break
     }
   }
 
   // Check if the newest assignment is an actual assignment. If not, make a new barebones assignment so that a new bubbble can be made. Just exists with required fields for visuals
-  if (data[data.length - 1].status !== 0) {
+  if (data[data.length - 1].completedByTherapist) {
     let newAssignmentForNewBubble = {
     visitNumber: data.length + 1,
-    due: "New",
+    due: undefined,
     assignmentProgress: 0,
     status: 0
     
@@ -243,6 +316,18 @@ function changeVisibleAssignment(visitNumber) {
   }))
 }
 
+// Take in an assignment. Return the total progress as a percent. Divide assignment progress (completions so far) by total amount of completions expected
+function calculateAssignmentProgressAsPercent(assignment) {
+  if (assignment.due) {
+    let totalCompletions = 0;
+    for (let exercise of assignment.exerciseList) {
+      totalCompletions += exercise.goal
+    }
+    return 100 * assignment.assignmentProgress / totalCompletions
+  }
+  return 0
+}
+
 let getBubbleInfo = (assignmentsList) => {
   const ongoingBubbleColor = '#00b5d9'
   const completedBubbleColor = '#20315f'
@@ -253,7 +338,7 @@ let getBubbleInfo = (assignmentsList) => {
     for (let assignmentIndex = 0; assignmentIndex < 7; assignmentIndex++) {
       // Make an invisible assignment bubble so the spacing still works out
       if (assignmentsList.length <= assignmentIndex) {
-        progressBubbleComponents.unshift(
+        progressBubbleComponents.push(
           <div className = "Progress-bubble-column-hidden">
             <CircularProgressbar  className = "Progress-bubbles"
             background
@@ -265,14 +350,14 @@ let getBubbleInfo = (assignmentsList) => {
         let targetAssignment = assignmentsList[targetIndex]
         progressBubbleComponents.unshift(
           <div className = "Progress-bubble-column" onClick = {() => changeVisibleAssignment(targetAssignment.visitNumber)}>
-            <CircularProgressbar  className = "Progress-bubbles" value={targetAssignment.assignmentProgress}
-            text={`${targetAssignment.due}`}
+            <CircularProgressbar  className = "Progress-bubbles" value={calculateAssignmentProgressAsPercent(targetAssignment)}
+            text={targetAssignment.due ? `${new Date(targetAssignment.due).getMonth()+1}/${new Date(targetAssignment.due).getDate()}` : 'New'}
             background
             backgroundPadding={6}
             styles={buildStyles({
-              backgroundColor: `${targetAssignment.status == 2 ? completedBubbleColor : ongoingBubbleColor}`,
+              backgroundColor: `${targetAssignment.completedByTherapist ? completedBubbleColor : ongoingBubbleColor}`,
               textColor: "#fff",
-              pathColor: `${targetAssignment.status == 2 ? completedBubblePathColor : ongoingBubblePathColor}`,
+              pathColor: `${targetAssignment.completedByTherapist ? completedBubblePathColor : ongoingBubblePathColor}`,
               trailColor: "transparent"
             })}/>
           </div>)
@@ -343,11 +428,11 @@ class ClientInfo extends Component {
       <div className = "Exercise-data">
         <Row>
             <Col>
-              <ActualLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {exercise.completionAmount} color = "primary" thickness={5}/>
-              <ExpectedLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {exercise.completionStatus} color = "secondary"/>
+              <ActualLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {100*exercise.progress/exercise.goal} color = "primary" thickness={5}/>
+              <ExpectedLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {calculateExpectedExerciseProgress(exercise)} color = "primary"/>
             </Col>
             <Col>
-                <p>{exercise.name}<br></br>{exercise.due}</p>
+                <p>{exercise.exerciseTitle}<br></br>{`${new Date(exercise.dueDate).getMonth()+1}/${new Date(exercise.dueDate).getDate()}`}</p>
             </Col>
         </Row>
         <br></br>
