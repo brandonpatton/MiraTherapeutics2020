@@ -25,47 +25,54 @@ function patientClick(patient) {
     constructor(props) {
       super(props);
       this.state = { selectedPatient: {
-                    name: '',
-                    trackedSymptoms: 0,
-                    groundingExercises: 0,
-                    assignments: [],
+                      name: 'Bruce Wayne',
+                      trackedSymptoms: 3,
+                      groundingExercises: 5,
+                      assignments: [true, false],
+                      nextSession: '3/4',
+                      status: 'Ongoing',
                     } };
       this.listItems = []
-      this.therapist = {
-        name: 'Miranda Cosgrove',
-        nextSession: '11/19',
-        status: 'Ongoing',
-      }
       this.patients = [
-        {
-          name: 'James Acaster',
-          trackedSymptoms: 3,
-          groundingExercises: 5,
-          assignments: [true, true],
-        },
-        {
-          name: 'Eduardo Bonelli',
-          trackedSymptoms: 3,
-          groundingExercises: 5,
-          assignments: [true, false],
-        },
         {
           name: 'Bruce Wayne',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
+          nextSession: '3/4',
+          status: 'Ongoing'
         },
         {
           name: 'Craig Ferguson',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
+          nextSession: '2/8',
+          status: 'Ongoing'
+        },
+        {
+          name: 'Eduardo Bonelli',
+          trackedSymptoms: 3,
+          groundingExercises: 5,
+          assignments: [true, false],
+          nextSession: '12/24',
+          status: 'Ongoing'
+        },
+        {
+          name: 'James Acaster',
+          trackedSymptoms: 3,
+          groundingExercises: 5,
+          assignments: [true, true],
+          nextSession: '11/20',
+          status: 'Completed'
         },
         {
           name: 'Scooby Doo',
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
+          nextSession: '3/14',
+          status: 'Ongoing'
         }
       ];
 
@@ -92,18 +99,18 @@ function patientClick(patient) {
                       <Image src={acasterPicture} roundedCircle className="picture"/>
                     </Row>
                     <Row className = "Name-Row justify-content-md-center">
-                      <Card className = "Name-Card">{this.therapist.name}</Card>
+                      <Card className = "Name-Card">{this.state.selectedPatient.name}</Card>
                     </Row>
                     <Row className= "Name-Row justify-content-md-center">
-                      <Card className = "Next-Session-Date">{this.therapist.nextSession}</Card>
+                      <Card className = "Next-Session-Date">{this.state.selectedPatient.nextSession}</Card>
                     </Row>
                     <Row className = "Name-Row justify-content-md-center">
-                      <Card className = "Status">{this.therapist.status}</Card>
+                      <Card className = "Status">{this.state.selectedPatient.status}</Card>
                     </Row>
                     <Row className = "Name-Row justify-content-md-center">
                       <Link to = {{
                           pathname: "/ClientView",
-                          data: {name: this.state.selectedPatient.name} // your data array of objects
+                          data: {name: this.state.selectedPatient} // your data array of objects
                         }}><Button variant="info" className = "Client-View-Button">Go To Client View</Button></Link>
                     </Row> 
                   </div>  
@@ -145,7 +152,6 @@ class TableRow extends Component {
         <td className = "Completion">Completed {this.getCompleted(patient.assignments)}/{patient.assignments.length} homework assignments</td>
         <p className = "Tab"></p>
         <td className = "Completion-indicator"><Image src={green} Green/></td>
-        
       </tr>
     );
     return rowItems;
