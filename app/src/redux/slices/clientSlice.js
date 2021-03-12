@@ -26,6 +26,7 @@ const clientSlice = createSlice({
     assignments: [],
     clientSince: "",
     nextSession: "",
+    selectedAssignment: {},
     //eventLogs: [],
     //errors: [],
     loading: "idle",
@@ -35,6 +36,9 @@ const clientSlice = createSlice({
     openClient: (state, action) => {
       state.clientId = action.payload;
     },
+    changeActiveAssignment: (state, action) => {
+      state.selectedAssignment = action.payload;
+    }
   },
   extraReducers: {
     [closeClient.pending]: (state, action) => {

@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Page1 from "./App";
 import PracticeView from "./views/PracticeView";
 import ExerciseForm from "./views/ExerciseForm";
-import ClientView from "./views/ClientView";
+import ClientView from "./views/ClientViewFn";
 import AssignmentForm from "./views/AssignmentForm";
 const rootElement = document.getElementById("root");
 ReactDOM.render(
