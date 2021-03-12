@@ -110,7 +110,7 @@ function patientClick(patient) {
                     <Row className = "Name-Row justify-content-md-center">
                       <Link to = {{
                           pathname: "/ClientView",
-                          data: {name: this.state.selectedPatient} // your data array of objects
+                          data: {name: this.state.selectedPatient.name} // your data array of objects
                         }}><Button variant="info" className = "Client-View-Button">Go To Client View</Button></Link>
                     </Row> 
                   </div>  

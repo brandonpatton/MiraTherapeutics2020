@@ -1,18 +1,13 @@
 import React from "react";
-import ReactDOM from 'react-dom';
+import { useDispatch, useSelector } from "react-redux "
 import { Component } from "react";
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import useState from 'react';
 import { FormControl } from '@material-ui/core';
 import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
-import {Redirect,Switch} from 'react-router-dom';
 import logo from '../mira-new-medium.png';
 import {Row, Col, Container, Image, Card, /*Button*/} from 'react-bootstrap'
-import Form from 'react-bootstrap/Form';
 import picture from '../Bonelli-RECT.jpg';
-import { useHistory } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   CircularProgressbar,
