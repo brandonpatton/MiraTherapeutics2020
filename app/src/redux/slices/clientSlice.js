@@ -12,33 +12,25 @@ export const closeClient = createAsyncThunk(
     if (loading !== "pending" || currentRequestId !== requestId) {
       return null;
     }
-    return postClient(getState().clients, getState().auth.user);
+    //return postClient(getState().clients, getState().auth.user);
+    return 0
   }
 );
 
 const clientSlice = createSlice({
   name: "client",
   initialState: {
-    clientId: "",
-    /*score: 0,
-    maxScore: 100,*/
-    clientName: "",
-    assignments: [],
+    id: "",
+    name: "initial name",
     clientSince: "",
     nextSession: "",
-    selectedAssignment: {},
-    //eventLogs: [],
-    //errors: [],
     loading: "idle",
     currentRequestId: undefined
   },
   reducers: {
     openClient: (state, action) => {
-      state.clientId = action.payload;
+      state = action.payload;
     },
-    changeActiveAssignment: (state, action) => {
-      state.selectedAssignment = action.payload;
-    }
   },
   extraReducers: {
     [closeClient.pending]: (state, action) => {
