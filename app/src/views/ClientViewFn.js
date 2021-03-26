@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux"
-import { Component } from "react";
-import { FormControl } from '@material-ui/core';
 import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../mira-new-medium.png';
@@ -22,86 +20,56 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import {closeAssignment, getAssignments} from "../api/clientAPI"
+
+
 function ClientView() {
 
-      const [patient, setPatient] = useState({
-        name: "Eddie Spaghetti",
-        id: "PjohnDoe1",
-        nextSession: '1/1/2021',
-        startDate: '1/1/2020',
-      })
+    const [client, setClient] = useState({
+      name: "Eddie Spaghetti",
+      id: "PjohnDoe1",
+      nextSession: '1/1/2021',
+      clientSince: '1/1/2020',
+    })
 
-      const [assignments, setAssignments] = useState([{
-        due: '',
-        status: 0,
-        exercises: []
+    const clientFromStore = useSelector((state) => state)
+
+    const [assignments, setAssignments] = useState([{
+      due: '',
+      status: 0,
+      exercises: []
     }])
 
-      const [selectedAssignment, setSelectedAssignment] = useState({
-        due: new Date()
-      })
+    const [selectedAssignment, setSelectedAssignment] = useState({
+      due: ""
+    })
 
-      const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
+    const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
 
+    const [assignmentsFetched, setAssignmentsFetched] = useState(false)
 
-      const clientInfo = [
-        {
-          picture: picture,
-          name: "Eddie Spaghetti", //Get this from previous page
-          clientSince: '11/10/19',
-          nextSession: '11/28'
-        }
-      ]
+    const dispatch = useDispatch()
 
-    /*componentDidMount() {
-      fetch("http://localhost:3080/assignments/patient/PjohnDoe1")
-          .then(res => res.json())
-          .then(data => {
-            // sort the assignments based on the number of the visit during which they were assigned
-            data.sort((a, b) => a.visitNumber - b.visitNumber)
-            // add an extra assignment to allow for a new one to be created
-            if (data[data.length - 1].completedByTherapist) {
+    useEffect(async () => {
+      if (!assignmentsFetched) {
+        let assignments = await getAssignments('PjohnDoe1')
+            // add an extra assignment to allow for a new one to be created if the most recent assignment has been closed
+            if (assignments[assignments.length - 1].completedByTherapist) {
               let newAssignmentForNewBubble = {
-                visitNumber: data.length + 1,
+                visitNumber: assignments.length + 1,
                 due: undefined,
                 assignmentProgress: 0,
-                status: 0
-                
+                status: 0 
                 }
-                data.push(newAssignmentForNewBubble)
+
+                assignments.push(newAssignmentForNewBubble)
             }
             // update the state with the assignments in the right order
-            this.setState(() => ({patient: {assignments: data}}))
-            // make the assignment that's visible to the therapist the most recent one
-            this.setState((state) => ({selectedAssignment: state.patient.assignments[state.patient.assignments.length - 1]}))
-          });
-
-    }*/
-
-    useEffect(() => {
-        fetch("http://localhost:3080/assignments/patient/PjohnDoe1")
-          .then(res => res.json())
-          .then(data => {
-            // sort the assignments based on the number of the visit during which they were assigned
-            data.sort((a, b) => a.visitNumber - b.visitNumber)
-            // add an extra assignment to allow for a new one to be created
-            if (data[data.length - 1].completedByTherapist) {
-              let newAssignmentForNewBubble = {
-                visitNumber: data.length + 1,
-                due: undefined,
-                assignmentProgress: 0,
-                status: 0
-                
-                }
-                data.push(newAssignmentForNewBubble)
-            }
-            // update the state with the assignments in the right order
-            setAssignments(data)
-            // make the assignment that's visible to the therapist the most recent one
-            //this.setState((state) => ({selectedAssignment: state.patient.assignments[state.patient.assignments.length - 1]}))
-            //setSelectedAssignment(data[data.length - 1])
-        });
-      });
+            setAssignmentsFetched(true)
+            setAssignments(assignments)
+            setSelectedAssignment(assignments[assignments.length - 1])
+      }
+    });
     
 
 // Take in an exercise and calculate expected progress. Due date is in model, assigned date is in exercise
@@ -164,7 +132,7 @@ function completeAssignmentButton() {
 
   return (<div className = "Complete-assignment-button-div">
   <Button className = "Complete-assignment-button" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {selectedAssignment.completedByTherapist}>
-        {selectedAssignment.due != undefined ? "Complete Assignment" : "Create Assignment"}
+        {selectedAssignment.completedByTherapist != undefined ? "Complete Assignment" : "Create Assignment"}
       </Button>
       <Dialog
         open = {assignmentCompletionDialogOpen}
@@ -197,18 +165,7 @@ function completeAssignment() {
   let data = assignments
   for (let assignment of data) {
     if (assignment.visitNumber == targetVisitNumber) {
-      assignment.completedByTherapist = true
-      const postSettings = {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(assignment),
-      }
-      fetch(`http://localhost:3080/assignments/${assignment._id}/edit`, postSettings)
-        .then(res => res.json())
-      break
+      closeAssignment(assignment)
     }
   }
 
@@ -223,15 +180,8 @@ function completeAssignment() {
     }
     data.push(newAssignmentForNewBubble)
   }
-    /*this.setState(() => ({
-      patient: {assignments: data},
-      selectedAssignment: data[data.length - 1],
-      assignmentCompletionDialogOpen: false
-    }))*/
-
     setAssignments(data)
     setSelectedAssignment(data[data.length - 1])
-    console.log(`setSelectedAssignment called 234`)
     setAssignmentCompletionDialogOpen(false)
 }
 
@@ -240,13 +190,9 @@ function changeVisibleAssignment(visitNumber) {
   for (let assignment of assignments) {
     if (assignment.visitNumber == visitNumber) {
       setSelectedAssignment(assignment)
-      console.log(`setSelectedAssignment called 243`)
       break
     }
   }
-  /*this.setState(() => ({
-    selectedAssignment: correspondingAssignmentByVisitNumber
-  }))*/
 
   
 
@@ -304,8 +250,8 @@ function getBubbleInfo(assignmentsList) {
   </div>)
 }
 
-function getClientInfo(clientInfo) {
-  const result = clientInfo.map((client) =>
+function getClientInfo(client) {
+  const result = 
     <Row>
       <MDBCard className = "Client-information">
         <Image src={picture} roundedCircle className="picture"/>
@@ -316,7 +262,6 @@ function getClientInfo(clientInfo) {
         </div>
       </MDBCard>
     </Row>
-  );
   return result;
 }
 
@@ -373,14 +318,14 @@ function getClientInfo(clientInfo) {
               <img src={logo} className="App-logo" alt="logo" />
           </div>
           <div className = "Client-view-title-container">
-              <p className = "Client-view-title-text">  {patient.name}</p> {/*Get this from previous page*/}
+              <p className = "Client-view-title-text">  {client.name}</p> {/*Get this from previous page*/}
           </div>
             
           <Container fluid className = "background-container">
             <Row className = "background">
               <div className = "Client-information-container">
                 <Col>
-                  {getClientInfo(clientInfo)}
+                  {getClientInfo(client)}
                 </Col>
               </div>
               {/*<Col>

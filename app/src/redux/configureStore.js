@@ -12,14 +12,15 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import reducers from "./reducer";
+//import reducers from "./reducer";
+import clientReducer from "./slices/clientSlice"
 
 const persistConfig = {
   key: "root",
   storage
 };
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, clientReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
