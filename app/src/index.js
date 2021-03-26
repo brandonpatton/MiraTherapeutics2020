@@ -6,9 +6,9 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Page1 from "./App";
 import PracticeView from "./views/PracticeView";
-import ExerciseForm from "./views/ExerciseForm";
+import ExerciseForm from "./views/ExerciseFormFn";
 import ClientView from "./views/ClientViewFn";
-import AssignmentForm from "./views/AssignmentForm";
+import AssignmentForm from "./views/AssignmentFormFn";
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <BrowserRouter>
