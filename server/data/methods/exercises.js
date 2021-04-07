@@ -13,7 +13,8 @@ module.exports = {
             patientId: exercise.patientId,
             progress: exercise.progress,
             specialInstructions: exercise.specialInstructions,
-            goal:exercise.goal
+            goal:exercise.goal,
+            results: ''
         });
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
@@ -36,7 +37,8 @@ module.exports = {
             patientId: newExercise.patientId,
             progress: newExercise.progress,
             specialInstructions: newExercise.specialInstructions,
-            goal:newExercise.goal
+            goal:newExercise.goal,
+            results: newExercise.results
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
         
