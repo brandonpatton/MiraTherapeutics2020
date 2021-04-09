@@ -228,6 +228,24 @@ function ExerciseForm() {
         );
         return result;
     }
+    function getGoal(dueDate,frequency){
+        var today = new Date();
+        const difference = Math.abs(dueDate - today);
+        dayDiff =  difference / (1000 * 60 * 60 * 24);
+        dayDiff = Math.ceil(dayDiff);
+        switch(frequency) {
+            case "Daily":
+                return dayDiff;
+            case "Weekly":
+              // code block
+                return Math.floor(dayDiff/7);
+            case "Bi-Weekly":
+              // code block
+                return Math.floor(dayDiff/3.5);
+            default:
+                return Math.floor(dayDiff/(7/frequency));
+        } 
+    }
     function setRedirect(){
         this.setState({
             redirect: true
