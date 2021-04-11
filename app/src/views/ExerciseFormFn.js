@@ -231,7 +231,7 @@ function ExerciseForm() {
     function getGoal(dueDate,frequency){
         var today = new Date();
         const difference = Math.abs(dueDate - today);
-        dayDiff =  difference / (1000 * 60 * 60 * 24);
+        let dayDiff =  difference / (1000 * 60 * 60 * 24);
         dayDiff = Math.ceil(dayDiff);
         switch(frequency) {
             case "Daily":
