@@ -1,6 +1,9 @@
 const express = require('express')
+const multer  = require('multer')
 const router = express.Router()
 const exerciseData = require('../data/methods/exercises')
+const upload = multer({ dest: 'uploads/'})
+var fs = require('fs');
 
 router.get('/:id', async (req, res) => {
     const id = req.params.id
@@ -46,5 +49,18 @@ router.delete('/:id', async (req, res) => {
         console.log(e)
     }
 })
+
+router.post('/upload', upload.single("picture"), function (req,res) {
+    console.log("Received file" + req.file.originalname);
+    var src = fs.createReadStream(req.file.path);
+    var dest = fs.createWriteStream('uploads/' + req.file.originalname);
+    src.pipe(dest);
+    src.on('end', function() {
+    	fs.unlinkSync(req.file.path);
+    	res.json('OK: received ' + req.file.originalname);
+    });
+    src.on('error', function(err) { res.json('Something went wrong!'); });
+  })
+
 
 module.exports = router;
