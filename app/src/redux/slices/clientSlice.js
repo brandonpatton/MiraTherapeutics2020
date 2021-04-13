@@ -13,23 +13,29 @@ export const closeClient = createAsyncThunk(
       return null;
     }
     //return postClient(getState().clients, getState().auth.user);
-    return 0
+    return 0;
   }
 );
 
-const clientSlice = createSlice({
-  name: "client",
-  initialState: {
+/*
     id: "",
     name: "initial name",
     clientSince: "",
     nextSession: "",
     loading: "idle",
     currentRequestId: undefined
+*/
+
+const clientSlice = createSlice({
+  name: "client",
+  initialState: {
+    client: {
+      name: "",
+    },
   },
   reducers: {
     openClient: (state, action) => {
-      state = action.payload;
+      state.client = action.payload;
     },
   },
   extraReducers: {
@@ -56,12 +62,10 @@ const clientSlice = createSlice({
         state.loading = "idle";
         state.currentRequestId = undefined;
       }
-    }
-  }
+    },
+  },
 });
 
-export const {
-  openClient,
-} = clientSlice.actions;
+export const { openClient } = clientSlice.actions;
 
 export default clientSlice.reducer;

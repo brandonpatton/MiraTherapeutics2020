@@ -16,7 +16,7 @@ const rootElement = document.getElementById("root");
 
 ReactDOM.render(
   <Provider store={store}>
-    {/*<PersistGate loading={null} persistor={persistor}>*/}
+    <PersistGate loading={null} persistor={persistor}>
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={Page1} />
@@ -26,7 +26,7 @@ ReactDOM.render(
           <Route path="/AssignmentForm" component={AssignmentForm} />
         </Switch>
       </BrowserRouter>
-    {/*</PersistGate>*/}
+    </PersistGate>
  </Provider>,
  rootElement
 );
