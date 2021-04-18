@@ -10,7 +10,8 @@ const exerciseSchema = new mongoose.Schema({
     progress: Number,
     specialInstructions: String,
     goal:Number,
-    results: String
+    results: String,
+    imageId: String,
 });
 
 const Exercise = mongoose.model('Exercise', exerciseSchema);

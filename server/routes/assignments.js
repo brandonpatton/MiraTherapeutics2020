@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.post('/:id/edit', async (req, res) => {
+router.post('/:id/edit', async (req, res) => { //may want to make it a patch
     const id = req.params.id
     try {
         const updatedAssignment = await assignmentData.updateAssignment(id, req.body)
