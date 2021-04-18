@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const { Exercise } = require('../models/exercise');
 const Assignments = require('./assignments')
+const fs = require('fs');
+const AWS = require('aws-sdk');
 
 module.exports = {
     async createExercise(exercise) {
@@ -14,7 +16,8 @@ module.exports = {
             progress: exercise.progress,
             specialInstructions: exercise.specialInstructions,
             goal:exercise.goal,
-            results: ''
+            results: '',
+            imageId: ''
         });
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
@@ -38,7 +41,8 @@ module.exports = {
             progress: newExercise.progress,
             specialInstructions: newExercise.specialInstructions,
             goal:newExercise.goal,
-            results: newExercise.results
+            results: newExercise.results,
+            imageId: newExercise.imageId
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
         
@@ -76,6 +80,26 @@ module.exports = {
         if(delExercise.deletedCount == 0) throw `No exercise exists with that ID`
 
         return `Removed exercise with id:${id}`
-    }
+    },
+    async uploadFile(fileName, fileContent) {
+        const id = process.env.AWS_ACCESS_KEY;
+        const secret = process.env.AWS_SECRET_KEY;
+        const bucketName = process.env.AWS_BUCKET_NAME
 
+        const s3 = new AWS.S3({
+            accessKeyId: id,
+            secretAccessKey: secret
+        });
+
+        const params = {
+            Bucket: bucketName,
+            Key: fileName, // File name you want to save as in S3
+            Body: fileContent
+        };
+
+        // Uploading files to the bucket
+        const result = await s3.upload(params);
+        //console.log(result);
+    
+    }
 }
