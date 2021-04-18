@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../mira-new-medium.png';
@@ -21,18 +21,19 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {closeAssignment, getAssignments} from "../api/clientAPI"
+import { Redirect, useHistory } from 'react-router';
 
 
 function ClientView() {
 
-    const [client, setClient] = useState({
-      name: "Eddie Spaghetti",
-      id: "PjohnDoe1",
-      nextSession: '1/1/2021',
-      clientSince: '1/1/2020',
-    })
+    // const [redirectToAssignmentForm, setRedirectToAssignmentForm] = useState(false);
 
-    const clientFromStore = useSelector((state) => state)
+    let history = useHistory();
+
+    // This page doesn't update the client info so no need for setClient
+    const [client, ] = useState(
+      useSelector((state) => state.client)
+    )
 
     const [assignments, setAssignments] = useState([{
       due: '',
@@ -47,8 +48,6 @@ function ClientView() {
     const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
 
     const [assignmentsFetched, setAssignmentsFetched] = useState(false)
-
-    const dispatch = useDispatch()
 
     useEffect(async () => {
       if (!assignmentsFetched) {
@@ -92,8 +91,8 @@ function calculateExpectedExerciseProgress(exercise) {
   let daysSinceAssignment;
   daysSinceAssignment = (today.getTime() - assignmentDate.getTime()) / millisecondsInADay
   // Calculate how many days there were to complete the assignment
-  let daysToCompleteExercise;
-  daysToCompleteExercise = (dueDate.getTime() - assignmentDate.getTime()) / millisecondsInADay
+  // let daysToCompleteExercise;
+  // daysToCompleteExercise = (dueDate.getTime() - assignmentDate.getTime()) / millisecondsInADay
   // Will indicate how many times the exercise should have been completed
   let expectedCompletions = 0
   switch (frequency) {
@@ -108,7 +107,7 @@ function calculateExpectedExerciseProgress(exercise) {
       break
     default:
       // X per week case
-      const completionsPerWeek = frequency.split(" ")[0]
+      const completionsPerWeek = Number(frequency)
       expectedCompletions = daysSinceAssignment/(7/completionsPerWeek)
       break
   }
@@ -129,8 +128,11 @@ function completeAssignmentButton() {
       setAssignmentCompletionDialogOpen(false)
   }
 
-
-  return (<div className = "Complete-assignment-button-div">
+  // if flag to redirect to assignment form is true, redirect to assignment form. Otherwise, render the page
+  
+  
+  return (
+  <div className = "Complete-assignment-button-div">
   <Button className = "Complete-assignment-button" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {selectedAssignment.completedByTherapist}>
         {selectedAssignment.completedByTherapist != undefined ? "Complete Assignment" : "Create Assignment"}
       </Button>
@@ -147,7 +149,7 @@ function completeAssignmentButton() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={selectedAssignment.due != undefined ? completeAssignment : (() => {alert("You want to make a new assignment"); setAssignmentCompletionDialogOpen(false)})} color="primary">
+          <Button onClick={selectedAssignment.due != undefined ? completeAssignment : createAssignment} color="primary">
             Yes
           </Button>
           <Button onClick={handleClose} color="primary" autoFocus>
@@ -183,6 +185,12 @@ function completeAssignment() {
     setAssignments(data)
     setSelectedAssignment(data[data.length - 1])
     setAssignmentCompletionDialogOpen(false)
+}
+
+// Sets up redirect to assignment form if therapist wants to make new assignment
+const createAssignment = () => {
+  // setRedirectToAssignmentForm(true)
+  history.push('/AssignmentForm')
 }
 
 function changeVisibleAssignment(visitNumber) {

@@ -19,8 +19,10 @@ const PracticeView = () => {
 
   const { client } = useSelector((state) => state);
 
+  console.log("Client")
+
   const [patient, setPatient] = useState(
-    client == undefined
+    client.name.length == 0
       ? {
           name: "Bruce Wayne",
           id: "PjohnDoe1",
