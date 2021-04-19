@@ -13,14 +13,18 @@ import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import "../css/PracticeView.css";
 import { openClient } from "../redux/slices/clientSlice";
+import { updateTherapistClientList } from "../redux/slices/therapistSlice"
 
 const PracticeView = () => {
+  
   const dispatch = useDispatch();
+
+
 
   const { client } = useSelector((state) => state);
 
   const [patient, setPatient] = useState(
-    client == undefined
+    client.name.length == 0
       ? {
           name: "Bruce Wayne",
           id: "PjohnDoe1",
@@ -81,12 +85,42 @@ const PracticeView = () => {
     },
   ]);
 
+  const [fetchedTherapistClientInfo, setFetchedTherapistClientInfo] = useState(false)
+
   useEffect(() => {
+    // Only set the therapist slice once
+    if (!fetchedTherapistClientInfo){
+      updateTherapistClientList()
+      setFetchedTherapistClientInfo(false)
+    }
     // window.onpopstate = function(event) {
     //   // Allows back and forth action by refreshing the page if it was reached using the browser's back button
     //   if (event.currentTarget.location.pathname == "/PracticeView") window.location.reload()
     // }
   });
+
+   const updateTherapistStore = async () => {
+    const getSettings = {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: ["PjohnDoe1"],
+    }
+  
+  let clientInfoObj = await fetch(`http://localhost:3080/assignments/patient/batch/PjohnDoe1`)
+  clientInfoObj = await clientInfoObj.json()
+  console.log("Client info")
+  console.log(clientInfoObj)
+
+  dispatch(
+    updateTherapistClientList({
+      clientInfo: clientInfoObj
+    })
+  )
+  
+  }
 
   function clientClick(client) {
     setPatient(client);

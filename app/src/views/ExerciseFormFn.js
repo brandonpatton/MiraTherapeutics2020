@@ -11,9 +11,10 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link, Redirect} from 'react-router-dom';
-
+import { getAssignments } from '../api/clientAPI'
 
 function ExerciseForm() {
+    const dispatch = useDispatch();
     /*
     this.state = {
         chosenExercise: {
@@ -28,64 +29,27 @@ function ExerciseForm() {
         nextSession: props.location.data.nextSessionDate
     
     }*/
-    const [exerciseState, setExerciseState] = useState({
-        chosenExercise: {
-            exerciseTitle: "",
-            exerciseType: "",
-            dueDate: new Date(),
-            frequency: "",
-            patientName: "",
-            patientId: "",
-            progress: 0,
-            specialInstructions: "",
-            goal: 0
-        },
-        exerciseToEdit: [],/*{//props.location.data.editExercise,
-            exerciseTitle: "",
-            exerciseType: "",
-            dueDate: new Date(),
-            frequency: "",
-            patientName: "",
-            patientId: "",
-            progress: 0,
-            specialInstructions: "",
-            goal: 0
-        }*/
-        added: [{//props.location.data.addedExercises,
-            exerciseTitle: "",
-            exerciseType: "",
-            dueDate: new Date(),
-            frequency: "",
-            patientName: "",
-            patientId: "",
-            progress: 0,
-            specialInstructions: "",
-            goal: 0
-        }],
-        nextSession: new Date()//props.location.data.nextSessionDate
+    const [redirect, setRedirect] = useState(false)
+    const [setAssignment, setAssignmentState] = useState({
+        //these below should be empty to start, but fill with something like the following:
+                                /*{
+                                    exerciseTitle: "",
+                                    exerciseType: "",
+                                    dueDate: new Date(),
+                                    frequency: "",
+                                    patientName: "",
+                                    patientId: "",
+                                    progress: 0,
+                                    specialInstructions: "",
+                                    goal: 0
+                                }*/
+        chosenExercise: {},
+        exerciseToEdit: [],
+        added: [],
+        nextSession: new Date()//props.location.data.nextSessionDate  WHERE CAN I GET THIS FROM????
     })
 
-    /*const [assignments, setAssignments] = useState([{
-        due: '',
-        status: 0,
-        exercises: []
-    }])
-
-    const [selectedExercise, setSelectedExercise] = useState({
-        //they pick the date on this page, 
-        //would this then set the default or update the state with the chosen date?
-        //*can i get the date you generate from the previous page? because all the local
-        //*state is is startDate which begins as a new Date() object and is updated with the chosen date.
-        due: new Date()
-    })
-
-    const [selectedEditedExercise, setSelectedEditedExercise] = useState({
-        //when they press the edit button, 
-        //it should send the exercise info here to be sent to the store
-        //so that the exerciseform can access it from the store and perform editing
-        //Does this selectedxyz thing in the state just select the object FOR editing or does it update it too?
-    })*/
-    console.log(exerciseState.added);
+    console.log(setAssignment.added);
     var exercises = [];
     const exerciseTypes = {
         "Grounding": ["Flashback Grounding", "Color Finder", "Breathing Exercise", "Vibration Tool", "Bilateral Simulation", "5, 4, 3, 2, 1 Grounding", "Any", "All"],
@@ -97,14 +61,15 @@ function ExerciseForm() {
     }
     const dueByChoices = ["Next Session", "Custom Days", "Custom Weeks", "Choose Date"];
     const frequenceyChoices = ["Daily", "Weekly", "Bi-Weekly", "Custom per Week"];
-    if (exerciseState.added == [] || !exerciseState.added){
+    if (setAssignment.added == [] || !setAssignment.added){
         exercises = [];
     } else {
-        exercises = exerciseState.added;
+        //hitting this case, shouldnt be because nothing was added yet
+        exercises = setAssignment.added;
     }
-    console.log(exerciseState.exerciseToEdit)
-    if (exerciseState.exerciseToEdit == [] || exerciseState.exerciseToEdit == undefined){
-        exerciseState.chosenExercise = {
+    console.log(setAssignment.exerciseToEdit)
+    if (setAssignment.exerciseToEdit == [] || setAssignment.exerciseToEdit == undefined){
+        setAssignment.chosenExercise = {
             exerciseTitle: "Flashback Grounding",
             exerciseType: "Grounding",
             dueDate: "Next Session",
@@ -116,29 +81,32 @@ function ExerciseForm() {
             goal: 0
         };
     } else {
-        exerciseState.chosenExercise = {
-            exerciseTitle: exerciseState.exerciseToEdit.exerciseTitle,
-            exerciseType: exerciseState.exerciseToEdit.exerciseType,            
-            dueDate: exerciseState.exerciseToEdit.dueDate,
-            frequency: exerciseState.exerciseToEdit.frequency,
-            patientName: exerciseState.exerciseToEdit.patientName,
-            patientId: exerciseState.exerciseToEdit.patientId,
-            progress: exerciseState.exerciseToEdit.progress,
-            specialInstructions: exerciseState.exerciseToEdit.specialInstructions,
-            goal: exerciseState.exerciseToEdit.goal
+        setAssignment.chosenExercise = {
+            exerciseTitle: setAssignment.exerciseToEdit.exerciseTitle,
+            exerciseType: setAssignment.exerciseToEdit.exerciseType,            
+            dueDate: setAssignment.exerciseToEdit.dueDate,
+            frequency: setAssignment.exerciseToEdit.frequency,
+            patientName: setAssignment.exerciseToEdit.patientName,
+            patientId: setAssignment.exerciseToEdit.patientId,
+            progress: setAssignment.exerciseToEdit.progress,
+            specialInstructions: setAssignment.exerciseToEdit.specialInstructions,
+            goal: setAssignment.exerciseToEdit.goal
         }
     }
-    console.log(exerciseState.chosenExercise)
-    useEffect(() => {
-        fetch("http://localhost:3080/assignments/patient/PjohnDoe1")
-            .then(res => res.json())
-            .then(data => {
-            // sort the assignments based on the number of the visit during which they were assigned
-            data.sort((a, b) => a.visitNumber - b.visitNumber)
-            // add an extra assignment to allow for a new one to be created
-            // update the state with the assignments in the right order
-            /*setExerciseState({
-                chosenExercise: {
+    console.log(setAssignment.chosenExercise)
+    useEffect(async () => {
+        /*var data = await getAssignments("PjohnDoe1");
+        setAssignmentState({
+            dateAssigned: today,
+            visitNumber: data[data.length - 1].visitNumber + 1, //
+            therapistName: data[data.length - 1].therapistName,
+            patientId: data[data.length - 1].patientId,
+            clientName: data[data.length - 1].patientName,
+            due: new Date(),
+            status: 0,
+            nextSession: new Date(),
+            exercises: [
+                {
                     exerciseTitle: "",
                     exerciseType: "",
                     dueDate: new Date(),
@@ -149,37 +117,12 @@ function ExerciseForm() {
                     specialInstructions: "",
                     goal: 0
                 },
-                exerciseToEdit: {//props.location.data.editExercise,
-                    exerciseTitle: "",
-                    exerciseType: "",
-                    dueDate: new Date(),
-                    frequency: "",
-                    patientName: "",
-                    patientId: "",
-                    progress: 0,
-                    specialInstructions: "",
-                    goal: 0
-                },
-                added: [{//props.location.data.addedExercises,
-                    exerciseTitle: "",
-                    exerciseType: "",
-                    dueDate: new Date(),
-                    frequency: "",
-                    patientName: "",
-                    patientId: "",
-                    progress: 0,
-                    specialInstructions: "",
-                    goal: 0
-                }],
-                nextSession: new Date()
-
-            })*/
-            // make the assignment that's visible to the therapist the most recent one
-            //this.setState((state) => ({selectedAssignment: state.patient.assignments[state.patient.assignments.length - 1]}))
-            //setSelectedAssignment(data[data.length - 1])
-        });
+    
+            ]
+        });*/
     });    
     function bigFilter(exerciseList, exercise){
+        //filters out chosen exercise to edit from list of exercises
         const converted = [];
         for (let i = 0; i < exerciseList.length; i++){
             if (exerciseList[i].exerciseType == exercise.exerciseType && exerciseList[i].exerciseTitle == exercise.exerciseTitle && exerciseList[i].dueDate == exercise.dueDate && exerciseList[i].frequency == exercise.frequency && exerciseList[i].specialInstructions == exercise.specialInstructions){
@@ -197,15 +140,19 @@ function ExerciseForm() {
         //delete exerciseList[exerc]
         //var filtered = exerciseList.filter(function(value, index, arr))
         console.log(exerciseList);
-        console.log(exerciseState.added);
+        console.log(setAssignment.added);
         console.log(exercise);
         return exerciseList;
     }
+    
     function getExercises(exercises) {
-        const result = exercises.map((exercise) =>
-        <Row>
-            <div className = "Exercise-card-row">
-                <MDBCard className = "Exercise-card-body">
+        console.log(exercises);
+
+
+        const result = exercises.map((exercise, idx) =>
+        <Row key = {idx}>
+            <div className = "Exercise-card-row" key = {idx}>
+                <MDBCard className = "Exercise-card-body" key = {idx}>
                     <p className="exerciseTitle">{exercise[1]}</p>
                     <p className="exerciseCard">{exercise[5]}</p>
                     <p className="exerciseCard">Due By: {exercise[2]}</p>
@@ -214,8 +161,10 @@ function ExerciseForm() {
             </div>
         </Row>
         );
+        console.log(result);
         return result;
     }
+    //
     function getExerciseFormData(data){
         const result = Object.keys(data).map((d) =>
             <option>{d}</option>
@@ -223,11 +172,15 @@ function ExerciseForm() {
         return result;
     }
     function getExerciseTitle(data, choice){
+        if(data[choice] == undefined){
+            return <option>balls</option>
+        }
         const result = data[choice].map((d) =>
             <option>{d}</option>
         );
         return result;
     }
+    
     function getGoal(dueDate,frequency){
         var today = new Date();
         const difference = Math.abs(dueDate - today);
@@ -245,15 +198,11 @@ function ExerciseForm() {
             default:
                 return Math.floor(dayDiff/(7/frequency));
         } 
-    }
-    function setRedirect(){
-        this.setState({
-            redirect: true
-        });
-    }
+    }//
+
     function doRedirect(){
-        if(this.state.redirect){
-            return <Redirect to='/AssignmentForm'/>
+        if(redirect){
+            <Redirect to='/AssignmentForm'/>
         } 
     }
 
@@ -270,7 +219,7 @@ return(
         <Row className = "background">
             <Col className = "Added-exercise-list">
                 <Row className = "Added-exercise-list-text">Added Exercises:</Row>
-                {getExercises(bigFilter(exercises, exerciseState.chosenExercise))}
+                {getExercises(bigFilter(exercises, setAssignment.chosenExercise))/*cannot pass array/object as a react component, missing a step here*/}
             </Col>
             {/*<Col>
             <MDBCard className="Exercise-preview-body">
@@ -280,22 +229,24 @@ return(
             <Col>
             <div className = "Exercise-form-container">
                 <Form>
+
+                {/* COMMENTED THESE OUT BECAUSE OF getExercises ERROR THAT NEEDS TO BE FIXED*/}
                 <Form.Group controlId="exerciseType">
                     <Form.Label>Exercise Type</Form.Label>
-                    <Form.Control  onChange = {event => setExerciseState({chosenExercise: {exerciseType: event.target.value}})} as="select" defaultValue = {exerciseState.chosenExercise.exerciseType} custom>
+                    <Form.Control  onChange = {event => setAssignmentState({chosenExercise: {exerciseType: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
                     {getExerciseFormData(exerciseTypes)}
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="exerciseTitle">
                     <Form.Label>Exercise Title</Form.Label>
-                    <Form.Control onChange = {event => setExerciseState({chosenExercise: {exerciseTitle: event.target.value}})} as="select" defaultValue = {exerciseState.chosenExercise.exerciseTitle} custom>
-                    {getExerciseTitle(exerciseTypes, exerciseState.chosenExercise.exerciseType)}
+                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {exerciseTitle: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom>
+                    {getExerciseTitle(exerciseTypes, setAssignment.chosenExercise.exerciseType)}
                     </Form.Control>
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Due By</Form.Label>
-                    <Form.Control onChange = {event => setExerciseState({chosenExercise: {dueDate: event.target.value}})} as="select" defaultValue = {"Next Session:" + toString(exerciseState.nextSession)} custom>
-                    <option>{`Next Session: ${exerciseState.nextSession[0]}/${exerciseState.nextSession[1]}/${exerciseState.nextSession[2]}`}</option>
+                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {dueDate: event.target.value}})} as="select" defaultValue = {"Next Session:" + toString(setAssignment.nextSession)} custom>
+                    <option>{`Next Session: ${setAssignment.nextSession[0]}/${setAssignment.nextSession[1]}/${setAssignment.nextSession[2]}`}</option>
                     <option>Days</option>
                     <option>Weeks</option>
                     <option>Choose Date</option>
@@ -303,7 +254,7 @@ return(
                 </Form.Group>
                 <Form.Group controlId="frequency">
                     <Form.Label>Frequency</Form.Label>
-                    <Form.Control onChange = {event => setExerciseState({chosenExercise: {frequency: event.target.value}})} as="select" defaultValue = {exerciseState.chosenExercise.frequency} custom>
+                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {frequency: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.frequency} custom>
                     <option>Daily</option>
                     <option>Weekly</option>
                     <option>Bi-Weekly</option>
@@ -313,14 +264,15 @@ return(
                 
                 <Form.Group controlId="specialInstructions">
                     <Form.Label>Special Instructions</Form.Label>
-                    <Form.Control onChange = {event => setExerciseState({chosenExercise: {specialInstructions: event.target.value}})} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} />
+                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {specialInstructions: event.target.value}})} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} />
                 </Form.Group>
+                
                 <Link to = {{
                     pathname: "/AssignmentForm",
                     data: {editedExerciseList: exercises,
-                            nextSession: exerciseState.nextSession} 
+                            nextSession: setAssignment.nextSession} 
                 }}>
-                    <Button onClick={setRedirect()} variant="primary" type="Submit">
+                    <Button onClick={setRedirect(true)} variant="primary" type="Submit">
                     
                     Add
                     </Button>
@@ -330,7 +282,8 @@ return(
             </Col>
         </Row>
         </Container> 
-    {doRedirect()}
+    {doRedirect}
+    
 </div>
 )
 }

@@ -21,3 +21,16 @@ export const closeAssignment = async (assignmentObject) => {
 
       await fetch(`http://localhost:3080/assignments/${assignmentObject._id}/edit`, postSettings)
 }
+
+export const postAssignment = async (assignmentObject) => {
+  const postSettings = {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(assignmentObject),
+  }
+
+  await fetch(`http://localhost:3080/assignments/`, postSettings)
+}

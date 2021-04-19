@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { closeAssignment } from "../../api/clientAPI";
+import { closeClient } from "./clientSlice";
 //import { postRecord } from "../../utils/lssApi";
 // create postClient equivalent of this
 
 // is currentRequestId like a unique ID for each request so the response can be connected to the request
 
 // closeAssignment?
-export const closeClient = createAsyncThunk(
+/*export const closeClient = createAsyncThunk(
   "clients/closeClient",
   async (_, { getState, requestId }) => {
     const { loading, currentRequestId } = getState().client;
@@ -14,11 +16,13 @@ export const closeClient = createAsyncThunk(
     }
     return postAssignment(getState().assignments, getState().auth.user);
   }
-);
+);*/
+closeClient()
 
 const assignmentSlice = createSlice({
   name: "assignment",
   initialState: {
+    currentAssignment: {
         dateAssigned: new Date(),
         visitNumber: 0,
         therapistName: "",
@@ -39,15 +43,14 @@ const assignmentSlice = createSlice({
               specialInstructions: "",
               goal: 0
             },
-        ]
+        ],
+        exerciseToEdit: []
+      },
   },
   reducers: {
-    openClient: (state, action) => {
-      state.patientId = action.payload;
+    openAssignment: (state, action) => {
+      state.currentAssignment = action.payload;
     },
-    changeActiveAssignment: (state, action) => {
-      state.selectedAssignment = action.payload;
-    }
   },
   extraReducers: {
     [closeClient.pending]: (state, action) => {
@@ -78,8 +81,7 @@ const assignmentSlice = createSlice({
 });
 
 export const {
-  openClient,
-  changeActiveAssignment,
+  openAssignment,
 } = assignmentSlice.actions;
 
 export default assignmentSlice.reducer;

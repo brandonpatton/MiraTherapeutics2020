@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux"
 import '../css/ClientView.css';
+import { completeClientAssignment } from "../redux/slices/therapistSlice";
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../mira-new-medium.png';
 import {Row, Col, Container, Image, Card, /*Button*/} from 'react-bootstrap'
@@ -21,28 +22,28 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {closeAssignment, getAssignments} from "../api/clientAPI"
-
+import { useHistory } from 'react-router';
 
 function ClientView() {
 
-    const [client, setClient] = useState({
-      name: "Eddie Spaghetti",
-      id: "PjohnDoe1",
-      nextSession: '1/1/2021',
-      clientSince: '1/1/2020',
-    })
+  let history = useHistory();
 
-    const clientFromStore = useSelector((state) => state)
+  const [client] = useState(
+    useSelector((state) => state.client)
+  )
 
-    const [assignments, setAssignments] = useState([{
-      due: '',
-      status: 0,
-      exercises: []
-    }])
 
-    const [selectedAssignment, setSelectedAssignment] = useState({
-      due: ""
-    })
+  //let stateCheck = useSelector((state) => console.log(state.therapist.therapist))
+
+  const {therapist} = useSelector((state) => state.therapist)
+
+  const [assignments, setAssignments] = useState(therapist.clientInfo['PjohnDoe1'])
+
+  const [selectedAssignment, setSelectedAssignment] = useState({
+    due: ""
+  })
+
+  const [assignmentsSorted, setAssignmentsSorted] = useState(false)
 
     const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
 
@@ -51,8 +52,12 @@ function ClientView() {
     const dispatch = useDispatch()
 
     useEffect(async () => {
-      if (!assignmentsFetched) {
-        let assignments = await getAssignments('PjohnDoe1')
+      // Sort assignments once
+      if (!assignmentsSorted) {
+        setAssignments(assignments.sort((a, b) => a.visitNumber - b.visitNumber))
+        setAssignmentsSorted(true)
+      }
+        //let assignments = useSelector((state) => state.therapist['PjohnDoe1'])
             // add an extra assignment to allow for a new one to be created if the most recent assignment has been closed
             if (assignments[assignments.length - 1].completedByTherapist) {
               let newAssignmentForNewBubble = {
@@ -68,7 +73,7 @@ function ClientView() {
             setAssignmentsFetched(true)
             setAssignments(assignments)
             setSelectedAssignment(assignments[assignments.length - 1])
-      }
+      
     });
     
 
@@ -92,8 +97,8 @@ function calculateExpectedExerciseProgress(exercise) {
   let daysSinceAssignment;
   daysSinceAssignment = (today.getTime() - assignmentDate.getTime()) / millisecondsInADay
   // Calculate how many days there were to complete the assignment
-  let daysToCompleteExercise;
-  daysToCompleteExercise = (dueDate.getTime() - assignmentDate.getTime()) / millisecondsInADay
+  // let daysToCompleteExercise;
+  // daysToCompleteExercise = (dueDate.getTime() - assignmentDate.getTime()) / millisecondsInADay
   // Will indicate how many times the exercise should have been completed
   let expectedCompletions = 0
   switch (frequency) {
@@ -147,7 +152,7 @@ function completeAssignmentButton() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={selectedAssignment.due != undefined ? completeAssignment : (() => {alert("You want to make a new assignment"); setAssignmentCompletionDialogOpen(false)})} color="primary">
+          <Button onClick={selectedAssignment.due != undefined ? completeAssignment : createAssignment} color="primary">
             Yes
           </Button>
           <Button onClick={handleClose} color="primary" autoFocus>
@@ -165,9 +170,19 @@ function completeAssignment() {
   let data = assignments
   for (let assignment of data) {
     if (assignment.visitNumber == targetVisitNumber) {
+      // Update database
       closeAssignment(assignment)
+
+      // Update global store
+      dispatch(
+        completeClientAssignment({
+          assignment: assignment
+        })
+      )
+      break;
     }
   }
+
 
   // Check if the newest assignment is an actual assignment. If not, make a new barebones assignment so that a new bubbble can be made. Just exists with required fields for visuals
   if (data[data.length - 1].completedByTherapist) {
@@ -196,6 +211,12 @@ function changeVisibleAssignment(visitNumber) {
 
   
 
+}
+
+// Sets up redirect to assignment form if therapist wants to make new assignment
+const createAssignment = () => {
+  // setRedirectToAssignmentForm(true)
+  history.push('/AssignmentForm')
 }
 
 // Take in an assignment. Return the total progress as a percent. Divide assignment progress (completions so far) by total amount of completions expected
