@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import '../css/ClientView.css';
 import { completeClientAssignment } from "../redux/slices/therapistSlice";
 import { MDBCard, MDBCardTitle } from "mdbreact";
@@ -28,6 +28,8 @@ function ClientView() {
 
   let history = useHistory();
 
+  const dispatch = useDispatch()
+
   const [client] = useState(
     useSelector((state) => state.client)
   )
@@ -43,7 +45,6 @@ function ClientView() {
     due: ""
   })
 
-  const [assignmentsSorted, setAssignmentsSorted] = useState(false)
 
     const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
 
@@ -51,10 +52,7 @@ function ClientView() {
 
     useEffect(async () => {
       // Sort assignments once
-      if (!assignmentsSorted) {
-        setAssignments(assignments.sort((a, b) => a.visitNumber - b.visitNumber))
-        setAssignmentsSorted(true)
-      }
+      if (!assignmentsFetched) {
         //let assignments = useSelector((state) => state.therapist['PjohnDoe1'])
             // add an extra assignment to allow for a new one to be created if the most recent assignment has been closed
             if (assignments[assignments.length - 1].completedByTherapist) {
@@ -65,12 +63,14 @@ function ClientView() {
                 status: 0 
                 }
 
-                assignments.push(newAssignmentForNewBubble)
+                let newAssignmentList = assignments.slice()
+                newAssignmentList.push(newAssignmentForNewBubble)
+                setAssignments(newAssignmentList)
             }
             // update the state with the assignments in the right order
             setAssignmentsFetched(true)
-            setAssignments(assignments)
             setSelectedAssignment(assignments[assignments.length - 1])
+          }
       
     });
     
@@ -218,12 +218,6 @@ function changeVisibleAssignment(visitNumber) {
 
   
 
-}
-
-// Sets up redirect to assignment form if therapist wants to make new assignment
-const createAssignment = () => {
-  // setRedirectToAssignmentForm(true)
-  history.push('/AssignmentForm')
 }
 
 // Take in an assignment. Return the total progress as a percent. Divide assignment progress (completions so far) by total amount of completions expected

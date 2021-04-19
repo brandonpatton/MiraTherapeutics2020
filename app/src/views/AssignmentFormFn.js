@@ -42,7 +42,6 @@ function AssignmentForm() {
     const {therapist} = useSelector((state) => state.therapist)
 
     let [assignments] = useState(therapist.clientInfo['PjohnDoe1'])
-    assignments.sort((a, b) => a.visitNumber - b.visitNumber)
 
     console.log(assignments)
 
