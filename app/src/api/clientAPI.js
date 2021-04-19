@@ -9,14 +9,16 @@ export const getAssignments = async (patientID) => {
 
 export const closeAssignment = async (assignmentObject) => {
     // mark the assignment as completed by the therapist
-    assignmentObject.completedByTherapist = true
+    let closedAssignment = Object.assign({}, assignmentObject);
+    console.log(`Read only property: ${closedAssignment.completedByTherapist}`)
+    closedAssignment.completedByTherapist = true
     const postSettings = {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(assignmentObject),
+        body: JSON.stringify(closedAssignment),
       }
 
       await fetch(`http://localhost:3080/assignments/${assignmentObject._id}/edit`, postSettings)

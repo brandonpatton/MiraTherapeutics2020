@@ -56,9 +56,11 @@ const therapistSlice = createSlice({
     completeClientAssignment: (state, action) => {
         let patientId = action.payload.assignment.patientId;
         // Find the index of the assignment that matches the supplied assignment ID for the supplied patient ID
+        console.log(state.therapist.therapist)
+        console.log(action.payload)
         let targetIndex = state.therapist.clientInfo[patientId].findIndex((assignment) => assignment._id == action.payload.assignment._id);
         // Update the completedByTherapist field of the assignment at targetIndex to indicate that the therapist marked it as completed
-        state.therarpist.clientInfo[patientId][targetIndex].completedByTherapist = true;
+        state.therapist.clientInfo[patientId][targetIndex].completedByTherapist = true;
 
     }
   },

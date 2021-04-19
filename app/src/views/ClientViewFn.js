@@ -164,22 +164,27 @@ function completeAssignmentButton() {
       </div>)
 }
 
-function completeAssignment() {
+async function completeAssignment() {
   // Assignments are sorted in descending order of visitNumber (whatever nth visit during which they were assigned)
   // change status of selected assignment to "Complete"
   let targetVisitNumber = selectedAssignment.visitNumber
-  let data = assignments
+  let data = assignments.slice()
   for (let assignment of data) {
     if (assignment.visitNumber == targetVisitNumber) {
       // Update database
-      closeAssignment(assignment)
-
+      await closeAssignment(assignment)
+      console.log("Updating global store")
       // Update global store
       dispatch(
         completeClientAssignment({
           assignment: assignment
         })
       )
+      
+      let completedAssignment = Object.assign({}, data[targetVisitNumber - 1])
+      completedAssignment.completedByTherapist = true
+      data[targetVisitNumber - 1] = completedAssignment
+
       break;
     }
   }
