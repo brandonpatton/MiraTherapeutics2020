@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import '../css/ClientView.css';
 import { completeClientAssignment } from "../redux/slices/therapistSlice";
 import { MDBCard, MDBCardTitle } from "mdbreact";
@@ -48,8 +48,6 @@ function ClientView() {
     const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
 
     const [assignmentsFetched, setAssignmentsFetched] = useState(false)
-
-    const dispatch = useDispatch()
 
     useEffect(async () => {
       // Sort assignments once
@@ -113,7 +111,7 @@ function calculateExpectedExerciseProgress(exercise) {
       break
     default:
       // X per week case
-      const completionsPerWeek = frequency.split(" ")[0]
+      const completionsPerWeek = Number(frequency)
       expectedCompletions = daysSinceAssignment/(7/completionsPerWeek)
       break
   }
@@ -134,8 +132,11 @@ function completeAssignmentButton() {
       setAssignmentCompletionDialogOpen(false)
   }
 
-
-  return (<div className = "Complete-assignment-button-div">
+  // if flag to redirect to assignment form is true, redirect to assignment form. Otherwise, render the page
+  
+  
+  return (
+  <div className = "Complete-assignment-button-div">
   <Button className = "Complete-assignment-button" variant="outlined" color="primary" onClick={handleClickOpen} disabled = {selectedAssignment.completedByTherapist}>
         {selectedAssignment.completedByTherapist != undefined ? "Complete Assignment" : "Create Assignment"}
       </Button>
@@ -198,6 +199,12 @@ function completeAssignment() {
     setAssignments(data)
     setSelectedAssignment(data[data.length - 1])
     setAssignmentCompletionDialogOpen(false)
+}
+
+// Sets up redirect to assignment form if therapist wants to make new assignment
+const createAssignment = () => {
+  // setRedirectToAssignmentForm(true)
+  history.push('/AssignmentForm')
 }
 
 function changeVisibleAssignment(visitNumber) {

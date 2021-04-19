@@ -23,6 +23,22 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Returns an object that maps supplied patient IDs to assignment lists
+router.get("/patient/batch", async (req, res) => {
+  const patientIds = req.body.patientIds
+  if (patientIds.length === 0) {
+    res.status(400).json({Error: "No IDs provided"})
+    return
+  }
+  try {
+    const idToAssignmentList  = await assignmentData.getAssignmentsByBatchPatientIds(patientIds)
+    res.json(idToAssignmentList)
+  } catch (e) {
+    res.status(500).json({Error: e})
+  }
+})
+
+// get all assignments for given client ID
 router.get("/patient/:id", async (req, res) => {
   const id = req.params.id;
   try {
