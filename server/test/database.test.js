@@ -1,3 +1,4 @@
+const assert = require('assert')
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Assignment } = require('../data/models/assignment');
@@ -25,9 +26,45 @@ afterEach(async () => {
 	await mongoServer.stop();
 });
 
+const checkExerciseEquality = (exercise1, exercise2) => {
+	expect(exercise1._id).toEqual(exercise2._id);
+	expect(exercise1.exerciseTitle).toEqual(exercise2.exerciseTitle);
+	expect(exercise1.exerciseType).toEqual(exercise2.exerciseType);
+	expect(exercise1.dueDate).toEqual(exercise2.dueDate);
+	expect(exercise1.frequency).toEqual(exercise2.frequency);
+	expect(exercise1.patientName).toEqual(exercise2.patientName);
+	expect(exercise1.patientId).toEqual(exercise2.patientId);
+	expect(exercise1.progress).toEqual(exercise2.progress);
+	expect(exercise1.specialInstructions).toEqual(exercise2.specialInstructions);
+}
+
+const checkAssignmentEqualty = (assignment1, assignment2) => {
+	expect(assignment1._id).toEqual(assignment2._id);
+	expect(assignment1.exerciseList.length).toEqual(assignment2.exerciseList.length);
+	for (let i = 0; i < assignment1.exerciseList.length; i++) {
+		checkExerciseEquality(assignment1.exerciseList[i], assignment2.exerciseList[i])
+	}
+	expect(assignment1.dateAssigned).toEqual(assignment2.dateAssigned);
+	expect(assignment1.due).toEqual(assignment2.due);
+	expect(assignment1.patientName).toEqual(assignment2.patientName);
+	expect(assignment1.patientId).toEqual(assignment2.patientId);
+	expect(assignment1.therapistName).toEqual(assignment2.therapistName);
+	expect(assignment1.therapistId).toEqual(assignment2.therapistId);
+	expect(assignment1.assignmentProgress).toEqual(assignment2.assignmentProgress);
+	expect(assignment1.visitNumber).toEqual(assignment2.visitNumber);
+	expect(assignment1.overallInstructions).toEqual(assignment2.overallInstructions);
+	expect(assignment1.completedByTherapist).toEqual(assignment2.completedByTherapist);
+} 
+
+const checkAssignmentListEquality = (assignmentList1, assignmentList2) => {
+	expect(assignmentList1.length).toEqual(assignmentList2.length)
+	for (let i = 0; i < assignmentList1.length; i++) {
+		checkAssignmentEqualty(assignmentList1[i], assignmentList2[i])
+	}
+}
+
 describe('insert', () => {
 	it('should insert an assignment with no exercises', async () => {
-		expect.assertions(13)
 
 		let testDateAssigned = new Date();
 		let testDue = new Date(testDateAssigned.getTime() + 60000)
@@ -48,18 +85,8 @@ describe('insert', () => {
 		let insertInfo = await assignmentData.createAssignment(noExerciseAssignment);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id });
-		expect(res._id).toEqual(insertInfo._id);
-		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length);
-		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
-		expect(res.due).toEqual(insertInfo.due);
-		expect(res.patientName).toEqual(insertInfo.patientName);
-		expect(res.patientId).toEqual(insertInfo.patientId);
-		expect(res.therapistName).toEqual(insertInfo.therapistName);
-		expect(res.therapistId).toEqual(insertInfo.therapistId);
-		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
-		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
-		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
-		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
+
+		checkAssignmentEqualty(res, insertInfo)
 
 		await expect(assignmentData.createAssignment()).rejects.toThrow()
 
@@ -113,21 +140,7 @@ describe('insert', () => {
 		const insertInfo = await assignmentData.createAssignment(assignmentWithExercises);
 
 		const res = await Assignment.findOne({ _id: insertInfo._id})
-		expect.assertions(13 + res.exerciseList.length)
-		expect(res._id).toEqual(insertInfo._id);
-		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
-		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
-		for (let i = 0; i < res.exerciseList.length; i++) expect(res.exerciseList[i]).toEqual(insertInfo.exerciseList[i])
-		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
-		expect(res.due).toEqual(insertInfo.due);
-		expect(res.patientName).toEqual(insertInfo.patientName);
-		expect(res.patientId).toEqual(insertInfo.patientId);
-		expect(res.therapistName).toEqual(insertInfo.therapistName);
-		expect(res.therapistId).toEqual(insertInfo.therapistId);
-		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
-		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
-		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
-		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
+		checkAssignmentEqualty(res, insertInfo)
 
 	});
 
@@ -136,7 +149,6 @@ describe('insert', () => {
 
 describe('retrieve', () => {
 	it('should retrieve an assignment with no exercises from the database', async () => {
-		expect.assertions(13)
 
 		let testDateAssigned = new Date();
 		let testDue = new Date(testDateAssigned.getTime() + 60000)
@@ -158,18 +170,8 @@ describe('retrieve', () => {
 		const insertInfo = await noExerciseAssignment.save()
 
 		const res = await assignmentData.getAssignment(insertInfo._id)
-		expect(res._id).toEqual(insertInfo._id);
-		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length);
-		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
-		expect(res.due).toEqual(insertInfo.due);
-		expect(res.patientName).toEqual(insertInfo.patientName);
-		expect(res.patientId).toEqual(insertInfo.patientId);
-		expect(res.therapistName).toEqual(insertInfo.therapistName);
-		expect(res.therapistId).toEqual(insertInfo.therapistId);
-		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
-		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
-		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
-		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
+		checkAssignmentEqualty(res, insertInfo)
+
 		let badId = mongoose.Types.ObjectId()
 		await expect(assignmentData.getAssignment(badId)).rejects.toEqual('No assignment exists with that id')
 
@@ -224,21 +226,7 @@ describe('retrieve', () => {
 		const insertInfo = await assignmentWithExercises.save()
 
 		const res = await assignmentData.getAssignment(insertInfo._id)
-		expect.assertions(13 + res.exerciseList.length)
-		expect(res._id).toEqual(insertInfo._id);
-		expect(res.exerciseList.length).toEqual(insertInfo.exerciseList.length)
-		expect(res.exerciseList[0]).toEqual(insertInfo.exerciseList[0]);
-		for (let i = 0; i < res.exerciseList.length; i++) expect(res.exerciseList[i]).toEqual(insertInfo.exerciseList[i])
-		expect(res.dateAssigned).toEqual(insertInfo.dateAssigned);
-		expect(res.due).toEqual(insertInfo.due);
-		expect(res.patientName).toEqual(insertInfo.patientName);
-		expect(res.patientId).toEqual(insertInfo.patientId);
-		expect(res.therapistName).toEqual(insertInfo.therapistName);
-		expect(res.therapistId).toEqual(insertInfo.therapistId);
-		expect(res.assignmentProgress).toEqual(insertInfo.assignmentProgress);
-		expect(res.visitNumber).toEqual(insertInfo.visitNumber);
-		expect(res.overallInstructions).toEqual(insertInfo.overallInstructions);
-		expect(res.completedByTherapist).toEqual(insertInfo.completedByTherapist);
+		checkAssignmentEqualty(res, insertInfo)
 
 	});
 })
@@ -384,25 +372,14 @@ describe('update', () => {
         const updatedAssignment = await assignmentData.updateAssignment(res._id, noExerciseUpdated)
         const retrievedUpdatedAssignment = await Assignment.findOne({ _id: res._id});
 
-		expect(updatedAssignment._id).toEqual(retrievedUpdatedAssignment._id);
-		expect(updatedAssignment.exerciseList.length).toEqual(retrievedUpdatedAssignment.exerciseList.length);
-		expect(updatedAssignment.dateAssigned).toEqual(retrievedUpdatedAssignment.dateAssigned);
-		expect(updatedAssignment.due).toEqual(retrievedUpdatedAssignment.due);
-		expect(updatedAssignment.patientName).toEqual(retrievedUpdatedAssignment.patientName);
-		expect(updatedAssignment.patientId).toEqual(retrievedUpdatedAssignment.patientId);
-		expect(updatedAssignment.therapistName).toEqual(retrievedUpdatedAssignment.therapistName);
-		expect(updatedAssignment.therapistId).toEqual(retrievedUpdatedAssignment.therapistId);
-		expect(updatedAssignment.assignmentProgress).toEqual(retrievedUpdatedAssignment.assignmentProgress);
-		expect(updatedAssignment.visitNumber).toEqual(retrievedUpdatedAssignment.visitNumber);
-		expect(updatedAssignment.overallInstructions).toEqual(retrievedUpdatedAssignment.overallInstructions);
-		expect(updatedAssignment.completedByTherapist).toEqual(retrievedUpdatedAssignment.completedByTherapist);
+		checkExerciseEquality(updatedAssignment, retrievedUpdatedAssignment)
 
 	});
 })
 
 describe('insert', () => {
 	it('should insert an exercise from the database', async () => {
-		expect.assertions(10)
+		
 
 		let testDateAssigned = new Date();
 		let testDue = new Date(testDateAssigned.getTime() + 60000)
@@ -421,15 +398,6 @@ describe('insert', () => {
 		const insertFlashback = await exerciseData.createExercise(flashbackExercise);
 
 		const res = await Exercise.findOne({ _id: insertFlashback._id })
-		expect(res._id).toEqual(insertFlashback._id);
-		expect(res.exerciseTitle).toEqual(insertFlashback.exerciseTitle);
-		expect(res.exerciseType).toEqual(insertFlashback.exerciseType);
-		expect(res.dueDate).toEqual(insertFlashback.dueDate);
-        expect(res.frequency).toEqual(insertFlashback.frequency);
-		expect(res.patientName).toEqual(insertFlashback.patientName);
-		expect(res.patientId).toEqual(insertFlashback.patientId);
-		expect(res.progress).toEqual(insertFlashback.progress);
-		expect(res.specialInstructions).toEqual(insertFlashback.specialInstructions);
 
 		await expect(exerciseData.createExercise()).rejects.toThrow()
 
@@ -438,7 +406,6 @@ describe('insert', () => {
 
 describe('retrieve', () => {
 	it('should retrieve an exercise from the database', async () => {
-		expect.assertions(10)
 
 		let testDateAssigned = new Date();
 		let testDue = new Date(testDateAssigned.getTime() + 60000)
@@ -457,15 +424,7 @@ describe('retrieve', () => {
 		const insertFlashback = await flashbackExercise.save()
 
 		const res = await exerciseData.getExercise(insertFlashback._id)
-		expect(res._id).toEqual(insertFlashback._id);
-		expect(res.exerciseTitle).toEqual(insertFlashback.exerciseTitle);
-		expect(res.exerciseType).toEqual(insertFlashback.exerciseType);
-		expect(res.dueDate).toEqual(insertFlashback.dueDate);
-        expect(res.frequency).toEqual(insertFlashback.frequency);
-		expect(res.patientName).toEqual(insertFlashback.patientName);
-		expect(res.patientId).toEqual(insertFlashback.patientId);
-		expect(res.progress).toEqual(insertFlashback.progress);
-		expect(res.specialInstructions).toEqual(insertFlashback.specialInstructions);
+		checkExerciseEquality(res, insertFlashback)
 
 		let badId = mongoose.Types.ObjectId();
 		await expect(exerciseData.getExercise(badId)).rejects.toEqual('No exercise exists with that id')
@@ -534,15 +493,7 @@ describe('update', () => {
 
 		const res = await exerciseData.updateExercise(insertFlashback._id, updatedFlashbackExercise)
 		const newFlashbackExercise = await Exercise.findOne({_id: insertFlashback._id});
-		expect(res._id).toEqual(newFlashbackExercise._id);
-		expect(res.exerciseTitle).toEqual(newFlashbackExercise.exerciseTitle);
-		expect(res.exerciseType).toEqual(newFlashbackExercise.exerciseType);
-		expect(res.dueDate).toEqual(newFlashbackExercise.dueDate);
-        expect(res.frequency).toEqual(newFlashbackExercise.frequency);
-		expect(res.patientName).toEqual(newFlashbackExercise.patientName);
-		expect(res.patientId).toEqual(newFlashbackExercise.patientId);
-		expect(res.progress).toEqual(newFlashbackExercise.progress);
-		expect(res.specialInstructions).toEqual(newFlashbackExercise.specialInstructions);
+		checkExerciseEquality(res, newFlashbackExercise)
 
 	});
 })
@@ -591,6 +542,143 @@ describe('retrieve', () => {
 		}
 
 		await expect(assignmentData.getAssignmentsByPatientId('badPatientId')).rejects.toEqual('No assignment exists with that patientId')
+    });
+    
+})
+
+describe('retrieve', () => {
+	it('should retrieve an object that maps supplied patient IDs to their assignment lists', async () => {
+
+		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
+		// Make assignments to retrieve
+		const johnDoeAssignment = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'John Doe',
+			patientId: 'PjohnDoe1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 1,
+			overallInstructions: 'Hang in there',
+			completedByTherapist: false
+		});
+
+		const johnDoeAssignment2 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'John Doe',
+			patientId: 'PjohnDoe1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 2,
+			overallInstructions: 'This is for the second visit',
+			completedByTherapist: false
+		});
+
+		const pattyPancakesAssignment1 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'Patty Pancakes',
+			patientId: 'PpattyPancakes1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 1,
+			overallInstructions: 'You are doing amazing',
+			completedByTherapist: false
+		});
+
+		const pattyPancakesAssignment2 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'Patty Pancakes',
+			patientId: 'PpattyPancakes1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 2,
+			overallInstructions: 'Keep it up!',
+			completedByTherapist: false
+		});
+
+		const pattyPancakesAssignment3 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'Patty Pancakes',
+			patientId: 'PpattyPancakes1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 3,
+			overallInstructions: 'It is time for the third assignment!',
+			completedByTherapist: false
+		});
+
+		const stubertSizzoAssignment1 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'Stubert Sizzo',
+			patientId: 'PstubertSizzo1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 1,
+			overallInstructions: 'Nice one!',
+			completedByTherapist: false
+		});
+
+		const stubertSizzoAssignment2 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'Stubert Sizzo',
+			patientId: 'PstubertSizzo1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 2,
+			overallInstructions: 'Wow!',
+			completedByTherapist: false
+		});
+
+		const stubertSizzoAssignment3 = new Assignment({
+			exerciseList: [],
+			dateAssigned: testDateAssigned,
+			due: testDue,
+			patientName: 'Stubert Sizzo',
+			patientId: 'PstubertSizzo1',
+			therapistName: 'Jane Doe',
+			therapistId: 'TjaneDoe1',
+			assignmentProgress: 0,
+			visitNumber: 3,
+			overallInstructions: 'Okay.',
+			completedByTherapist: false
+		});
+
+		// Will have patient IDs as keys and assignment lists as values
+		let patientIdToAssignments = {}
+
+		// Assign the assignment lists to the correct patient IDs
+		patientIdToAssignments['PjohnDoe1'] = [await johnDoeAssignment.save(), await johnDoeAssignment2.save()]
+		patientIdToAssignments['PpattyPancakes1'] = [await pattyPancakesAssignment1.save(), await pattyPancakesAssignment2.save(), await pattyPancakesAssignment3.save()]
+		patientIdToAssignments['PstubertSizzo1'] = [await stubertSizzoAssignment1.save(), await stubertSizzoAssignment2.save(), await stubertSizzoAssignment3.save()]
+	
+		// Check that each patient ID in the response object has the right assignment list
+		const resObj = await assignmentData.getAssignmentsByBatchPatientIds(['PjohnDoe1', 'PpattyPancakes1', 'PstubertSizzo1'])
+		for (let patientId in resObj){
+			checkAssignmentListEquality(patientIdToAssignments[patientId], resObj[patientId])
+		}
+
     });
     
 })

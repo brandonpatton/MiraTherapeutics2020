@@ -1,0 +1,7 @@
+**Things to consider
+
+API endpoint which takes the array of client ids and returns the object
+
+Consider creating a complex/big redux slice, which stores all the clients, and their associcated assigments, and their excerises
+ -- Reducers are going to be complicated
+ -- Consider loading this in on login

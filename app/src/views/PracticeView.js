@@ -1,163 +1,171 @@
-import React from "react";
-import green from '../Green.PNG';
-import Table from 'react-bootstrap/Table';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Container from 'react-bootstrap/Container'
-import Button from 'react-bootstrap/Button'
-import Card from 'react-bootstrap/Card'
-import { Component } from "react";
-import bonelliPicture from '../Bonelli-RECT.jpg';
-import acasterPicture from '../james-acaster.jpg'
-import Image from 'react-bootstrap/Image';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import green from "../Green.PNG";
+import Table from "react-bootstrap/Table";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import bonelliPicture from "../Bonelli-RECT.jpg";
+import acasterPicture from "../james-acaster.jpg";
+import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
-import { Redirect } from 'react-router-dom'
-import '../css/PracticeView.css'
+import "../css/PracticeView.css";
+import { openClient } from "../redux/slices/clientSlice";
+import { updateTherapistClientList } from "../redux/slices/therapistSlice"
+
+const PracticeView = () => {
+  
+  const dispatch = useDispatch();
 
 
-function patientClick(patient) {
-  this.setState(() => ({
-    selectedPatient: patient
-  }));
-}
 
-  class PracticeView extends Component {
-    constructor(props) {
-      super(props);
-      this.state = { selectedPatient: {
-                      name: 'Bruce Wayne',
-                      trackedSymptoms: 3,
-                      groundingExercises: 5,
-                      assignments: [true, false],
-                      nextSession: '3/4',
-                      status: 'Ongoing',
-                    } };
-      this.listItems = []
-      this.patients = [
-        {
-          name: 'Bruce Wayne',
+  const { client } = useSelector((state) => state);
+
+  console.log("Client")
+
+  const [patient, setPatient] = useState(
+    client.name.length == 0
+      ? {
+          name: "Bruce Wayne",
+          id: "PjohnDoe1",
           trackedSymptoms: 3,
           groundingExercises: 5,
           assignments: [true, false],
-          nextSession: '3/4',
-          status: 'Ongoing'
-        },
-        {
-          name: 'Craig Ferguson',
-          trackedSymptoms: 3,
-          groundingExercises: 5,
-          assignments: [true, false],
-          nextSession: '2/8',
-          status: 'Ongoing'
-        },
-        {
-          name: 'Eduardo Bonelli',
-          trackedSymptoms: 3,
-          groundingExercises: 5,
-          assignments: [true, false],
-          nextSession: '12/24',
-          status: 'Ongoing'
-        },
-        {
-          name: 'James Acaster',
-          trackedSymptoms: 3,
-          groundingExercises: 5,
-          assignments: [true, true],
-          nextSession: '11/20',
-          status: 'Completed'
-        },
-        {
-          name: 'Scooby Doo',
-          trackedSymptoms: 3,
-          groundingExercises: 5,
-          assignments: [true, false],
-          nextSession: '3/14',
-          status: 'Ongoing'
+          nextSession: "3/4",
+          status: "Ongoing",
         }
-      ];
+      : client
+  );
 
-      patientClick = patientClick.bind(this);
+  const [patientList, setPatientList] = useState([
+    {
+      name: "Bruce Wayne",
+      id: "PjohnDoe1",
+      trackedSymptoms: 3,
+      groundingExercises: 5,
+      assignments: [true, false],
+      nextSession: "3/4",
+      status: "Ongoing",
+    },
+    {
+      name: "Craig Ferguson",
+      id: "PcraigFerguson1",
+      trackedSymptoms: 3,
+      groundingExercises: 5,
+      assignments: [true, false],
+      nextSession: "2/8",
+      status: "Ongoing",
+    },
+    {
+      name: "Eduardo Bonelli",
+      id: "PeddyBonelli1",
+      trackedSymptoms: 3,
+      groundingExercises: 5,
+      assignments: [true, false],
+      nextSession: "12/24",
+      status: "Ongoing",
+    },
+    {
+      name: "James Acaster",
+      id: "PjamesAcaster1",
+      trackedSymptoms: 3,
+      groundingExercises: 5,
+      assignments: [true, true],
+      nextSession: "11/20",
+      status: "Completed",
+    },
+    {
+      name: "Scooby Doo",
+      id: "PscoobyDoo1",
+      trackedSymptoms: 3,
+      groundingExercises: 5,
+      assignments: [true, false],
+      nextSession: "3/14",
+      status: "Ongoing",
+    },
+  ]);
 
+  const [fetchedTherapistClientInfo, setFetchedTherapistClientInfo] = useState(false)
+
+  useEffect(() => {
+    // Only set the therapist slice once
+    if (!fetchedTherapistClientInfo){
+      updateTherapistClientList()
+      setFetchedTherapistClientInfo(false)
     }
+    // window.onpopstate = function(event) {
+    //   // Allows back and forth action by refreshing the page if it was reached using the browser's back button
+    //   if (event.currentTarget.location.pathname == "/PracticeView") window.location.reload()
+    // }
+  });
 
-    componentDidMount() {
-      window.onpopstate = function(event) {
-        // Allows back and forth action by refreshing the page if it was reached using the browser's back button
-        if (event.currentTarget.location.pathname == "/PracticeView") window.location.reload()
+   const updateTherapistStore = async () => {
+    const getSettings = {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: ["PjohnDoe1"],
     }
+  
+  let clientInfoObj = await fetch(`http://localhost:3080/assignments/patient/batch/PjohnDoe1`)
+  clientInfoObj = await clientInfoObj.json()
+  console.log("Client info")
+  console.log(clientInfoObj)
+
+  dispatch(
+    updateTherapistClientList({
+      clientInfo: clientInfoObj
+    })
+  )
+  
   }
 
-    render(){
-      return(
-        <div>
-          <Container className = "Profile">
-            <Row>
-              <Col>
-                <div className = "border">
-                  <div className = "Profile-info">
-                    <Row className = "Name-Row justify-content-md-center">
-                      <Image src={acasterPicture} roundedCircle className="picture"/>
-                    </Row>
-                    <Row className = "Name-Row justify-content-md-center">
-                      <Card className = "Name-Card">{this.state.selectedPatient.name}</Card>
-                    </Row>
-                    <Row className= "Name-Row justify-content-md-center">
-                      <Card className = "Next-Session-Date">{this.state.selectedPatient.nextSession}</Card>
-                    </Row>
-                    <Row className = "Name-Row justify-content-md-center">
-                      <Card className = "Status">{this.state.selectedPatient.status}</Card>
-                    </Row>
-                    <Row className = "Name-Row justify-content-md-center">
-                      <Link to = {{
-                          pathname: "/ClientView",
-                          data: {name: this.state.selectedPatient} // your data array of objects
-                        }}><Button variant="info" className = "Client-View-Button">Go To Client View</Button></Link>
-                    </Row> 
-                  </div>  
-                </div>             
-              </Col>
-              
-              <Col xs={8}>
-                <h1 className = "Practice-view-title">Practice View</h1>
-                <Table className = "Table">
-                <tbody>
-                  <TableRow className = "Patients" patients = {this.patients} />
-                </tbody>
-                </Table>
-              </Col>
-            </Row>
-          </Container>
-          
-          {/* <NumberList numbers = {this.numbers} /> */}
-        </div>
-      )
-    }
-  };
-      
-class TableRow extends Component {
-  constructor(props) {
-    super(props);
-    this.patients = props.patients;
+  function clientClick(client) {
+    setPatient(client);
   }
 
-  getRow(patients) {
-    const rowItems = patients.map((patient) =>
-      <tr onClick = {() => patientClick(patient)}>
-        <td className = "Patient-name" >Client: {patient.name}</td>
-        <p className = "Tab"></p>
-        <td className = "Tracked-symptoms">Tracked Symptoms {patient.trackedSymptoms} times</td>
-        <p className = "Tab"></p>
-        <td className = "Exercise-use">Grounding Exercises used {patient.groundingExercises} times</td>
-        <p className = "Tab"></p>
-        <td className = "Completion">Completed {this.getCompleted(patient.assignments)}/{patient.assignments.length} homework assignments</td>
-        <p className = "Tab"></p>
-        <td className = "Completion-indicator"><Image src={green} Green/></td>
-      </tr>
+  const updateCurrentClient = (client) => {
+    dispatch(
+      openClient({
+        id: client.id,
+        name: client.name,
+        nextSession: client.nextSession,
+        status: client.status,
+      })
     );
-    return rowItems;
-  } 
+  };
 
-  getCompleted(assignments) {
+  function getRow(patients) {
+    const rowItems = patients.map((patient) => (
+      <tr onClick={() => clientClick(patient)}>
+        <td className="Patient-name">Client: {patient.name}</td>
+        <p className="Tab"></p>
+        <td className="Tracked-symptoms">
+          Tracked Symptoms {patient.trackedSymptoms} times
+        </td>
+        <p className="Tab"></p>
+        <td className="Exercise-use">
+          Grounding Exercises used {patient.groundingExercises} times
+        </td>
+        <p className="Tab"></p>
+        <td className="Completion">
+          Completed {getCompleted(patient.assignments)}/
+          {patient.assignments.length} homework assignments
+        </td>
+        <p className="Tab"></p>
+        <td className="Completion-indicator">
+          <Image src={green} Green />
+        </td>
+      </tr>
+    ));
+    return rowItems;
+  }
+
+  function getCompleted(assignments) {
     let count = 0;
     for (let assignment of assignments) {
       if (assignment) {
@@ -167,9 +175,66 @@ class TableRow extends Component {
     return count;
   }
 
-  render() {
-    return(this.getRow(this.patients))
-  }
+  return (
+    <div>
+      <Container className="Profile">
+        <Row>
+          <Col>
+            <div className="border">
+              <div className="Profile-info">
+                <Row className="Name-Row justify-content-md-center">
+                  <Image
+                    src={acasterPicture}
+                    roundedCircle
+                    className="picture"
+                  />
+                </Row>
+                <Row className="Name-Row justify-content-md-center">
+                  <Card className="Name-Card">{patient.name}</Card>
+                </Row>
+                <Row className="Name-Row justify-content-md-center">
+                  <Card className="Next-Session-Date">
+                    {patient.nextSession}
+                  </Card>
+                </Row>
+                <Row className="Name-Row justify-content-md-center">
+                  <Card className="Status">{patient.status}</Card>
+                </Row>
+                <Row className="Name-Row justify-content-md-center">
+                  <Link
+                    to={{
+                      pathname: "/ClientView",
+                      data: { name: patient.name }, // your data array of objects
+                    }}
+                  >
+                    <Button
+                      onClick={() => updateCurrentClient(patient)}
+                      variant="info"
+                      className="Client-View-Button"
+                    >
+                      Go To Client View
+                    </Button>
+                  </Link>
+                </Row>
+              </div>
+            </div>
+          </Col>
 
+          <Col xs={8}>
+            <h1 className="Practice-view-title">Practice View</h1>
+            <Table className="Table">
+              <tbody>
+                {/*<TableRow className = "Patients" patients = {this.patients} />*/}
+                {getRow(patientList)}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* <NumberList numbers = {this.numbers} /> */}
+    </div>
+  );
 };
-export default PracticeView
+
+export default PracticeView;

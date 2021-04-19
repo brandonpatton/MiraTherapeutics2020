@@ -1,18 +1,13 @@
 import React from "react";
-import ReactDOM from 'react-dom';
+import { useDispatch, useSelector } from "react-redux"
 import { Component } from "react";
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import useState from 'react';
 import { FormControl } from '@material-ui/core';
 import '../css/ClientView.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
-import {Redirect,Switch} from 'react-router-dom';
 import logo from '../mira-new-medium.png';
 import {Row, Col, Container, Image, Card, /*Button*/} from 'react-bootstrap'
-import Form from 'react-bootstrap/Form';
 import picture from '../Bonelli-RECT.jpg';
-import { useHistory } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   CircularProgressbar,
@@ -40,10 +35,8 @@ class ClientView extends Component {
           assignments: [
               {
                   due: '',
-                  // status of assignments numbers: 0 - New, 1 - Ongoing, 2 - Completed
                   status: 0,
-                  exercises: [
-                  ]
+                  exercises: []
               }
           ]
         },
@@ -53,7 +46,8 @@ class ClientView extends Component {
         assignmentCompletionDialogOpen: false
 
       }
-      this.completionStatusWords = ["New", "Ongoing", "Completed"]
+
+
       this.clientInfo = [
         {
           picture: picture,
@@ -458,34 +452,7 @@ class ClientInfo extends Component {
     </a>
   ));
 
-  const CustomMenu = React.forwardRef(
-    ({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
-      const [value, setValue] = useState('');
   
-      return (
-        <div
-          ref={ref}
-          style={style}
-          className={className}
-          aria-labelledby={labeledBy}
-        >
-          <FormControl
-            autoFocus
-            className="mx-3 my-2 w-auto"
-            placeholder="Type to filter..."
-            onChange={(e) => setValue(e.target.value)}
-            value={value}
-          />
-          <ul className="list-unstyled">
-            {React.Children.toArray(children).filter(
-              (child) =>
-                !value || child.props.children.toLowerCase().startsWith(value),
-            )}
-          </ul>
-        </div>
-      );
-    },
-  );
 //#endregion  
 
 
