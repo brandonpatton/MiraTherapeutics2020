@@ -9,7 +9,9 @@ const exerciseSchema = new mongoose.Schema({
     patientId: String,
     progress: Number,
     specialInstructions: String,
-    goal:Number
+    goal:Number,
+    results: String,
+    imageId: String,
 });
 
 const Exercise = mongoose.model('Exercise', exerciseSchema);

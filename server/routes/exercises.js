@@ -1,6 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const exerciseData = require("../data/methods/exercises");
+
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/'})
+var fs = require('fs');
+const AWS = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
+// import { v4 as uuidv4 } from 'uuid';
 
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
@@ -46,5 +50,31 @@ router.delete("/:id", async (req, res) => {
     console.log(e);
   }
 });
+
+router.post('/upload', upload.single("picture"), async function (req,res) {
+    try {
+        var src = fs.createReadStream(req.file.path);
+        var imageId = uuidv4();
+        await exerciseData.uploadFile(imageId + ".jpg",src); //Do we need an extension?
+        console.log(imageId);
+        res.json(imageId);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({"Error": e});
+    }
+    
+
+    
+    // console.log("Received file" + req.file.originalname);
+    // var src = fs.createReadStream(req.file.path);
+    // var dest = fs.createWriteStream('uploads/' + req.file.originalname);
+    // src.pipe(dest);
+    // src.on('end', function() {
+    // 	fs.unlinkSync(req.file.path);
+    // 	res.json('OK: received ' + req.file.originalname);
+    // });
+    // src.on('error', function(err) { res.json('Something went wrong!'); });
+  })
+
 
 module.exports = router;
