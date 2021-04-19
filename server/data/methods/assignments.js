@@ -61,6 +61,17 @@ module.exports = {
         const assignments = await Assignment.find({patientId: patientIdInput})
         if (assignments.length === 0) throw 'No assignment exists with that patientId'
         return assignments
+    },
+
+    async getAssignmentsByBatchPatientIds(patientIds) {
+        let idToAssignmentList = {}
+        for (let patientId of patientIds) {
+            let assignmentList = await this.getAssignmentsByPatientId(patientId)
+            assignmentList.sort((a, b) => a.visitNumber - b.visitNumber)
+            idToAssignmentList[patientId] = assignmentList
+        }
+
+        return idToAssignmentList
     }
 }
 

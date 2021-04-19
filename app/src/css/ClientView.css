@@ -1,27 +1,42 @@
-.Client-view-title-container{
-    position: absolute;
-    top: 6.5%;
-    left: 9%
+.App-logo {
+    max-width: 35%;
+    height: auto;
+    padding-right: 10%;
 }
 
-.background-container{
-    position: absolute;
-    top: 25%;
-    width: 100%;
-    z-index: -2; 
+.Assignment-completion-body{
+    float: right;
+    width: 87%;
+    height: 100%;
+    top: 30%;
+    right: 4%;
+    overflow:scroll
 }
 
-.Progress-bubbles-container{
-    position: absolute;
-    top: 5%;
-    width: 80%;
-    left: 10%;
-    display: flex;
-    flex-direction: row;
-    z-index: 20;
+.Assignment-completion-status-text{
+    color:#3D8FB4;
 }
-.Progress-bubbles{
-    padding-left: 5%;
+
+.Assignment-completion-status-text-container{
+    position: absolute;
+    padding-top: 2%;
+    left: 6%;
+}
+
+.Assignment-completion-title-text{
+    color: #707070;
+}
+
+.Assignment-due-date-container{
+    position: absolute;
+    padding-top: 2%;
+    
+}
+
+.Assignment-progress-container{
+    position: absolute;
+    padding-top: 15%;
+    left: 6%;
 }
 
 .background{
@@ -31,17 +46,28 @@
     z-index: -1;
   }
 
-.Client-view-title-text{
-    position: relative;
-    color: #707070;
-    font: Nunito; 
-    font-size: 45px;
-    font-weight: 500;
+.background-container{
+    position: absolute;
+    top: 25%;
+    width: 100%;
+    z-index: -2;
 }
-.Client-information-container{
-    width: 25%;
-    height: 650px;
+
+/* z-index value has to be higher than .Progress-bubbles-container */
+.Complete-assignment-button {
+    z-index: 25;
 }
+
+.clientInfoCard{
+    padding: 2%;
+}
+
+.clientInfoCardContainer{
+    text-align: center;
+    padding-top: 5%;
+    width: 35%;
+}
+
 .Client-information{
     align-items: center;
     width: 100%;
@@ -49,48 +75,34 @@
     top: 80px;
     left: 15%;
 }
-.clientInfoCardContainer{
-    text-align: center;
-    padding-top: 5%;
-    width: 35%;
+
+.Client-information-container{
+    width: 25%;
+    height: 650px;
 }
-.picture{
-    padding-top: 5%;
-}
-.clientInfoCard{
-    padding: 2%;
-}
-.Assignment-completion-body{
-    float: right;
-    width: 87%;
-    height: 100%;
-    top: 39%;
-    right: 4%;
-}
-.Assignment-completion-status-text-container{
+
+.Client-view-title-container{
     position: absolute;
-    padding-top: 2%;
-    left: 6%;
+    top: 6.5%;
+    left: 9%
 }
 
-.Assignment-due-date-container{
-    position: absolute;
-    padding-top: 2%;
-    
-}
-
-.Assignment-completion-status-text{
-    color:#3D8FB4;
-}
-
-.Assignment-progress-container{
-    position: absolute;
-    padding-top: 15%;
-    left: 6%;
-}
-
-.Assignment-completion-title-text{
+.Client-view-title-text{
+    position: relative;
     color: #707070;
+    font: Nunito; 
+    font-size: 45px;
+    font-weight: 500;
+}
+
+.Complete-assignment-button-col {
+    padding-left: 210%;
+    z-index: 25;
+}
+
+.Exercise-data{
+    width: 785%;
+    /* NEED THE COLORS TO MATCH (bubbles and bars)*/
 }
 
 .Exercise-data-container{
@@ -99,11 +111,36 @@
     
 }
 
-.Exercise-data{
-    width: 785%;
-    /* NEED THE COLORS TO MATCH (bubbles and bars)*/
+.picture{
+    padding-top: 5%;
+}
+
+.Progress-bubbles {
+    padding-left: 5%;
+    padding-bottom: 20%;
+    
+}
+
+
+.Progress-bubble-column {
+    padding-left: 6%;
+}
+
+.Progress-bubble-column-hidden {
+    opacity: 0;
+    padding-left: 6%;
+    bottom: 10%;
 }
 
 
 
-
+.Progress-bubbles-container {
+    position: absolute;
+    height: 50%;
+    top: 5%;
+    width: 80%;
+    left: 10%;
+    z-index: 20;
+    display: flex;
+    flex-direction: row;
+}

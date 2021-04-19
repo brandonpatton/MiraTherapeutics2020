@@ -22,6 +22,10 @@
     height: 712px;
 }
 
+.Assignment-information-top{
+    margin: 2px
+}
+
 .Exercise-card-container{
     position: relative;
     left: 5%;
@@ -50,9 +54,36 @@
     text-align: center;
 }
 
-.Plus{
+.Add-exercise{
+    /*color, positioning*/
     width: 250px;
     height: 150px;
     align-items: center;
     padding-top: 5%;
 }
+
+.exerciseTitle {
+    font-size: 20px;
+}
+
+.exerciseCard {
+    font-size: 14px;
+}
+
+/*.Exercise-card-body{
+    display: flex;
+    flex-flow: column wrap;
+    max-height: 160px;
+    width: 250px;
+    
+}
+
+.Exercise-card-row{
+    max-width: 252px;
+}*/
+
+.Edit-icon{
+    float: right;
+}
+
+
