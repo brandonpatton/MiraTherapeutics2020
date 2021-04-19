@@ -30,7 +30,7 @@ function ClientView() {
 
   const dispatch = useDispatch()
 
-  const [client] = useState(
+  const [{client}] = useState(
     useSelector((state) => state.client)
   )
 

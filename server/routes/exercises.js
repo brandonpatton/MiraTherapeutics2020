@@ -1,4 +1,6 @@
-
+const express = require('express')
+const router = express.Router()
+const exerciseData = require('../data/methods/exercises')
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/'})
 var fs = require('fs');
