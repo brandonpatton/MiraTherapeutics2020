@@ -67,6 +67,7 @@ module.exports = {
         let idToAssignmentList = {}
         for (let patientId of patientIds) {
             let assignmentList = await this.getAssignmentsByPatientId(patientId)
+            assignmentList.sort((a, b) => a.visitNumber - b.visitNumber)
             idToAssignmentList[patientId] = assignmentList
         }
 

@@ -24,6 +24,7 @@ const PracticeView = () => {
   const { client } = useSelector((state) => state);
 
   console.log("Client")
+  console.log(useSelector((state) => state))
 
   const [patient, setPatient] = useState(
     client.name.length == 0
@@ -92,8 +93,8 @@ const PracticeView = () => {
   useEffect(() => {
     // Only set the therapist slice once
     if (!fetchedTherapistClientInfo){
-      updateTherapistClientList()
-      setFetchedTherapistClientInfo(false)
+      updateTherapistStore()
+      setFetchedTherapistClientInfo(true)
     }
     // window.onpopstate = function(event) {
     //   // Allows back and forth action by refreshing the page if it was reached using the browser's back button
@@ -101,26 +102,25 @@ const PracticeView = () => {
     // }
   });
 
+  // Updates the client slice by fetching all client assignment lists from the database
    const updateTherapistStore = async () => {
-    const getSettings = {
-      method: 'GET',
+    const postSettings = {
+      method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: ["PjohnDoe1"],
+      body: JSON.stringify({patientIds: ["PjohnDoe1"]})
     }
   
-  let clientInfoObj = await fetch(`http://localhost:3080/assignments/patient/batch/PjohnDoe1`)
-  clientInfoObj = await clientInfoObj.json()
-  console.log("Client info")
-  console.log(clientInfoObj)
+    let clientInfoObj = await fetch(`http://localhost:3080/assignments/patient/batch/`, postSettings)
+    clientInfoObj = await clientInfoObj.json()
 
-  dispatch(
-    updateTherapistClientList({
-      clientInfo: clientInfoObj
-    })
-  )
+    dispatch(
+      updateTherapistClientList({
+        clientInfo: clientInfoObj
+      })
+    )
   
   }
 
