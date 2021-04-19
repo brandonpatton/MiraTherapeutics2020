@@ -31,7 +31,7 @@ const assignmentSlice = createSlice({
         due: '',
         status: '',
         nextSession: "",
-        exercises: [
+        exerciseList: [
             {
               exerciseTitle: "",
               exerciseType: "",
@@ -49,7 +49,11 @@ const assignmentSlice = createSlice({
   },
   reducers: {
     openAssignment: (state, action) => {
-      state.currentAssignment = action.payload;
+      state.assignment.currentAssignment = action.payload;
+    },
+    addExercise: (state, action) => {
+      let exercise = action.payload.exercise;
+      state.assignment.currentAssignment.exerciseList.push(exercise);
     },
   },
   extraReducers: {

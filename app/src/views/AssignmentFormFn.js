@@ -19,10 +19,12 @@ import { postAssignment } from '../api/clientAPI';
 import { openAssignment } from '../redux/slices/assignmentSlice'; //method that pushes assignment data to store for exercise form to access
 import { openClient } from "../redux/slices/clientSlice";
 import { addAssignmentToClient } from "../redux/slices/therapistSlice"; //method that pushes assignment data to store on SUBMIT
+import { useHistory } from 'react-router';
 
 
 function AssignmentForm() {
     const dispatch = useDispatch();
+    let history = useHistory();
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -33,15 +35,27 @@ function AssignmentForm() {
         useSelector((state) => state.client) //need correct id for updating store
       )
 
+    
+
     const [dateState, setDateState] = useState({
         startDate: new Date()
     })
-
+    /*client.name.length == 0
+    ? {
+        name: "Bruce Wayne",
+        id: "PjohnDoe1",
+        trackedSymptoms: 3,
+        groundingExercises: 5,
+        assignments: [true, false],
+        nextSession: "3/4",
+        status: "Ongoing",
+      }
+    : client*/
     let stateCheck = useSelector((state) => console.log(state))
 
-    const {therapist} = useSelector((state) => state.therapist)
+    const {currentAssignment} = useSelector((state) => state.assignment)
 
-    let [assignments] = useState(therapist.clientInfo['PjohnDoe1'])
+    let [assignments] = useState(useSelector((state) => state.therapist.clientInfo["PjohnDoe1"]))
 
     console.log(assignments)
 
@@ -119,7 +133,7 @@ const postAssignmentToClient = () => {
 
 function getExercises(exercises, next) {
     //populates the page with exercise cards
-    if (exercises[0].exerciseTitle != ""){   
+    if (exercises != []){   
         const result = exercises.map((exercise) =>
         <Row>
             <div className = "Exercise-card-row">
@@ -190,16 +204,9 @@ return(
                     {getExercises(setAssignment.exerciseList, dateState.startDate)}
                         <Row>
                             <MDBCard className = "Add-exercise">
-                                
-                                <Link to = {{ 
-                                    pathname: "/ExerciseForm",
-                                    data: {addedExercises: setAssignment.exerciseList,
-                                            nextSessionDate: [String(dateState.startDate.getMonth() + 1), String(dateState.startDate.getDate()), String(dateState.startDate.getFullYear())] }
-                                    }}>
-                                    <Button variant="link" size="lg">
-                                        Add Exercise
-                                    </Button>
-                                </Link>
+                                <Button variant="link" size="lg" onClick = { () => history.push("/ExerciseForm")}>
+                                    Add Exercise
+                                </Button>
                             </MDBCard>
                         </Row>
                     </div>
@@ -236,3 +243,11 @@ return(
 }
 
 export default AssignmentForm;
+
+
+
+/*{ 
+                                    pathname: "/ExerciseForm",
+                                    data: {addedExercises: setAssignment.exerciseList,
+                                            nextSessionDate: [String(dateState.startDate.getMonth() + 1), String(dateState.startDate.getDate()), String(dateState.startDate.getFullYear())] }
+                                    }*/

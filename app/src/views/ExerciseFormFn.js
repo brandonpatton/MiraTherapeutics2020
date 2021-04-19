@@ -95,6 +95,7 @@ function ExerciseForm() {
     }
     console.log(setAssignment.chosenExercise)
     useEffect(async () => {
+        console.log("aaaaa")
         /*var data = await getAssignments("PjohnDoe1");
         setAssignmentState({
             dateAssigned: today,
@@ -147,8 +148,6 @@ function ExerciseForm() {
     
     function getExercises(exercises) {
         console.log(exercises);
-
-
         const result = exercises.map((exercise, idx) =>
         <Row key = {idx}>
             <div className = "Exercise-card-row" key = {idx}>
@@ -242,7 +241,7 @@ return(
                     <Form.Control onChange = {event => setAssignmentState({chosenExercise: {exerciseTitle: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom>
                     {getExerciseTitle(exerciseTypes, setAssignment.chosenExercise.exerciseType)}
                     </Form.Control>
-                </Form.Group>
+                </Form.Group> 
                 <Form.Group>
                     <Form.Label>Due By</Form.Label>
                     <Form.Control onChange = {event => setAssignmentState({chosenExercise: {dueDate: event.target.value}})} as="select" defaultValue = {"Next Session:" + toString(setAssignment.nextSession)} custom>
@@ -272,8 +271,7 @@ return(
                     data: {editedExerciseList: exercises,
                             nextSession: setAssignment.nextSession} 
                 }}>
-                    <Button onClick={setRedirect(true)} variant="primary" type="Submit">
-                    
+                    <Button onClick={() => setRedirect(true)} variant="primary" type="Submit">
                     Add
                     </Button>
                 </Link>
