@@ -3,6 +3,7 @@ const { Exercise } = require('../models/exercise');
 const Assignments = require('./assignments')
 const fs = require('fs');
 const AWS = require('aws-sdk');
+require('dotenv').config()
 
 module.exports = {
     async createExercise(exercise) {
@@ -17,7 +18,8 @@ module.exports = {
             specialInstructions: exercise.specialInstructions,
             goal:exercise.goal,
             results: '',
-            imageId: ''
+            imageId: '',
+            dateOfLastProgress: ''
         });
         const insertInfo = await newExercise.save();
         if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
@@ -42,7 +44,8 @@ module.exports = {
             specialInstructions: newExercise.specialInstructions,
             goal:newExercise.goal,
             results: newExercise.results,
-            imageId: newExercise.imageId
+            imageId: newExercise.imageId,
+            dateOfLastProgress: dateOfLastProgress
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
         
@@ -98,7 +101,12 @@ module.exports = {
         };
 
         // Uploading files to the bucket
-        const result = await s3.upload(params);
+        const result = await s3.upload(params, function(err, data) {
+            if(err) {
+                throw err;
+            }
+            console.log(`File uploaded successfully. ${data.Location}`);
+        });
         //console.log(result);
     
     }

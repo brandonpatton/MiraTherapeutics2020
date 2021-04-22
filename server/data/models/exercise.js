@@ -12,6 +12,7 @@ const exerciseSchema = new mongoose.Schema({
     goal:Number,
     results: String,
     imageId: String,
+    dateOfLastProgress: Date,
 });
 
 const Exercise = mongoose.model('Exercise', exerciseSchema);
