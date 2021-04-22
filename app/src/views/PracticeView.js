@@ -49,7 +49,7 @@ const PracticeView = () => {
     },
     {
       name: "Craig Ferguson",
-      id: "PcraigFerguson1",
+      id: "PjohnDoe1",
       trackedSymptoms: 3,
       groundingExercises: 5,
       assignments: [true, false],
@@ -58,7 +58,7 @@ const PracticeView = () => {
     },
     {
       name: "Eduardo Bonelli",
-      id: "PeddyBonelli1",
+      id: "PjohnDoe1",
       trackedSymptoms: 3,
       groundingExercises: 5,
       assignments: [true, false],
@@ -67,7 +67,7 @@ const PracticeView = () => {
     },
     {
       name: "James Acaster",
-      id: "PjamesAcaster1",
+      id: "PjohnDoe1",
       trackedSymptoms: 3,
       groundingExercises: 5,
       assignments: [true, true],
@@ -76,7 +76,7 @@ const PracticeView = () => {
     },
     {
       name: "Scooby Doo",
-      id: "PscoobyDoo1",
+      id: "PjohnDoe1",
       trackedSymptoms: 3,
       groundingExercises: 5,
       assignments: [true, false],

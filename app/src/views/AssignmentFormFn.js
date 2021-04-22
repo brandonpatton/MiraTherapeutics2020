@@ -31,8 +31,12 @@ function AssignmentForm() {
     var yyyy = today.getFullYear();
     today = mm + '/' + dd + '/' + yyyy;
 
-    const [client] = useState(
+    const [{client}] = useState(
         useSelector((state) => state.client) //need correct id for updating store
+      )
+
+    const [{therapist}] = useState(
+        useSelector((state) => state.therapist) //need correct id for updating store
       )
 
     /*client.name.length == 0
@@ -46,8 +50,6 @@ function AssignmentForm() {
         status: "Ongoing",
       }
     : client*/
-
-    let stateCheck = useSelector((state) => console.log(state))
 
     let [assignments] = useState(useSelector((state) => state.therapist.therapist.clientInfo["PjohnDoe1"]))
 
@@ -105,7 +107,6 @@ function AssignmentForm() {
 
 const updateCurrentAssignment = () => {
     //assign assignment, called when submitting form
-
     postAssignment(setAssignment)
 
     dispatch(
@@ -228,8 +229,8 @@ return(
                                 {/*console.log(dateState.startDate)*/}
                             </div>
                     </p>
-                    <p className = "Assignment-information-top">Therapist: {setAssignment.therapistName}</p>
-                    <p className = "Assignment-information-top">Client Name: {setAssignment.clientName}</p>
+                    <p className = "Assignment-information-top">Therapist: {therapist.name}</p>
+                    <p className = "Assignment-information-top">Client Name: {client.name}</p>
                     <h2>Exercises</h2>
                     <div className = "Exercise-card-container">
                     {/*console.log(dateState.startDate)*/}

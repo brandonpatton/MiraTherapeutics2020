@@ -39,6 +39,7 @@ const therapistSlice = createSlice({
   initialState: {
     therapist: {
       id: "",
+      name: "Miranda Cosgrove",
       clientInfo: {} //client list mapped by patient ids
     },
   },
