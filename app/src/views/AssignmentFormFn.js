@@ -35,11 +35,6 @@ function AssignmentForm() {
         useSelector((state) => state.client) //need correct id for updating store
       )
 
-    
-
-    const [dateState, setDateState] = useState({
-        startDate: new Date()
-    })
     /*client.name.length == 0
     ? {
         name: "Bruce Wayne",
@@ -51,14 +46,14 @@ function AssignmentForm() {
         status: "Ongoing",
       }
     : client*/
+
     let stateCheck = useSelector((state) => console.log(state))
 
-    const {currentAssignment} = useSelector((state) => state.assignment)
-
-    let [assignments] = useState(useSelector((state) => state.therapist.clientInfo["PjohnDoe1"]))
+    let [assignments] = useState(useSelector((state) => state.therapist.therapist.clientInfo["PjohnDoe1"]))
 
     console.log(assignments)
 
+    /*
     const [setAssignment, setAssignmentState] = useState({
         dateAssigned: today,
         visitNumber: assignments[assignments.length - 1].visitNumber + 1, //
@@ -80,31 +75,28 @@ function AssignmentForm() {
                 specialInstructions: "",
                 goal: 0
             },
+        ],
+        chosenExercise: {}
+    })
+    */
+   
+    const [setAssignment, setAssignmentState] = useState(useSelector((state) => state.assignment.currentAssignment))
 
-        ]
-        /*dateAssigned: today,
-        visitNumber: 0,
-        therapistName: "",
-        patientId: "",
-        clientName: "",
-        due: '',
-        status: '',
-        nextSession: "",
-        exercises: [
-            {
-                exerciseTitle: "",
-                exerciseType: "",
-                dueDate: new Date(),
-                frequency: "",
-                patientName: "",
-                patientId: "",
-                progress: 0,
-                specialInstructions: "",
-                goal: 0
-            },
-            
-        ]*/
-    })    
+    const [dateState, setDateState] = useState({
+        startDate: new Date(setAssignment.nextSession)
+    })
+
+    const defaultExercise = {
+        exerciseTitle: "Flashback Grounding",
+        exerciseType: "Grounding",
+        dueDate: setAssignment.nextSession,
+        frequency: "Daily",
+        patientName: client.name,
+        patientId: client.id,
+        progress: 0,
+        specialInstructions: "",
+        goal: 0
+    }
 
     useEffect(async () => {
         
@@ -131,20 +123,23 @@ const postAssignmentToClient = () => {
     )*/
 }
 
+/*<Link to = {{ //need an onclick function that sets this exercise as the one to be edited.
+                        pathname: "/ExerciseForm",
+                        data: {editExercise: exercise, // EDITING
+                                addedExercises: exercises,
+                                nextSessionDate: [String(next.getMonth() + 1), String(next.getDate()), String(next.getFullYear())]}}}></Link>*/
+
+                                
 function getExercises(exercises, next) {
     //populates the page with exercise cards
-    if (exercises != []){   
+    if (exercises.length != 0){   
         const result = exercises.map((exercise) =>
         <Row>
             <div className = "Exercise-card-row">
                 <MDBCard className = "Exercise-card-body">
-                    <p className="exerciseTitle">{exercise.name} <Link to = {{ //need an onclick function that sets this exercise as the one to be edited.
-                        pathname: "/ExerciseForm",
-                        data: {editExercise: exercise, // EDITING
-                                addedExercises: exercises,
-                                nextSessionDate: [String(next.getMonth() + 1), String(next.getDate()), String(next.getFullYear())]}}}><EditIcon className = "Edit-icon"/></Link></p>
+                    <p className="exerciseTitle">{exercise.exerciseTitle} <EditIcon onClick={() => goToExerciseForm(exercise)} className = "Edit-icon"/></p>
                     <p className="exerciseCard">{exercise.frequency}</p>
-                    <p className="exerciseCard">Due By: {exercise.due}</p>
+                    <p className="exerciseCard">Due By: {formatDateToString(exercise.dueDate)}</p>
                     <p className="exerciseCard">Special Instructions: {exercise.specialInstructions}</p>
                 </MDBCard>
             </div>
@@ -154,6 +149,38 @@ function getExercises(exercises, next) {
         return result;
     }
             
+}
+
+const goToExerciseForm = (exercise) => {
+    // Update assignment state to include empty exercise to be added
+    let newAssignmentState = {};
+    for (let key in setAssignment) {
+        newAssignmentState[key] = setAssignment[key];
+    }
+
+    // If exercise parameter is empty, update assignment state to include empty exercise to be added
+    if (!exercise.exerciseTitle) {
+        newAssignmentState.chosenExercise = defaultExercise;
+    } else {
+        // Otherwise, update assignment state to include exercise to be edited
+        newAssignmentState.chosenExercise = exercise;
+    }
+    setAssignmentState(() => newAssignmentState)
+
+    // Update global store with current assignment
+    dispatch(
+        openAssignment({
+            assignment: setAssignment,
+            chosenExercise: newAssignmentState.chosenExercise
+        })
+    )
+
+    history.push("/ExerciseForm")
+}
+
+const formatDateToString = (dateString) => {
+    let date = new Date(dateString)
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
 }
 
 async function assignAssignment() { 
@@ -184,12 +211,17 @@ return(
             <Col>
             <MDBContainer className = "Assignment-information-card">
                 <MDBCard className = "Assignment-information-body">
-                    <p className = "Assignment-information-top">Date Created: {setAssignment.dateAssigned} Visit Number: {setAssignment.visitNumber}</p>
+                    <p className = "Assignment-information-top">Date Created: {formatDateToString(setAssignment.dateAssigned)} Visit Number: {setAssignment.visitNumber}</p>
                     <p className = "Assignment-information-top">Next Session: 
                             <div>
                                 <DatePicker
                                     selected={dateState.startDate}
-                                    onSelect={selected => setDateState({startDate: new Date(selected.getFullYear(), selected.getMonth(), selected.getDate())})}
+                                    onSelect={selected => {
+                                        setDateState({startDate: new Date(selected.getFullYear(), selected.getMonth(), selected.getDate())})
+                                        let newAssignmentState = Object.assign({}, setAssignment)
+                                        newAssignmentState.nextSession = selected
+                                        setAssignmentState(newAssignmentState)
+                                    }}
                                     
                                     name="startDate"
                                 />
@@ -204,7 +236,7 @@ return(
                     {getExercises(setAssignment.exerciseList, dateState.startDate)}
                         <Row>
                             <MDBCard className = "Add-exercise">
-                                <Button variant="link" size="lg" onClick = { () => history.push("/ExerciseForm")}>
+                                <Button variant="link" size="lg" onClick = { () => goToExerciseForm({}) }>
                                     Add Exercise
                                 </Button>
                             </MDBCard>

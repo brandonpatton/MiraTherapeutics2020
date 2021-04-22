@@ -28,32 +28,21 @@ const assignmentSlice = createSlice({
         therapistName: "",
         patientId: "",
         clientName: "",
-        due: '',
+        due: new Date(),
         status: '',
-        nextSession: "",
-        exerciseList: [
-            {
-              exerciseTitle: "",
-              exerciseType: "",
-              dueDate: new Date(),
-              frequency: "",
-              patientName: "",
-              patientId: "",
-              progress: 0,
-              specialInstructions: "",
-              goal: 0
-            },
-        ],
-        exerciseToEdit: []
+        nextSession: new Date(),
+        exerciseList: [],
+        chosenExercise: {}
       },
   },
   reducers: {
     openAssignment: (state, action) => {
-      state.assignment.currentAssignment = action.payload;
+      state.currentAssignment = action.payload.assignment;
+      state.currentAssignment.chosenExercise = action.payload.chosenExercise
     },
     addExercise: (state, action) => {
       let exercise = action.payload.exercise;
-      state.assignment.currentAssignment.exerciseList.push(exercise);
+      state.currentAssignment.exerciseList.push(exercise);
     },
   },
   extraReducers: {
@@ -86,6 +75,7 @@ const assignmentSlice = createSlice({
 
 export const {
   openAssignment,
+  addExercise
 } = assignmentSlice.actions;
 
 export default assignmentSlice.reducer;

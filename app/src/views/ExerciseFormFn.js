@@ -11,10 +11,15 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link, Redirect} from 'react-router-dom';
+import { useHistory } from 'react-router'
 import { getAssignments } from '../api/clientAPI'
+import { addExercise } from '../redux/slices/assignmentSlice'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function ExerciseForm() {
     const dispatch = useDispatch();
+    let history = useHistory()
     /*
     this.state = {
         chosenExercise: {
@@ -30,9 +35,14 @@ function ExerciseForm() {
     
     }*/
     const [redirect, setRedirect] = useState(false)
+    
+    const [exerciseDueNextSession, setExerciseDueNextSession] = useState(true)
+
+    
+    /*
     const [setAssignment, setAssignmentState] = useState({
         //these below should be empty to start, but fill with something like the following:
-                                /*{
+                              /*  {
                                     exerciseTitle: "",
                                     exerciseType: "",
                                     dueDate: new Date(),
@@ -42,14 +52,24 @@ function ExerciseForm() {
                                     progress: 0,
                                     specialInstructions: "",
                                     goal: 0
-                                }*/
+                                }
         chosenExercise: {},
         exerciseToEdit: [],
         added: [],
         nextSession: new Date()//props.location.data.nextSessionDate  WHERE CAN I GET THIS FROM????
     })
+    */
 
-    console.log(setAssignment.added);
+    const [setAssignment, setAssignmentState] = useState(useSelector((state) => state.assignment.currentAssignment))
+
+    const exerciseList = setAssignment.exerciseList
+
+    const [chosenExercise, setChosenExercise] = useState(setAssignment.chosenExercise)
+    
+    const [userDueByChoice, setUserDueByChoice] = useState('')
+
+    const [dateState, setDateState] = useState(new Date())
+    
     var exercises = [];
     const exerciseTypes = {
         "Grounding": ["Flashback Grounding", "Color Finder", "Breathing Exercise", "Vibration Tool", "Bilateral Simulation", "5, 4, 3, 2, 1 Grounding", "Any", "All"],
@@ -64,63 +84,12 @@ function ExerciseForm() {
     if (setAssignment.added == [] || !setAssignment.added){
         exercises = [];
     } else {
-        //hitting this case, shouldnt be because nothing was added yet
         exercises = setAssignment.added;
     }
-    console.log(setAssignment.exerciseToEdit)
-    if (setAssignment.exerciseToEdit == [] || setAssignment.exerciseToEdit == undefined){
-        setAssignment.chosenExercise = {
-            exerciseTitle: "Flashback Grounding",
-            exerciseType: "Grounding",
-            dueDate: "Next Session",
-            frequency: "Daily",
-            patientName: "",
-            patientId: "",
-            progress: 0,
-            specialInstructions: "",
-            goal: 0
-        };
-    } else {
-        setAssignment.chosenExercise = {
-            exerciseTitle: setAssignment.exerciseToEdit.exerciseTitle,
-            exerciseType: setAssignment.exerciseToEdit.exerciseType,            
-            dueDate: setAssignment.exerciseToEdit.dueDate,
-            frequency: setAssignment.exerciseToEdit.frequency,
-            patientName: setAssignment.exerciseToEdit.patientName,
-            patientId: setAssignment.exerciseToEdit.patientId,
-            progress: setAssignment.exerciseToEdit.progress,
-            specialInstructions: setAssignment.exerciseToEdit.specialInstructions,
-            goal: setAssignment.exerciseToEdit.goal
-        }
-    }
-    console.log(setAssignment.chosenExercise)
+    
     useEffect(async () => {
         console.log("aaaaa")
-        /*var data = await getAssignments("PjohnDoe1");
-        setAssignmentState({
-            dateAssigned: today,
-            visitNumber: data[data.length - 1].visitNumber + 1, //
-            therapistName: data[data.length - 1].therapistName,
-            patientId: data[data.length - 1].patientId,
-            clientName: data[data.length - 1].patientName,
-            due: new Date(),
-            status: 0,
-            nextSession: new Date(),
-            exercises: [
-                {
-                    exerciseTitle: "",
-                    exerciseType: "",
-                    dueDate: new Date(),
-                    frequency: "",
-                    patientName: "",
-                    patientId: "",
-                    progress: 0,
-                    specialInstructions: "",
-                    goal: 0
-                },
-    
-            ]
-        });*/
+        
     });    
     function bigFilter(exerciseList, exercise){
         //filters out chosen exercise to edit from list of exercises
@@ -140,9 +109,6 @@ function ExerciseForm() {
 
         //delete exerciseList[exerc]
         //var filtered = exerciseList.filter(function(value, index, arr))
-        console.log(exerciseList);
-        console.log(setAssignment.added);
-        console.log(exercise);
         return exerciseList;
     }
     
@@ -179,6 +145,78 @@ function ExerciseForm() {
         );
         return result;
     }
+
+    const addNewExercise = (exercise) => {
+        console.log("addNewExercise")
+        console.log(exercise)
+        dispatch(
+            addExercise({
+                exercise: exercise
+            })
+        )
+        history.push('/assignmentform')
+    }
+
+    const updateChosenExercise = (targetKey, newValue) => {
+        // If they're changing the due date, state can't be updated immediately if they select days, weeks, or customDate
+
+        /*
+        if (targetKey == "dueDate") {
+            setUserDueByChoice(newValue)
+            updateChosenExerciseDueDate(newValue)
+            return
+        }
+        */
+
+        let newChosenExercise = {}
+        for (let key in chosenExercise) {
+            newChosenExercise[key] = chosenExercise[key]
+        }
+
+        newChosenExercise[targetKey] = newValue
+        setChosenExercise(newChosenExercise)
+
+        
+    }
+
+    const updateChosenExerciseDueDate = (dueDateSelection, newValue) => {
+        setUserDueByChoice(dueDateSelection)
+        let newDueDate
+        let today = new Date()
+        let millisecondsInADay = 1000 * 60 * 60 * 24
+        if (dueDateSelection == "Next Session") {
+            setExerciseDueNextSession(true)
+            newDueDate = setAssignment.nextSession
+            setUserDueByChoice(newDueDate)
+            updateChosenExercise("dueDate", newDueDate)
+        }
+        else {
+            setExerciseDueNextSession(false)
+            if (newValue) {
+                switch (dueDateSelection) {
+                    case "Days":
+                        setUserDueByChoice("Days")
+                        newDueDate = new Date(today.getTime() + (millisecondsInADay * newValue))
+                        break
+                    case "Weeks":
+                        setUserDueByChoice("Weeks")
+                        newDueDate = new Date(today.getTime() + (millisecondsInADay * newValue * 7))
+                        break
+                    case "Choose Date":
+                        setUserDueByChoice("Choose Date")
+                        newDueDate = newValue
+                        break
+                }
+                updateChosenExercise("dueDate", newDueDate)
+            }
+        }
+
+    }
+
+    const formatDateToString = (dateString) => {
+        let date = new Date(dateString)
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+    }
     
     function getGoal(dueDate,frequency){
         var today = new Date();
@@ -199,11 +237,51 @@ function ExerciseForm() {
         } 
     }//
 
+    function daysWeeksCustomInput(){
+        if (!exerciseDueNextSession) {
+            console.log("hitting chosedaysorweeks")
+            switch (userDueByChoice) {
+                case "Days":
+                    console.log("Days")
+                    return (
+                        <Form.Group controlId="daysOrWeeks">
+                            <Form.Control onChange = {event => updateChosenExerciseDueDate("Days", event.target.value)} as = "textarea" placeholder={`Enter number of ${userDueByChoice}`}  rows = {1} />
+                        </Form.Group>
+                    )
+                case "Weeks":
+                    console.log("Weeks")
+                    return (
+                        <Form.Group controlId="daysOrWeeks">
+                            <Form.Control onChange = {event => updateChosenExerciseDueDate("Weeks", event.target.value)} as = "textarea" placeholder={`Enter number of ${userDueByChoice}`}  rows = {1} />
+                        </Form.Group>
+                    )
+                case "Choose Date":
+                    console.log("Custom")
+                    return (
+                        <Form.Group controlId="daysOrWeeks">
+                            <DatePicker
+                                    selected= {dateState}
+                                    onSelect={selected => {
+                                        //setDateState({startDate: new Date(selected.getFullYear(), selected.getMonth(), selected.getDate())})
+                                        setDateState(new Date(selected.getFullYear(), selected.getMonth(), selected.getDate()))
+                                        updateChosenExerciseDueDate("Choose Date", selected)
+                                    }}
+                                    
+                                    name="startDate"
+                                />
+                        </Form.Group>
+                    )
+            }
+            
+        }
+    }
+
     function doRedirect(){
         if(redirect){
             <Redirect to='/AssignmentForm'/>
         } 
     }
+
 
 return(
     <div>
@@ -232,28 +310,34 @@ return(
                 {/* COMMENTED THESE OUT BECAUSE OF getExercises ERROR THAT NEEDS TO BE FIXED*/}
                 <Form.Group controlId="exerciseType">
                     <Form.Label>Exercise Type</Form.Label>
-                    <Form.Control  onChange = {event => setAssignmentState({chosenExercise: {exerciseType: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
+                    {/* updateChosen */}
+                    {/*<Form.Control  onChange = {event => setAssignmentState({chosenExercise: {exerciseType: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>*/}
+                    <Form.Control  onChange = {event => updateChosenExercise("exerciseType", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
                     {getExerciseFormData(exerciseTypes)}
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="exerciseTitle">
                     <Form.Label>Exercise Title</Form.Label>
-                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {exerciseTitle: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom>
+                    {/* <Form.Control onChange = {event => setAssignmentState({chosenExercise: {exerciseTitle: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom> */}
+                    <Form.Control  onChange = {event => updateChosenExercise("exerciseTitle", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
                     {getExerciseTitle(exerciseTypes, setAssignment.chosenExercise.exerciseType)}
                     </Form.Control>
                 </Form.Group> 
-                <Form.Group>
+                <Form.Group controlId="dueBy">
                     <Form.Label>Due By</Form.Label>
-                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {dueDate: event.target.value}})} as="select" defaultValue = {"Next Session:" + toString(setAssignment.nextSession)} custom>
-                    <option>{`Next Session: ${setAssignment.nextSession[0]}/${setAssignment.nextSession[1]}/${setAssignment.nextSession[2]}`}</option>
+                    {/*<Form.Control onChange = {event => setAssignmentState({chosenExercise: {due: event.target.value}})} as="select" defaultValue = {"Next Session:" + setAssignment.nextSession.toString()} custom>*/}
+                    <Form.Control  onChange = {event => updateChosenExerciseDueDate(event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
+                    <option>{`Next Session`}</option>
                     <option>Days</option>
                     <option>Weeks</option>
                     <option>Choose Date</option>
                     </Form.Control>
                 </Form.Group>
+                {daysWeeksCustomInput()}
                 <Form.Group controlId="frequency">
                     <Form.Label>Frequency</Form.Label>
-                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {frequency: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.frequency} custom>
+                    {/* <Form.Control onChange = {event => setAssignmentState({chosenExercise: {frequency: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.frequency} custom> */}
+                    <Form.Control onChange = {event => updateChosenExercise("frequency", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.frequency} custom>
                     <option>Daily</option>
                     <option>Weekly</option>
                     <option>Bi-Weekly</option>
@@ -263,7 +347,8 @@ return(
                 
                 <Form.Group controlId="specialInstructions">
                     <Form.Label>Special Instructions</Form.Label>
-                    <Form.Control onChange = {event => setAssignmentState({chosenExercise: {specialInstructions: event.target.value}})} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} />
+                    { /* <Form.Control onChange = {event => setAssignmentState({chosenExercise: {specialInstructions: event.target.value}})} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} /> */}
+                    <Form.Control onChange = {event => updateChosenExercise("specialInstructions", event.target.value)} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} />
                 </Form.Group>
                 
                 <Link to = {{
@@ -271,7 +356,8 @@ return(
                     data: {editedExerciseList: exercises,
                             nextSession: setAssignment.nextSession} 
                 }}>
-                    <Button onClick={() => setRedirect(true)} variant="primary" type="Submit">
+                    {/* Add exercise to assignment here */}
+                    <Button onClick={() => addNewExercise(chosenExercise)} variant="primary" type="Submit">
                     Add
                     </Button>
                 </Link>
