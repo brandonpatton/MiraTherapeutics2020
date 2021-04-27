@@ -1,9 +1,12 @@
 
+// FIX CUSTOM FREQUENCY FORM ISSUE
+// SHOULD MAKE NEW INPUT TO SPECIFY HOW MANY TIMES PER WEEK
+
 import React, { useContext, useState, useEffect, Component } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import '../css/ExerciseForm.css';
 import { MDBCard, MDBCardTitle } from "mdbreact";
-import logo from '../Mira.jpg';
+import logo from '../mira-new-medium.png';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
@@ -13,7 +16,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link, Redirect} from 'react-router-dom';
 import { useHistory } from 'react-router'
 import { getAssignments } from '../api/clientAPI'
-import { addExercise } from '../redux/slices/assignmentSlice'
+import { addExercise, editExercise } from '../redux/slices/assignmentSlice'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -36,7 +39,7 @@ function ExerciseForm() {
     }*/
     const [redirect, setRedirect] = useState(false)
     
-    const [exerciseDueNextSession, setExerciseDueNextSession] = useState(true)
+    const [exerciseDueNextSession, setExerciseDueNextSession] = useState(false)
 
     
     /*
@@ -66,9 +69,13 @@ function ExerciseForm() {
 
     const [chosenExercise, setChosenExercise] = useState(setAssignment.chosenExercise)
     
-    const [userDueByChoice, setUserDueByChoice] = useState('')
+    const [userDueByChoice, setUserDueByChoice] = useState('Choose Date')
 
-    const [dateState, setDateState] = useState(new Date())
+    // Indicates if therapist wants custom frequency on an exercise
+    // If so, extra input field is shown to let them enter frequecny per week
+    const [customExerciseFrequency, setCustomExerciseFrequency] = useState(chosenExercise.frequency != "Daily" && chosenExercise.frequency != "Weekly" && chosenExercise.frequency != "Bi-Weekly")
+
+    const [dateState, setDateState] = useState(chosenExercise.dueDate)
     
     var exercises = [];
     const exerciseTypes = {
@@ -138,7 +145,7 @@ function ExerciseForm() {
     }
     function getExerciseTitle(data, choice){
         if(data[choice] == undefined){
-            return <option>balls</option>
+            return <option>undef</option>
         }
         const result = data[choice].map((d) =>
             <option>{d}</option>
@@ -147,26 +154,28 @@ function ExerciseForm() {
     }
 
     const addNewExercise = (exercise) => {
-        console.log("addNewExercise")
-        console.log(exercise)
-        dispatch(
-            addExercise({
-                exercise: exercise
-            })
-        )
+        let exerciseToAdd = Object.assign({}, exercise)
+        exerciseToAdd.goal = getGoal(exercise.dueDate, exercise.frequency)
+        if (exerciseToAdd.editing) {
+            dispatch(
+                editExercise({
+                    exercise: exerciseToAdd
+                })
+            )
+        }
+        else {
+            exerciseToAdd.editing = true
+            dispatch(
+                addExercise({
+                    exercise: exerciseToAdd
+                })
+            )   
+        }
         history.push('/assignmentform')
     }
 
     const updateChosenExercise = (targetKey, newValue) => {
         // If they're changing the due date, state can't be updated immediately if they select days, weeks, or customDate
-
-        /*
-        if (targetKey == "dueDate") {
-            setUserDueByChoice(newValue)
-            updateChosenExerciseDueDate(newValue)
-            return
-        }
-        */
 
         let newChosenExercise = {}
         for (let key in chosenExercise) {
@@ -174,7 +183,21 @@ function ExerciseForm() {
         }
 
         newChosenExercise[targetKey] = newValue
+
+        // If they are choosing a custom frequency, add ' per week' so frequency doesn't just show a number
+        // Otherwise, change customExerciseFrequency variable so the extra input goes away
+        if (targetKey == "frequency") {
+            if (newValue == '[x] per week' || !isNaN(newValue)) {
+                newChosenExercise.frequency = String(newValue) + ' per week'
+                setCustomExerciseFrequency(true)
+            }
+            else {
+                setCustomExerciseFrequency(false)
+            }
+        }
+
         setChosenExercise(newChosenExercise)
+
 
         
     }
@@ -213,6 +236,19 @@ function ExerciseForm() {
 
     }
 
+    const showCustomFrequencyInput = () => {
+        if (customExerciseFrequency) {
+            return (
+                <Form.Group controlId="customExerciseFrequency">
+                    {/* If a custom frequency has been entered, fill in the input with that value. Otherwise, tell them to enter a value */}
+                    <Form.Control onChange = {event => updateChosenExercise("frequency", event.target.value)} 
+                        as = "textarea" defaultValue={chosenExercise.frequency.split(' ').includes('[x]') ? "" : chosenExercise.frequency.split(' ')[0]} placeholder={`Enter frequency`}  rows = {1} 
+                    />
+                </Form.Group>
+            )
+        }
+    }
+
     const formatDateToString = (dateString) => {
         let date = new Date(dateString)
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
@@ -233,7 +269,8 @@ function ExerciseForm() {
               // code block
                 return Math.floor(dayDiff/3.5);
             default:
-                return Math.floor(dayDiff/(7/frequency));
+                let customFrequency = frequency.split(' ')[0]
+                return Math.floor(dayDiff/(7/customFrequency));
         } 
     }//
 
@@ -262,7 +299,6 @@ function ExerciseForm() {
                             <DatePicker
                                     selected= {dateState}
                                     onSelect={selected => {
-                                        //setDateState({startDate: new Date(selected.getFullYear(), selected.getMonth(), selected.getDate())})
                                         setDateState(new Date(selected.getFullYear(), selected.getMonth(), selected.getDate()))
                                         updateChosenExerciseDueDate("Choose Date", selected)
                                     }}
@@ -311,23 +347,20 @@ return(
                 <Form.Group controlId="exerciseType">
                     <Form.Label>Exercise Type</Form.Label>
                     {/* updateChosen */}
-                    {/*<Form.Control  onChange = {event => setAssignmentState({chosenExercise: {exerciseType: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>*/}
                     <Form.Control  onChange = {event => updateChosenExercise("exerciseType", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
                     {getExerciseFormData(exerciseTypes)}
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="exerciseTitle">
                     <Form.Label>Exercise Title</Form.Label>
-                    {/* <Form.Control onChange = {event => setAssignmentState({chosenExercise: {exerciseTitle: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom> */}
-                    <Form.Control  onChange = {event => updateChosenExercise("exerciseTitle", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
-                    {getExerciseTitle(exerciseTypes, setAssignment.chosenExercise.exerciseType)}
+                    <Form.Control  onChange = {event => updateChosenExercise("exerciseTitle", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom>
+                    {getExerciseTitle(exerciseTypes, chosenExercise.exerciseType)}
                     </Form.Control>
                 </Form.Group> 
                 <Form.Group controlId="dueBy">
                     <Form.Label>Due By</Form.Label>
-                    {/*<Form.Control onChange = {event => setAssignmentState({chosenExercise: {due: event.target.value}})} as="select" defaultValue = {"Next Session:" + setAssignment.nextSession.toString()} custom>*/}
-                    <Form.Control  onChange = {event => updateChosenExerciseDueDate(event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
-                    <option>{`Next Session`}</option>
+                    <Form.Control  onChange = {event => updateChosenExerciseDueDate(event.target.value)} as="select" defaultValue = {"Choose Date"} custom>
+                    <option>Next Session</option>
                     <option>Days</option>
                     <option>Weeks</option>
                     <option>Choose Date</option>
@@ -336,19 +369,17 @@ return(
                 {daysWeeksCustomInput()}
                 <Form.Group controlId="frequency">
                     <Form.Label>Frequency</Form.Label>
-                    {/* <Form.Control onChange = {event => setAssignmentState({chosenExercise: {frequency: event.target.value}})} as="select" defaultValue = {setAssignment.chosenExercise.frequency} custom> */}
-                    <Form.Control onChange = {event => updateChosenExercise("frequency", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.frequency} custom>
+                    <Form.Control onChange = {event => updateChosenExercise("frequency", event.target.value)} as="select" defaultValue = {customExerciseFrequency ? '[x] per week' : 'Daily'} custom>
                     <option>Daily</option>
                     <option>Weekly</option>
                     <option>Bi-Weekly</option>
                     <option>[x] per week</option>
                     </Form.Control>
                 </Form.Group>
-                
+                {showCustomFrequencyInput()}
                 <Form.Group controlId="specialInstructions">
                     <Form.Label>Special Instructions</Form.Label>
-                    { /* <Form.Control onChange = {event => setAssignmentState({chosenExercise: {specialInstructions: event.target.value}})} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} /> */}
-                    <Form.Control onChange = {event => updateChosenExercise("specialInstructions", event.target.value)} as = "textarea" placeholder="Enter Special Instructions"  rows = {4} />
+                    <Form.Control onChange = {event => updateChosenExercise("specialInstructions", event.target.value)} as = "textarea" defaultValue = {setAssignment.chosenExercise.specialInstructions.length == 0 ? "" : setAssignment.chosenExercise.specialInstructions} placeholder = {"Enter special instructions"} rows = {1} />
                 </Form.Group>
                 
                 <Link to = {{
@@ -358,7 +389,7 @@ return(
                 }}>
                     {/* Add exercise to assignment here */}
                     <Button onClick={() => addNewExercise(chosenExercise)} variant="primary" type="Submit">
-                    Add
+                    {chosenExercise.editing ? "Finish Editing" : "Add"}
                     </Button>
                 </Link>
                 </Form>

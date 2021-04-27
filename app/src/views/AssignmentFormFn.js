@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { FormControl } from '@material-ui/core';
 import '../css/ExerciseForm.css'; //tf 
 import { MDBCard, MDBCardBody, MDBContainer,MDBCardTitle,MDBCardText } from "mdbreact";
-import logo from '../Mira.jpg';
+import logo from '../mira-new-medium.png';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
@@ -16,7 +16,7 @@ import '../css/AssignmentForm.css'
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from "react-router-dom";
 import { postAssignment } from '../api/clientAPI';
-import { openAssignment } from '../redux/slices/assignmentSlice'; //method that pushes assignment data to store for exercise form to access
+import { openAssignment, clearAssignment } from '../redux/slices/assignmentSlice'; //method that pushes assignment data to store for exercise form to access
 import { openClient } from "../redux/slices/clientSlice";
 import { addAssignmentToClient } from "../redux/slices/therapistSlice"; //method that pushes assignment data to store on SUBMIT
 import { useHistory } from 'react-router';
@@ -83,6 +83,7 @@ function AssignmentForm() {
     */
    
     const [setAssignment, setAssignmentState] = useState(useSelector((state) => state.assignment.currentAssignment))
+    
 
     const [dateState, setDateState] = useState({
         startDate: new Date(setAssignment.nextSession)
@@ -97,7 +98,10 @@ function AssignmentForm() {
         patientId: client.id,
         progress: 0,
         specialInstructions: "",
-        goal: 0
+        goal: 0,
+        id: setAssignment.exerciseList.length,
+        // false means adding an exercise to the assignment, true means editing an existing one
+        editing: false
     }
 
     useEffect(async () => {
@@ -106,14 +110,25 @@ function AssignmentForm() {
 //console.log(setAssignment);
 
 const updateCurrentAssignment = () => {
+    // Set assignment visit number to reflect number of assignments
+    let finalAssignment = Object.assign({}, setAssignment)
+    finalAssignment.visitNumber = assignments.length + 1
+    finalAssignment.patientId = client.id
+    finalAssignment.therapistName = "Miranda Cosgrove"
     //assign assignment, called when submitting form
-    postAssignment(setAssignment)
+    postAssignment(finalAssignment)
 
     dispatch(
         addAssignmentToClient({
-            assignment: setAssignment
+            assignment: finalAssignment
         })
     );
+
+    dispatch(
+        clearAssignment()
+    )
+
+    setAssignmentState(finalAssignment)
 }
 
 const postAssignmentToClient = () => {
@@ -159,7 +174,7 @@ const goToExerciseForm = (exercise) => {
         newAssignmentState[key] = setAssignment[key];
     }
 
-    // If exercise parameter is empty, update assignment state to include empty exercise to be added
+    // If exercise title field is empty, update assignment state to include empty exercise to be added
     if (!exercise.exerciseTitle) {
         newAssignmentState.chosenExercise = defaultExercise;
     } else {
@@ -212,7 +227,7 @@ return(
             <Col>
             <MDBContainer className = "Assignment-information-card">
                 <MDBCard className = "Assignment-information-body">
-                    <p className = "Assignment-information-top">Date Created: {formatDateToString(setAssignment.dateAssigned)} Visit Number: {setAssignment.visitNumber}</p>
+                    <p className = "Assignment-information-top">Date Created: {formatDateToString(setAssignment.dateAssigned)} Visit Number: {assignments.length + 1}</p>
                     <p className = "Assignment-information-top">Next Session: 
                             <div>
                                 <DatePicker

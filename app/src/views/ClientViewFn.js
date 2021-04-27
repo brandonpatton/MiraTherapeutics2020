@@ -111,7 +111,7 @@ function calculateExpectedExerciseProgress(exercise) {
       break
     default:
       // X per week case
-      const completionsPerWeek = Number(frequency)
+      const completionsPerWeek = Number(frequency.split(' ')[0])
       expectedCompletions = daysSinceAssignment/(7/completionsPerWeek)
       break
   }

@@ -19,21 +19,28 @@ import { closeClient } from "./clientSlice";
 );*/
 closeClient()
 
+const emptyAssignment = {
+  assignmentProgress: 0,
+  dateAssigned: new Date(),
+  overallInstructions: "",
+  visitNumber: 0,
+  therapistName: "Jane Doe",
+  therapistId: "TjaneDoe1",
+  completedByTherapist: false,
+  patientId: "",
+  patientName: "",
+  clientName: "",
+  due: new Date(),
+  status: '',
+  nextSession: new Date(),
+  exerciseList: [],
+  chosenExercise: {}
+}
+
 const assignmentSlice = createSlice({
   name: "assignment",
   initialState: {
-    currentAssignment: {
-        dateAssigned: new Date(),
-        visitNumber: 0,
-        therapistName: "",
-        patientId: "",
-        clientName: "",
-        due: new Date(),
-        status: '',
-        nextSession: new Date(),
-        exerciseList: [],
-        chosenExercise: {}
-      },
+    currentAssignment: emptyAssignment,
   },
   reducers: {
     openAssignment: (state, action) => {
@@ -44,6 +51,13 @@ const assignmentSlice = createSlice({
       let exercise = action.payload.exercise;
       state.currentAssignment.exerciseList.push(exercise);
     },
+    editExercise: (state, action) => {
+      let exerciseIndexInList = action.payload.exercise.id
+      state.currentAssignment.exerciseList[exerciseIndexInList] = action.payload.exercise
+    },
+    clearAssignment: (state, action) => {
+      state.currentAssignment = emptyAssignment
+    }
   },
   extraReducers: {
     [closeClient.pending]: (state, action) => {
@@ -75,7 +89,9 @@ const assignmentSlice = createSlice({
 
 export const {
   openAssignment,
-  addExercise
+  addExercise,
+  editExercise,
+  clearAssignment
 } = assignmentSlice.actions;
 
 export default assignmentSlice.reducer;

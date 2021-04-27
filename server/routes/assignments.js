@@ -53,7 +53,10 @@ router.get("/patient/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const newAssignment = await assignmentData.createAssignment(req.body);
+    let newAssignment = req.body
+    const exerciseList = await exerciseData.createExerciseBatch(req.body.exerciseList)
+    newAssignment.exerciseList = exerciseList
+    newAssignment = await assignmentData.createAssignment(newAssignment);
     res.json(newAssignment);
   } catch (e) {
     res.status(500).json({ Error: e });
