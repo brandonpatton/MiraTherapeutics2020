@@ -244,7 +244,7 @@ return(
                                 {/*console.log(dateState.startDate)*/}
                             </div>
                     </p>
-                    <p className = "Assignment-information-top">Therapist: {therapist.name}</p>
+                    <p className = "Assignment-information-top">Therapist: {"Miranda Cosgrove"}</p>
                     <p className = "Assignment-information-top">Client Name: {client.name}</p>
                     <h2>Exercises</h2>
                     <div className = "Exercise-card-container">

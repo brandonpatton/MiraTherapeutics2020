@@ -75,7 +75,8 @@ function ExerciseForm() {
     // If so, extra input field is shown to let them enter frequecny per week
     const [customExerciseFrequency, setCustomExerciseFrequency] = useState(chosenExercise.frequency != "Daily" && chosenExercise.frequency != "Weekly" && chosenExercise.frequency != "Bi-Weekly")
 
-    const [dateState, setDateState] = useState(chosenExercise.dueDate)
+    const [dateState, setDateState] = useState(new Date(chosenExercise.dueDate))
+
     
     var exercises = [];
     const exerciseTypes = {
