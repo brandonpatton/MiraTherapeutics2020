@@ -109,5 +109,31 @@ module.exports = {
         });
         //console.log(result);
     
+    },
+
+    async getFile(imageId) {
+        const id = process.env.AWS_ACCESS_KEY;
+        const secret = process.env.AWS_SECRET_KEY;
+        const bucketName = process.env.AWS_BUCKET_NAME
+
+        const s3 = new AWS.S3({
+            accessKeyId: id,
+            secretAccessKey: secret
+        });
+
+        const params = {
+            Bucket: bucketName,
+            Key: imageId + ".jpg", // File name you want to save as in S3
+        };
+
+        const result = await s3.getObject(params, function(err, data) {
+            if(err) {
+                throw err;
+            }
+            console.log(`File received`);
+            console.log(data)
+            return data;
+        })
+        
     }
 }
