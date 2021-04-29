@@ -66,4 +66,15 @@ router.post('/upload', upload.single("picture"), async function (req,res) {
     }
   })
 
+router.get('/getImage/:id', async (req, res) => {
+  var id = req.params.id
+  const result = await exerciseData.getFile(id);
+
+  res.writeHead(200, {'Content-Type': 'image/jpeg'});
+  res.write(result.Body, 'binary');
+  res.end(null, 'binary');
+
+  //res.sendFile() //path to image
+})
+
 module.exports = router;
