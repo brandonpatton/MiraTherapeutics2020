@@ -126,10 +126,10 @@ function ExerciseForm() {
         <Row key = {idx}>
             <div className = "Exercise-card-row" key = {idx}>
                 <MDBCard className = "Exercise-card-body" key = {idx}>
-                    <p className="exerciseTitle">{exercise[1]}</p>
+                    <p className="exerciseTitle">{exercise.exerciseTitle}</p>
                     <p className="exerciseCard">{exercise[5]}</p>
-                    <p className="exerciseCard">Due By: {exercise[2]}</p>
-                    <p className="exerciseCard">Special Instructions: {exercise[6]}</p >
+                    <p className="exerciseCard">Due By: {formatDateToString(exercise.dueDate)}</p>
+                    <p className="exerciseCard">Special Instructions: {exercise.specialInstructions}</p >
                 </MDBCard>
             </div>
         </Row>
@@ -261,17 +261,18 @@ function ExerciseForm() {
         let dayDiff =  difference / (1000 * 60 * 60 * 24);
         dayDiff = Math.ceil(dayDiff);
         switch(frequency) {
+            // Take the max of the expected goal and 1 to prevent the goal being 0
             case "Daily":
-                return dayDiff;
+                return Math.max(1, dayDiff);
             case "Weekly":
               // code block
-                return Math.floor(dayDiff/7);
+                return Math.max(1, Math.floor(dayDiff/7));
             case "Bi-Weekly":
               // code block
-                return Math.floor(dayDiff/3.5);
+                return Math.max(1, Math.floor(dayDiff/3.5));
             default:
                 let customFrequency = frequency.split(' ')[0]
-                return Math.floor(dayDiff/(7/customFrequency));
+                return Math.max(1, Math.floor(dayDiff/(7/customFrequency)));
         } 
     }//
 
@@ -333,7 +334,7 @@ return(
         <Row className = "background">
             <Col className = "Added-exercise-list">
                 <Row className = "Added-exercise-list-text">Added Exercises:</Row>
-                {getExercises(bigFilter(exercises, setAssignment.chosenExercise))/*cannot pass array/object as a react component, missing a step here*/}
+                {getExercises(setAssignment.exerciseList)/*cannot pass array/object as a react component, missing a step here*/}
             </Col>
             {/*<Col>
             <MDBCard className="Exercise-preview-body">
@@ -390,7 +391,7 @@ return(
                 }}>
                     {/* Add exercise to assignment here */}
                     <Button onClick={() => addNewExercise(chosenExercise)} variant="primary" type="Submit">
-                    {chosenExercise.editing ? "Finish Editing" : "Add"}
+                    {chosenExercise.editing ? "Update" : "Add"}
                     </Button>
                 </Link>
                 </Form>

@@ -3,7 +3,7 @@ import { __esModule } from "redux-persist/lib/storage/createWebStorage"
 export const getAssignments = async (patientID) => {
     let assignments = await fetch(`http://localhost:3080/assignments/patient/${patientID}`)
     assignments = await assignments.json()
-    assignments.sort((a, b) => a.visitNumber - b.visitNumber)
+    assignments.sort((a, b) => b.visitNumber - a.visitNumber)
     return assignments
 }
 

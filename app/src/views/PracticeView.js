@@ -7,8 +7,8 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import bonelliPicture from "../Bonelli-RECT.jpg";
 import acasterPicture from "../james-acaster.jpg";
+import fakePerson from '../fakePerson.jfif'
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import "../css/PracticeView.css";
@@ -57,7 +57,7 @@ const PracticeView = () => {
       status: "Ongoing",
     },
     {
-      name: "Eduardo Bonelli",
+      name: "John Doe",
       id: "PjohnDoe1",
       trackedSymptoms: 3,
       groundingExercises: 5,
@@ -181,7 +181,7 @@ const PracticeView = () => {
               <div className="Profile-info">
                 <Row className="Name-Row justify-content-md-center">
                   <Image
-                    src={acasterPicture}
+                    src={fakePerson}
                     roundedCircle
                     className="picture"
                   />

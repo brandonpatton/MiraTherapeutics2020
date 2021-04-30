@@ -1,7 +1,7 @@
 .App-logo {
     max-width: 35%;
     height: auto;
-    padding-right: 10%;
+    padding-right: 15%;
 }
 
 .Assignment-completion-body{
@@ -10,7 +10,9 @@
     height: 100%;
     top: 30%;
     right: 4%;
-    overflow:scroll
+
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .Assignment-completion-status-text{
@@ -27,10 +29,9 @@
     color: #707070;
 }
 
+
 .Assignment-due-date-container{
-    position: absolute;
     padding-top: 2%;
-    
 }
 
 .Assignment-progress-container{
@@ -51,6 +52,10 @@
     top: 25%;
     width: 100%;
     z-index: -2;
+}
+
+.card-body {
+    width: 100%;
 }
 
 /* z-index value has to be higher than .Progress-bubbles-container */
@@ -96,7 +101,6 @@
 }
 
 .Complete-assignment-button-col {
-    padding-left: 210%;
     z-index: 25;
 }
 
@@ -109,6 +113,18 @@
     padding-top: 15%;
     padding-left: 5%;
     
+}
+
+.Exercise-title {
+    display: block;
+    float: left;
+    clear: both;
+}
+
+.Exercise-title.col {
+    display: block;
+    float: left;
+    clear: both;
 }
 
 .picture{

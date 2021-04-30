@@ -51,7 +51,7 @@ const therapistSlice = createSlice({
     addAssignmentToClient: (state, action) => {
         let patientId = action.payload.assignment.patientId;
         let assignment = action.payload.assignment;
-        state.therapist.clientInfo[patientId].push(assignment)
+        state.therapist.clientInfo[patientId].unshift(assignment)
     },
 
     completeClientAssignment: (state, action) => {

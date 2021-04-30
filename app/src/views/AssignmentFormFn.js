@@ -114,7 +114,7 @@ const updateCurrentAssignment = () => {
     let finalAssignment = Object.assign({}, setAssignment)
     finalAssignment.visitNumber = assignments.length + 1
     finalAssignment.patientId = client.id
-    finalAssignment.therapistName = "Miranda Cosgrove"
+    finalAssignment.therapistName = "Jane Doe"
     //assign assignment, called when submitting form
     postAssignment(finalAssignment)
 
