@@ -3,6 +3,7 @@ const { Exercise } = require('../models/exercise');
 const Assignments = require('./assignments')
 const fs = require('fs');
 const AWS = require('aws-sdk');
+require('dotenv').config()
 
 module.exports = {
     async createExerciseBatch(exercises) {
@@ -22,7 +23,8 @@ module.exports = {
                 specialInstructions: exercise.specialInstructions,
                 goal:exercise.goal,
                 results: '',
-                imageId: ''
+                imageId: '',
+                dateOfLastProgress: ''
             });
             const insertInfo = await newExercise.save();
             if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
@@ -51,7 +53,8 @@ module.exports = {
             specialInstructions: newExercise.specialInstructions,
             goal:newExercise.goal,
             results: newExercise.results,
-            imageId: newExercise.imageId
+            imageId: newExercise.imageId,
+            dateOfLastProgress: dateOfLastProgress
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
         
@@ -107,8 +110,39 @@ module.exports = {
         };
 
         // Uploading files to the bucket
-        const result = await s3.upload(params);
+        const result = await s3.upload(params, function(err, data) {
+            if(err) {
+                throw err;
+            }
+            console.log(`File uploaded successfully. ${data.Location}`);
+        });
         //console.log(result);
     
+    },
+
+    async getFile(imageId) {
+        const id = process.env.AWS_ACCESS_KEY;
+        const secret = process.env.AWS_SECRET_KEY;
+        const bucketName = process.env.AWS_BUCKET_NAME
+
+        const s3 = new AWS.S3({
+            accessKeyId: id,
+            secretAccessKey: secret
+        });
+
+        const params = {
+            Bucket: bucketName,
+            Key: imageId + ".jpg", // File name you want to save as in S3
+        };
+
+        const result = await s3.getObject(params, function(err, data) {
+            if(err) {
+                throw err;
+            }
+            console.log(`File received`);
+            console.log(data)
+            return data;
+        })
+        
     }
 }

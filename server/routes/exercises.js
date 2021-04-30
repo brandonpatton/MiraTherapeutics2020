@@ -57,26 +57,24 @@ router.post('/upload', upload.single("picture"), async function (req,res) {
     try {
         var src = fs.createReadStream(req.file.path);
         var imageId = uuidv4();
-        await exerciseData.uploadFile(imageId + ".jpg",src); //Do we need an extension?
+        await exerciseData.uploadFile(imageId + ".jpg",src);
         console.log(imageId);
-        res.json(imageId);
+        res.json({imageId: imageId});
     } catch (e) {
         console.log(e);
         res.status(500).json({"Error": e});
     }
-    
-
-    
-    // console.log("Received file" + req.file.originalname);
-    // var src = fs.createReadStream(req.file.path);
-    // var dest = fs.createWriteStream('uploads/' + req.file.originalname);
-    // src.pipe(dest);
-    // src.on('end', function() {
-    // 	fs.unlinkSync(req.file.path);
-    // 	res.json('OK: received ' + req.file.originalname);
-    // });
-    // src.on('error', function(err) { res.json('Something went wrong!'); });
   })
 
+router.get('/getImage/:id', async (req, res) => {
+  var id = req.params.id
+  const result = await exerciseData.getFile(id);
+
+  res.writeHead(200, {'Content-Type': 'image/jpeg'});
+  res.write(result.Body, 'binary');
+  res.end(null, 'binary');
+
+  //res.sendFile() //path to image
+})
 
 module.exports = router;
