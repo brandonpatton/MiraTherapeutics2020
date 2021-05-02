@@ -4,18 +4,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // is currentRequestId like a unique ID for each request so the response can be connected to the request
 
-// closeExercise?
-export const closeClient = createAsyncThunk(
-  "clients/closeClient",
-  async (_, { getState, requestId }) => {
-    const { loading, currentRequestId } = getState().client;
-    if (loading !== "pending" || currentRequestId !== requestId) {
-      return null;
-    }
-    return postExercise(getState().added, getState().auth.user);
-  }
-);
-
 const exerciseSlice = createSlice({
   name: "exercise",
   initialState: {
@@ -30,7 +18,7 @@ const exerciseSlice = createSlice({
         specialInstructions: "",
         goal: 0
     },
-    exerciseToEdit: [],
+    exerciseToEdit: {},
     added: [{
         exerciseTitle: "",
         exerciseType: "",

@@ -7,7 +7,7 @@ const { Therapist } = require('../data/models/therapists');
 const { Patient } = require('../data/models/patients')
 const assignmentData = require('../data/methods/assignments')
 const exerciseData = require('../data/methods/exercises');
-const therapistData = require('../data/methods/therapists')
+const therapistData = require('../data/methods/therapists');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
@@ -378,7 +378,7 @@ describe('update', () => {
 })
 
 describe('insert', () => {
-	it('should insert an exercise from the database', async () => {
+	it('should insert an exercise to the database', async () => {
 		
 
 		let testDateAssigned = new Date();
@@ -387,7 +387,7 @@ describe('insert', () => {
 		const flashbackExercise = new Exercise({
             exerciseTitle: 'Flashback Grounding',
             exerciseType: 'Grounding',
-            dueDate: testDateAssigned,
+            dueDate: testDue,
             frequency: 'Weekly',
             patientName: 'John Doe',
             patientId: 'PjohnDoe1',
@@ -395,11 +395,52 @@ describe('insert', () => {
             specialInstructions: 'Please let me know if you need any help!'
 		});
 
-		const insertFlashback = await exerciseData.createExercise(flashbackExercise);
+		const insertFlashback = await exerciseData.createExerciseBatch([flashbackExercise]);
 
 		const res = await Exercise.findOne({ _id: insertFlashback._id })
+		checkExerciseEquality(insertFlashback, [res])
 
-		await expect(exerciseData.createExercise()).rejects.toThrow()
+		await expect(exerciseData.createExerciseBatch()).rejects.toThrow()
+
+	});
+})
+
+describe('insert', () => {
+	it('should insert multiple exercises to the database', async () => {
+		
+
+		let testDateAssigned = new Date();
+		let testDue = new Date(testDateAssigned.getTime() + 60000)
+
+		const flashbackExercise = new Exercise({
+            exerciseTitle: 'Flashback Grounding',
+            exerciseType: 'Grounding',
+            dueDate: testDue,
+            frequency: 'Weekly',
+            patientName: 'John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 0,
+            specialInstructions: 'Please let me know if you need any help!'
+		});
+
+		const colorFinderExercise = new Exercise({
+            exerciseTitle: 'Color Finder',
+            exerciseType: 'Grounding',
+            dueDate: testDue,
+            frequency: 'Daily',
+            patientName: 'John Doe',
+            patientId: 'PjohnDoe1',
+            progress: 0,
+            specialInstructions: 'Please let me know if you need any help!'
+		});
+
+		const insertExercises = await exerciseData.createExerciseBatch([flashbackExercise, colorFinderExercise]);
+
+		const res = [await Exercise.findOne({ _id: insertExercises[0]._id }), await Exercise.findOne({ _id: insertExercises[1]._id })]
+		checkExerciseEquality(insertExercises[0], res[0])
+		checkExerciseEquality(insertExercises[1], res[1])
+
+		await expect(exerciseData.createExerciseBatch()).rejects.toThrow()
 
 	});
 })

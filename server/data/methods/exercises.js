@@ -6,25 +6,34 @@ const AWS = require('aws-sdk');
 require('dotenv').config()
 
 module.exports = {
-    async createExercise(exercise) {
-        let newExercise = new Exercise({
-            exerciseTitle: exercise.exerciseTitle,
-            exerciseType: exercise.exerciseType,
-            dueDate: exercise.dueDate,
-            frequency: exercise.frequency,
-            patientName: exercise.patientName,
-            patientId: exercise.patientId,
-            progress: exercise.progress,
-            specialInstructions: exercise.specialInstructions,
-            goal:exercise.goal,
-            results: '',
-            imageId: '',
-            dateOfLastProgress: ''
-        });
-        const insertInfo = await newExercise.save();
-        if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
-        const id = insertInfo._id
-        return await this.getExercise(id)
+    async createExerciseBatch(exercises) {
+        if (exercises.length === 0) {
+            throw 'No Exercises provided'
+        }
+        let exerciseList = []
+        for (let exercise of exercises) {
+            let newExercise = new Exercise({
+                exerciseTitle: exercise.exerciseTitle,
+                exerciseType: exercise.exerciseType,
+                dueDate: exercise.dueDate,
+                frequency: exercise.frequency,
+                patientName: exercise.patientName,
+                patientId: exercise.patientId,
+                progress: exercise.progress,
+                specialInstructions: exercise.specialInstructions,
+                goal:exercise.goal,
+                results: '',
+                imageId: '',
+                dateOfLastProgress: ''
+            });
+            const insertInfo = await newExercise.save();
+            if (insertInfo.errors) throw `Could not add exercise. Error: ${insertInfo.errors}`
+            const id = insertInfo._id
+            exerciseList.push(await this.getExercise(id))
+        }
+
+        return exerciseList
+        
     },
 
     async getExercise(id) {

@@ -19,38 +19,45 @@ import { closeClient } from "./clientSlice";
 );*/
 closeClient()
 
+const emptyAssignment = {
+  assignmentProgress: 0,
+  dateAssigned: new Date(),
+  overallInstructions: "",
+  visitNumber: 0,
+  therapistName: "Jane Doe",
+  therapistId: "TjaneDoe1",
+  completedByTherapist: false,
+  patientId: "",
+  patientName: "",
+  clientName: "",
+  due: new Date(),
+  status: '',
+  nextSession: new Date(),
+  exerciseList: [],
+  chosenExercise: {}
+}
+
 const assignmentSlice = createSlice({
   name: "assignment",
   initialState: {
-    currentAssignment: {
-        dateAssigned: new Date(),
-        visitNumber: 0,
-        therapistName: "",
-        patientId: "",
-        clientName: "",
-        due: '',
-        status: '',
-        nextSession: "",
-        exercises: [
-            {
-              exerciseTitle: "",
-              exerciseType: "",
-              dueDate: new Date(),
-              frequency: "",
-              patientName: "",
-              patientId: "",
-              progress: 0,
-              specialInstructions: "",
-              goal: 0
-            },
-        ],
-        exerciseToEdit: []
-      },
+    currentAssignment: emptyAssignment,
   },
   reducers: {
     openAssignment: (state, action) => {
-      state.currentAssignment = action.payload;
+      state.currentAssignment = action.payload.assignment;
+      state.currentAssignment.chosenExercise = action.payload.chosenExercise
     },
+    addExercise: (state, action) => {
+      let exercise = action.payload.exercise;
+      state.currentAssignment.exerciseList.push(exercise);
+    },
+    editExercise: (state, action) => {
+      let exerciseIndexInList = action.payload.exercise.id
+      state.currentAssignment.exerciseList[exerciseIndexInList] = action.payload.exercise
+    },
+    clearAssignment: (state, action) => {
+      state.currentAssignment = emptyAssignment
+    }
   },
   extraReducers: {
     [closeClient.pending]: (state, action) => {
@@ -82,6 +89,9 @@ const assignmentSlice = createSlice({
 
 export const {
   openAssignment,
+  addExercise,
+  editExercise,
+  clearAssignment
 } = assignmentSlice.actions;
 
 export default assignmentSlice.reducer;

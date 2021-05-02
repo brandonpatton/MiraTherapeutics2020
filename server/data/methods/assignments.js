@@ -59,6 +59,7 @@ module.exports = {
     
     async getAssignmentsByPatientId(patientIdInput){
         const assignments = await Assignment.find({patientId: patientIdInput})
+        assignments.sort((a, b) => b.visitNumber - a.visitNumber)
         if (assignments.length === 0) throw 'No assignment exists with that patientId'
         return assignments
     },
@@ -67,7 +68,6 @@ module.exports = {
         let idToAssignmentList = {}
         for (let patientId of patientIds) {
             let assignmentList = await this.getAssignmentsByPatientId(patientId)
-            assignmentList.sort((a, b) => a.visitNumber - b.visitNumber)
             idToAssignmentList[patientId] = assignmentList
         }
 

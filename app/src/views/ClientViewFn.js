@@ -5,7 +5,7 @@ import { completeClientAssignment } from "../redux/slices/therapistSlice";
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../mira-new-medium.png';
 import {Row, Col, Container, Image, Card, /*Button*/} from 'react-bootstrap'
-import picture from '../Bonelli-RECT.jpg';
+import picture from '../fakePerson.jfif';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   CircularProgressbar,
@@ -55,7 +55,7 @@ function ClientView() {
       if (!assignmentsFetched) {
         //let assignments = useSelector((state) => state.therapist['PjohnDoe1'])
             // add an extra assignment to allow for a new one to be created if the most recent assignment has been closed
-            if (assignments[assignments.length - 1].completedByTherapist) {
+            if (assignments[0].completedByTherapist) {
               let newAssignmentForNewBubble = {
                 visitNumber: assignments.length + 1,
                 due: undefined,
@@ -111,7 +111,7 @@ function calculateExpectedExerciseProgress(exercise) {
       break
     default:
       // X per week case
-      const completionsPerWeek = Number(frequency)
+      const completionsPerWeek = Number(frequency.split(' ')[0])
       expectedCompletions = daysSinceAssignment/(7/completionsPerWeek)
       break
   }
@@ -164,29 +164,34 @@ function completeAssignmentButton() {
       </div>)
 }
 
-function completeAssignment() {
+async function completeAssignment() {
   // Assignments are sorted in descending order of visitNumber (whatever nth visit during which they were assigned)
   // change status of selected assignment to "Complete"
   let targetVisitNumber = selectedAssignment.visitNumber
-  let data = assignments
+  let data = assignments.slice()
   for (let assignment of data) {
     if (assignment.visitNumber == targetVisitNumber) {
       // Update database
-      closeAssignment(assignment)
-
+      await closeAssignment(assignment)
+      console.log("Updating global store")
       // Update global store
       dispatch(
         completeClientAssignment({
           assignment: assignment
         })
       )
+      
+      let completedAssignment = Object.assign({}, data[0])
+      completedAssignment.completedByTherapist = true
+      data[0] = completedAssignment
+
       break;
     }
   }
 
 
   // Check if the newest assignment is an actual assignment. If not, make a new barebones assignment so that a new bubbble can be made. Just exists with required fields for visuals
-  if (data[data.length - 1].completedByTherapist) {
+  if (data[0].completedByTherapist) {
     let newAssignmentForNewBubble = {
     visitNumber: data.length + 1,
     due: undefined,
@@ -194,10 +199,10 @@ function completeAssignment() {
     status: 0
     
     }
-    data.push(newAssignmentForNewBubble)
+    data.unshift(newAssignmentForNewBubble)
   }
     setAssignments(data)
-    setSelectedAssignment(data[data.length - 1])
+    setSelectedAssignment(data[0])
     setAssignmentCompletionDialogOpen(false)
 }
 
@@ -250,8 +255,8 @@ function getBubbleInfo(assignmentsList) {
           </div>
         )
       } else {
-        let targetIndex = assignmentsList.length - assignmentIndex - 1
-        let targetAssignment = assignmentsList[targetIndex]
+        //let targetIndex = assignmentsList.length - assignmentIndex - 1
+        let targetAssignment = assignmentsList[assignmentIndex]
         progressBubbleComponents.unshift(
           <div className = "Progress-bubble-column" onClick = {() => changeVisibleAssignment(targetAssignment.visitNumber)}>
             <CircularProgressbar  className = "Progress-bubbles" value={calculateAssignmentProgressAsPercent(targetAssignment)}
@@ -279,7 +284,7 @@ function getClientInfo(client) {
         <Image src={picture} roundedCircle className="picture"/>
         <div className="clientInfoCardContainer">
           <p className="clientInfoCard">{client.name}</p>
-          <p className="clientInfoCard">Client Since: {client.clientSince}</p>
+          <p className="clientInfoCard">Client Since: {'1/14'}</p>
           <p className="clientInfoCard">Next Session: {client.nextSession}</p>
         </div>
       </MDBCard>
@@ -319,12 +324,12 @@ function getClientInfo(client) {
       const result = exercises.map((exercise) =>
       <div className = "Exercise-data">
         <Row>
-            <Col>
+            <Col className='Linear-progress-bar' lg={4}>
               <ActualLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {100*exercise.progress/exercise.goal} color = "primary" thickness={5}/>
               <ExpectedLinearProgress className = "Linear-progress-bar" variant = {"determinate"} value = {calculateExpectedExerciseProgress(exercise)} color = "primary"/>
             </Col>
-            <Col>
-                <p>{exercise.exerciseTitle}<br></br>{`${new Date(exercise.dueDate).getMonth()+1}/${new Date(exercise.dueDate).getDate()}`}</p>
+            <Col className='Exercise-title'>
+                <p className="Exercise-title">{exercise.exerciseTitle}<br></br>{`${new Date(exercise.dueDate).getMonth()+1}/${new Date(exercise.dueDate).getDate()}`}</p>
             </Col>
         </Row>
         <br></br>
@@ -337,7 +342,7 @@ function getClientInfo(client) {
     return(
       <div>
           <div className = "App-logo-container">
-              <img src={logo} className="App-logo" alt="logo" />
+              <img src={logo} className="App-logo" alt="logo"/>
           </div>
           <div className = "Client-view-title-container">
               <p className = "Client-view-title-text">  {client.name}</p> {/*Get this from previous page*/}
@@ -379,7 +384,7 @@ function getClientInfo(client) {
                                       </div>
                                     </Col>
                                     <Col className = "Complete-assignment-button-col">
-                                      {completeAssignmentButton()}
+                                        {completeAssignmentButton()}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -395,7 +400,7 @@ function getClientInfo(client) {
                                 </Row>
                             </Card.Body>
                         </Card>
-                        </Col>
+                      </Col>
                     </Row>      
               </Col>
             </Row>
@@ -407,19 +412,19 @@ function getClientInfo(client) {
 
 
   //#region Exercise Type Dropdown
-  const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-    <a
-      href="./ClientView"
-      ref={ref}
-      onClick={(e) => {
-        e.preventDefault();
-        onClick(e);
-      }}
-    >
-      {children}
-      &#x25bc;
-    </a>
-  ));
+  // const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  //   <a
+  //     href="./ClientView"
+  //     ref={ref}
+  //     onClick={(e) => {
+  //       e.preventDefault();
+  //       onClick(e);
+  //     }}
+  //   >
+  //     {children}
+  //     &#x25bc;
+  //   </a>
+  // ));
 
   
 //#endregion  
