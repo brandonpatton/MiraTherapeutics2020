@@ -716,7 +716,6 @@ describe('retrieve', () => {
 	
 		// Check that each patient ID in the response object has the right assignment list
 		const resObj = await assignmentData.getAssignmentsByBatchPatientIds(['PjohnDoe1', 'PpattyPancakes1', 'PstubertSizzo1'])
-		resObj
 		for (let patientId in resObj){
 			checkAssignmentListEquality(patientIdToAssignments[patientId], resObj[patientId])
 		}
