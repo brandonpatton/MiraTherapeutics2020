@@ -185,6 +185,10 @@ function ExerciseForm() {
 
         newChosenExercise[targetKey] = newValue
 
+        if (targetKey == "exerciseType") {
+            newChosenExercise.exerciseTitle = exerciseTypes[newValue][0]
+        }
+
         // If they are choosing a custom frequency, add ' per week' so frequency doesn't just show a number
         // Otherwise, change customExerciseFrequency variable so the extra input goes away
         if (targetKey == "frequency") {
@@ -349,13 +353,13 @@ return(
                 <Form.Group controlId="exerciseType">
                     <Form.Label>Exercise Type</Form.Label>
                     {/* updateChosen */}
-                    <Form.Control  onChange = {event => updateChosenExercise("exerciseType", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseType} custom>
+                    <Form.Control  onChange = {event => updateChosenExercise("exerciseType", event.target.value)} as="select" defaultValue = {chosenExercise.exerciseType} custom>
                     {getExerciseFormData(exerciseTypes)}
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="exerciseTitle">
                     <Form.Label>Exercise Title</Form.Label>
-                    <Form.Control  onChange = {event => updateChosenExercise("exerciseTitle", event.target.value)} as="select" defaultValue = {setAssignment.chosenExercise.exerciseTitle} custom>
+                    <Form.Control  onChange = {event => updateChosenExercise("exerciseTitle", event.target.value)} as="select" defaultValue = {chosenExercise.exerciseTitle} custom>
                     {getExerciseTitle(exerciseTypes, chosenExercise.exerciseType)}
                     </Form.Control>
                 </Form.Group> 
@@ -381,7 +385,7 @@ return(
                 {showCustomFrequencyInput()}
                 <Form.Group controlId="specialInstructions">
                     <Form.Label>Special Instructions</Form.Label>
-                    <Form.Control onChange = {event => updateChosenExercise("specialInstructions", event.target.value)} as = "textarea" defaultValue = {setAssignment.chosenExercise.specialInstructions.length == 0 ? "" : setAssignment.chosenExercise.specialInstructions} placeholder = {"Enter special instructions"} rows = {1} />
+                    <Form.Control onChange = {event => updateChosenExercise("specialInstructions", event.target.value)} as = "textarea" defaultValue = {chosenExercise.specialInstructions.length == 0 ? "" : chosenExercise.specialInstructions} placeholder = {"Enter special instructions"} rows = {1} />
                 </Form.Group>
                 
                 <Link to = {{

@@ -64,12 +64,12 @@ function ClientView() {
                 }
 
                 let newAssignmentList = assignments.slice()
-                newAssignmentList.push(newAssignmentForNewBubble)
+                newAssignmentList.unshift(newAssignmentForNewBubble)
                 setAssignments(newAssignmentList)
             }
             // update the state with the assignments in the right order
             setAssignmentsFetched(true)
-            setSelectedAssignment(assignments[assignments.length - 1])
+            setSelectedAssignment(assignments[0])
           }
       
     });
