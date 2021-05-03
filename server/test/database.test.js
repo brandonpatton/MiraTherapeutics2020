@@ -710,12 +710,13 @@ describe('retrieve', () => {
 		let patientIdToAssignments = {}
 
 		// Assign the assignment lists to the correct patient IDs
-		patientIdToAssignments['PjohnDoe1'] = [await johnDoeAssignment.save(), await johnDoeAssignment2.save()]
-		patientIdToAssignments['PpattyPancakes1'] = [await pattyPancakesAssignment1.save(), await pattyPancakesAssignment2.save(), await pattyPancakesAssignment3.save()]
-		patientIdToAssignments['PstubertSizzo1'] = [await stubertSizzoAssignment1.save(), await stubertSizzoAssignment2.save(), await stubertSizzoAssignment3.save()]
+		patientIdToAssignments['PjohnDoe1'] = [await johnDoeAssignment.save(), await johnDoeAssignment2.save()].reverse()
+		patientIdToAssignments['PpattyPancakes1'] = [await pattyPancakesAssignment1.save(), await pattyPancakesAssignment2.save(), await pattyPancakesAssignment3.save()].reverse()
+		patientIdToAssignments['PstubertSizzo1'] = [await stubertSizzoAssignment1.save(), await stubertSizzoAssignment2.save(), await stubertSizzoAssignment3.save()].reverse()
 	
 		// Check that each patient ID in the response object has the right assignment list
 		const resObj = await assignmentData.getAssignmentsByBatchPatientIds(['PjohnDoe1', 'PpattyPancakes1', 'PstubertSizzo1'])
+		resObj
 		for (let patientId in resObj){
 			checkAssignmentListEquality(patientIdToAssignments[patientId], resObj[patientId])
 		}
