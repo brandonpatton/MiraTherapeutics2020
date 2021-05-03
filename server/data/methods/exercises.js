@@ -54,7 +54,7 @@ module.exports = {
             goal:newExercise.goal,
             results: newExercise.results,
             imageId: newExercise.imageId,
-            dateOfLastProgress: dateOfLastProgress
+            dateOfLastProgress: newExercise.dateOfLastProgress
         })
         if (updatedInfo.error) throw `Could not update exercise. Error: ${updatedInfo.errors}`
         
