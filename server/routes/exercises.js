@@ -95,9 +95,6 @@ router.get('/getImage/:imageId', async (req, res) => {
       res.end(null, 'binary');
   })
 
-  
-
-  //res.sendFile() //path to image
 })
 
 module.exports = router;
