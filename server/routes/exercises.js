@@ -6,6 +6,7 @@ const upload = multer({ dest: 'uploads/'})
 var fs = require('fs');
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
+require('dotenv').config()
 // import { v4 as uuidv4 } from 'uuid';
 
 router.get("/:id", async (req, res) => {
@@ -66,15 +67,34 @@ router.post('/upload', upload.single("picture"), async function (req,res) {
     }
   })
 
-router.get('/getImage/:id', async (req, res) => {
-  var id = req.params.id
-  const result = await exerciseData.getFile(id);
+router.get('/getImage/:imageId', async (req, res) => {
+  var imageId = req.params.imageId
 
-  res.writeHead(200, {'Content-Type': 'image/jpeg'});
-  res.write(result.Body, 'binary');
-  res.end(null, 'binary');
+  const id = process.env.AWS_ACCESS_KEY;
+  const secret = process.env.AWS_SECRET_KEY;
+  const bucketName = process.env.AWS_BUCKET_NAME
 
-  //res.sendFile() //path to image
+  const s3 = new AWS.S3({
+      accessKeyId: id,
+      secretAccessKey: secret
+  });
+
+  const params = {
+      Bucket: bucketName,
+      Key: imageId + ".jpg", // File name you want to save as in S3
+  };
+
+  const result = s3.getObject(params, function(err, data) {
+      if(err) {
+          throw err;
+      }
+      console.log(`File received`);
+      console.log(data)
+      res.writeHead(200, {'Content-Type': 'image/jpeg'});
+      res.write(data.Body, 'binary');
+      res.end(null, 'binary');
+  })
+
 })
 
 module.exports = router;

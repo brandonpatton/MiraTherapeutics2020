@@ -120,7 +120,7 @@ module.exports = {
     
     },
 
-    async getFile(imageId) {
+    getFile(imageId) {
         const id = process.env.AWS_ACCESS_KEY;
         const secret = process.env.AWS_SECRET_KEY;
         const bucketName = process.env.AWS_BUCKET_NAME
@@ -135,7 +135,7 @@ module.exports = {
             Key: imageId + ".jpg", // File name you want to save as in S3
         };
 
-        const result = await s3.getObject(params, function(err, data) {
+        const result = s3.getObject(params, function(err, data) {
             if(err) {
                 throw err;
             }
@@ -143,6 +143,5 @@ module.exports = {
             console.log(data)
             return data;
         })
-        
     }
 }
