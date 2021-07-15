@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; //
 import green from "../Green.PNG";
 import Table from "react-bootstrap/Table";
 import Row from "react-bootstrap/Row";
@@ -12,8 +12,8 @@ import fakePerson from '../fakePerson.jfif'
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import "../css/PracticeView.css";
-import { openClient } from "../redux/slices/clientSlice";
-import { updateTherapistClientList } from "../redux/slices/therapistSlice"
+import { openClient } from "../redux/slices/clientSlice"; //
+import { updateTherapistClientList } from "../redux/slices/therapistSlice" //
 
 const PracticeView = () => {
   
@@ -122,10 +122,13 @@ const PracticeView = () => {
   }
 
   function clientClick(client) {
-    setPatient(client);
+    //fires each time we click on a different client
+    setPatient(client); //updates the local state with the currently selected client's information
   }
 
   const updateCurrentClient = (client) => {
+    //updates the client global store with the selected client info
+    //fires when we click the "go to client view" button
     dispatch(
       openClient({
         id: client.id,
@@ -137,6 +140,8 @@ const PracticeView = () => {
   };
 
   function getRow(patients) {
+    //maps all patient information into a table
+    //each patient is clickable, changing which patient shows up on the left hand side bar
     const rowItems = patients.map((patient) => (
       <tr onClick={() => clientClick(patient)}>
         <td className="Patient-name">Client: {patient.name}</td>
@@ -163,6 +168,7 @@ const PracticeView = () => {
   }
 
   function getCompleted(assignments) {
+    //increments as patients complete assignments
     let count = 0;
     for (let assignment of assignments) {
       if (assignment) {
@@ -221,15 +227,12 @@ const PracticeView = () => {
             <h1 className="Practice-view-title">Practice View</h1>
             <Table className="Table">
               <tbody>
-                {/*<TableRow className = "Patients" patients = {this.patients} />*/}
                 {getRow(patientList)}
               </tbody>
             </Table>
           </Col>
         </Row>
       </Container>
-
-      {/* <NumberList numbers = {this.numbers} /> */}
     </div>
   );
 };

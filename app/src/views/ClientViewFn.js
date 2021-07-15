@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux" //
 import '../css/ClientView.css';
-import { completeClientAssignment } from "../redux/slices/therapistSlice";
+import { completeClientAssignment } from "../redux/slices/therapistSlice"; //
 import { MDBCard, MDBCardTitle } from "mdbreact";
 import logo from '../mira-new-medium.png';
 import {Row, Col, Container, Image, Card, /*Button*/} from 'react-bootstrap'
@@ -21,7 +21,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import {closeAssignment, getAssignments} from "../api/clientAPI"
+import {closeAssignment} from "../api/clientAPI" //
 import { useHistory } from 'react-router';
 
 function ClientView() {
@@ -34,21 +34,17 @@ function ClientView() {
     useSelector((state) => state.client)
   )
 
-
-  //let stateCheck = useSelector((state) => console.log(state.therapist.therapist))
-
   const {therapist} = useSelector((state) => state.therapist)
 
   const [assignments, setAssignments] = useState(therapist.clientInfo['PjohnDoe1'])
 
-  const [selectedAssignment, setSelectedAssignment] = useState({
+  const [selectedAssignment, setSelectedAssignment] = useState({ //locally keeps track of whatever assignment we have selected
     due: ""
   })
 
+    const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false) //boolean state variable that keeps track of if we have the completion dialog box open or not
 
-    const [assignmentCompletionDialogOpen, setAssignmentCompletionDialogOpen] = useState(false)
-
-    const [assignmentsFetched, setAssignmentsFetched] = useState(false)
+    const [assignmentsFetched, setAssignmentsFetched] = useState(false) //keeps track of if we have successfully fetched the assignments from the database
 
     useEffect(async () => {
       // Sort assignments once
@@ -123,6 +119,8 @@ function calculateExpectedExerciseProgress(exercise) {
 
 
 function completeAssignmentButton() {
+  //handles closing an assignment
+  //opens up a dialog box to confirm completion
 
   const handleClickOpen = () => {
       setAssignmentCompletionDialogOpen(true)
@@ -221,8 +219,6 @@ function changeVisibleAssignment(visitNumber) {
     }
   }
 
-  
-
 }
 
 // Take in an assignment. Return the total progress as a percent. Divide assignment progress (completions so far) by total amount of completions expected
@@ -238,6 +234,7 @@ function calculateAssignmentProgressAsPercent(assignment) {
 }
 
 function getBubbleInfo(assignmentsList) {
+  //populates progress bubbles on screen. takes in list of assignments 
   const ongoingBubbleColor = '#00b5d9'
   const completedBubbleColor = '#20315f'
   const completedBubblePathColor = '#FFFFFF'
@@ -278,6 +275,7 @@ function getBubbleInfo(assignmentsList) {
 }
 
 function getClientInfo(client) {
+  //gets client info passed in from practice view
   const result = 
     <Row>
       <MDBCard className = "Client-information">
@@ -293,6 +291,7 @@ function getClientInfo(client) {
 }
 
  function getExercises(exercises) {
+   //sets up exercises on page with expected and actual progress bars
       if (exercises) 
       {
         const ActualLinearProgress = withStyles((theme) => ({
@@ -355,11 +354,6 @@ function getClientInfo(client) {
                   {getClientInfo(client)}
                 </Col>
               </div>
-              {/*<Col>
-                <MDBCard className="Exercise-preview-body">
-                  <MDBCardTitle className="Exercise-preview-placeholder-text">-Exercise Preview-</MDBCardTitle>
-                </MDBCard>         
-              </Col>*/} 
               <Col>
                     <Row>
                     </Row>
@@ -392,7 +386,6 @@ function getClientInfo(client) {
                                       <div className = "Assignment-progress-container">
                                         <MDBCardTitle className="Assignment-completion-title-text">Assignment Completion</MDBCardTitle>
                                         <div className="Exercise-data-container">
-                                          {/*getExercises(this.state.patient.assignments[this.state.selectedAssignment].exerciseList)  until selectedAssignment being an object works*/}
                                           {getExercises(selectedAssignment.exerciseList)}
                                         </div>
                                       </div>
@@ -410,24 +403,6 @@ function getClientInfo(client) {
 
 }
 
-
-  //#region Exercise Type Dropdown
-  // const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  //   <a
-  //     href="./ClientView"
-  //     ref={ref}
-  //     onClick={(e) => {
-  //       e.preventDefault();
-  //       onClick(e);
-  //     }}
-  //   >
-  //     {children}
-  //     &#x25bc;
-  //   </a>
-  // ));
-
-  
-//#endregion  
 
 
 export default ClientView;
