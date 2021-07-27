@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "./Mira.jpg";
+import logo from "./mira-new-medium.png";
 import banner from "./MiraBanner.png";
 import bubble from "./bubbles.png";
 import "./css/App.css";
@@ -99,7 +99,7 @@ class App extends Component {
 
         <div>
           <MDBContainer className="Card">
-            <MDBCard className="card-body">
+            <MDBCard className="card-body-1">
               <MDBCardTitle className="Card1-title">
                 Miratx Articles
               </MDBCardTitle>

@@ -52,12 +52,12 @@
 .App-link {
   color: #61dafb;
 }
-.card-body{
+.card-body-1{
   top: 300px;
   width: 500px;
   height: 450px;
-  float:left;
-  
+  left: -3%;
+  float: left;
   }
 .card-body-2{
   top: 300px;
@@ -68,17 +68,15 @@
 
 .App-logo-container{
   position: absolute;
-  align-self: flex-start;
-  left: 20px;
-  top: 30px;
+  left: 3%;
+  top: 3%;
 }
 
 .App-logo {
-  pointer-events: none;
-  position: relative; 
-  z-index: 5;
-  max-width: 85%;
+  float: left;
+  max-width: 50%;
   height: auto;
+  padding-right: 15%;
 }
 
 .Mira-site-header{
@@ -156,9 +154,12 @@
   color:gray;
 }
 
-
+.Card1-title{
+  position: relative;
+  padding-top: 18px;
+}
 .Card2-title{
-  position:relative;
+  position: relative;
   padding-top: 18px;
 }
 

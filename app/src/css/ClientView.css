@@ -55,7 +55,11 @@
 }
 
 .card-body {
-    width: 100%;
+  top: 300px;
+  width: 500px;
+  height: 450px;
+  left: 10px;
+  float: left;
 }
 
 /* z-index value has to be higher than .Progress-bubbles-container */
